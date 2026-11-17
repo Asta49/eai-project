@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="100%" height="100%">
+  <rect width="800" height="1000" fill="#ffffff" />
+  <!-- Watermark -->
+  <text x="400" y="500" font-family="Helvetica, Arial, sans-serif" font-size="90" font-weight="bold" fill="#f1f5f9" text-anchor="middle" transform="rotate(-30, 400, 500)">SAMPLE REPORT - DEMO ONLY</text>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="800" height="90" fill="#be123c" />
+  <text x="40" y="45" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">THYROCARE DIAGNOSTIC LABORATORIES</text>
+  <text x="40" y="70" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#ffe4e6">NABL &amp; CAP Accredited • Central Reference Laboratory, Turbhe, Navi Mumbai</text>
+  <text x="760" y="55" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="end">CONFIDENTIAL</text>
+
+  <!-- Patient Details Box -->
+  <rect x="40" y="110" width="720" height="110" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
+  <text x="60" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Patient Name:</text>
+  <text x="170" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">Priya Sharma</text>
+  <text x="420" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Sample Date:</text>
+  <text x="530" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">15-Feb-2026 07:45 AM</text>
+
+  <text x="60" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Age / Gender:</text>
+  <text x="170" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">26 Years / Female</text>
+  <text x="420" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Ref. Physician:</text>
+  <text x="530" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">Dr. Ananya Sen, MD</text>
+
+  <text x="60" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Barcode / ID:</text>
+  <text x="170" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">THY-PCOS-883921</text>
+  <text x="420" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Test Panel:</text>
+  <text x="530" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">PCOS Comprehensive Metabolic Panel</text>
+
+  <!-- Table Header -->
+  <rect x="40" y="240" width="720" height="35" fill="#f1f5f9" />
+  <text x="60" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">INVESTIGATION</text>
+  <text x="320" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">OBSERVED VALUE</text>
+  <text x="470" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">UNIT</text>
+  <text x="600" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">REFERENCE RANGE</text>
+
+  <!-- Test 1: Fasting Glucose -->
+  <line x1="40" y1="310" x2="760" y2="310" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0f172a">Fasting Plasma Glucose (Hexokinase)</text>
+  <text x="320" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">94.0</text>
+  <text x="470" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">mg/dL</text>
+  <text x="600" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">70.0 - 99.0 (Normal)</text>
+
+  <!-- Test 2: Fasting Insulin -->
+  <line x1="40" y1="355" x2="760" y2="355" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">Fasting Serum Insulin (CLIA) *</text>
+  <text x="320" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">15.6</text>
+  <text x="470" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">µIU/mL</text>
+  <text x="600" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">2.6 - 24.9 (Optimal &lt; 10)</text>
+
+  <!-- Test 3: HOMA-IR -->
+  <line x1="40" y1="400" x2="760" y2="400" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">Calculated HOMA-IR Index *</text>
+  <text x="320" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">3.61</text>
+  <text x="470" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">ratio</text>
+  <text x="600" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">&lt; 2.5 (High IR Risk)</text>
+
+  <!-- Test 4: HbA1c -->
+  <line x1="40" y1="445" x2="760" y2="445" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0f172a">HbA1c (Glycated Hemoglobin, HPLC)</text>
+  <text x="320" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">5.6</text>
+  <text x="470" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">%</text>
+  <text x="600" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">4.0 - 5.6 (Normal)</text>
+
+  <!-- Test 5: Total Testosterone -->
+  <line x1="40" y1="490" x2="760" y2="490" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">Total Serum Testosterone (ECLIA) *</text>
+  <text x="320" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">68.4</text>
+  <text x="470" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">ng/dL</text>
+  <text x="600" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">15.0 - 55.0 (Elevated)</text>
+
+  <!-- Test 6: AMH -->
+  <line x1="40" y1="535" x2="760" y2="535" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="520" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">Anti-Müllerian Hormone (AMH) *</text>
+  <text x="320" y="520" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">6.8</text>
+  <text x="470" y="520" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">ng/mL</text>
+  <text x="600" y="520" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">1.0 - 4.0 (PCO Pattern)</text>
+
+  <!-- Test 7: Vitamin D -->
+  <line x1="40" y1="580" x2="760" y2="580" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="565" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">25-OH Vitamin D Total (CLIA) *</text>
+  <text x="320" y="565" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">14.2</text>
+  <text x="470" y="565" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">ng/mL</text>
+  <text x="600" y="565" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">&gt; 30.0 (Deficient &lt; 20)</text>
+
+  <!-- Clinical Interpretation Box -->
+  <rect x="40" y="630" width="720" height="170" rx="8" fill="#fff1f2" stroke="#fecdd3" stroke-width="1" />
+  <text x="60" y="660" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#9f1239">CLINICAL INTERPRETATION &amp; NOTES:</text>
+  <text x="60" y="685" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#881337">• Elevated HOMA-IR (3.61) with normal fasting glucose (94 mg/dL) confirms compensatory hyperinsulinemia.</text>
+  <text x="60" y="710" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#881337">• Elevated AMH (6.8 ng/mL) and total testosterone (68.4 ng/dL) support Rotterdam Phenotype A presentation.</text>
+  <text x="60" y="735" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#881337">• Significant Vitamin D deficiency (14.2 ng/mL). Therapeutic cholecalciferol repletion recommended.</text>
+  <text x="60" y="760" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#881337">• Repeat fasting insulin and HOMA-IR in 3 months following lifestyle/nutritional intervention.</text>
+
+  <!-- Signatures -->
+  <text x="100" y="870" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#334155">DR. S. MUKHERJEE, MD</text>
+  <text x="100" y="888" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#64748b">Consultant Pathologist</text>
+  
+  <text x="660" y="870" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#334155" text-anchor="end">DR. R. IYER, PhD</text>
+  <text x="660" y="888" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">Laboratory Director</text>
+
+  <!-- Footer Disclaimer -->
+  <line x1="40" y1="920" x2="760" y2="920" stroke="#cbd5e1" stroke-width="1" />
+  <text x="400" y="945" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">DEMO SAMPLE REPORT • GENERATED FOR RESEARCH SIMULATION • NOT A MEDICAL DIAGNOSIS</text>
+  <text x="400" y="965" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Page 1 of 1 • Thyrocare LIS Version 4.2 • IIM Ahmedabad Economics of AI Capstone</text>
+</svg>

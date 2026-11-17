@@ -1,0 +1,448 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  DOCTOR
+  ADMIN
+}
+
+enum ExperimentStatus {
+  proposed
+  awaiting_approval
+  baseline
+  active
+  completed
+  abandoned
+}
+
+enum VerdictType {
+  LIKELY_WORKED
+  LIKELY_DID_NOT_WORK
+  INCONCLUSIVE
+}
+
+model User {
+  id                    String              @id @default(cuid())
+  email                 String              @unique
+  name                  String
+  passwordHash          String
+  role                  Role                @default(USER)
+  language              String              @default("en")
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  profile               Profile?
+  consents              Consent[]
+  checkIns              CheckIn[]
+  cycleEvents           CycleEvent[]
+  labReports            LabReport[]
+  foodLogs              FoodLog[]
+  experiments           Experiment[]
+  testRecommendations   TestRecommendation[]
+  labBookings           LabBooking[]
+  doctorConsults        ConsultBooking[]    @relation("PatientConsults")
+  doctorProfile         Doctor?
+  chatMessages          ChatMessage[]
+  auditLogs             AuditLog[]          @relation("ActorAuditLogs")
+}
+
+model Profile {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  age                   Int
+  cityTier              String    @default("tier1") // tier1, tier2, tier3
+  heightCm              Float
+  weightKg              Float
+  waistCircumferenceCm  Float?
+  diagnosisStatus       String    // diagnosed, suspected, not_sure
+  symptoms              Json      // array of symptom keys
+  typicalCycleLength    Int       @default(28)
+  lastPeriodDate        DateTime?
+  dietType              String    @default("vegetarian") // vegetarian, non_vegetarian, eggetarian, vegan
+  activityLevel         String    @default("moderate") // sedentary, light, moderate, active
+  sleepHours            Float     @default(7.5)
+  currentMedicines      Json      // array of medicine/supplement names
+  monthlyBudget         Float     @default(2000)
+
+  // Phenotype estimate (Rotterdam criteria + metabolic flags)
+  estimatedPhenotype    String?   // Phenotype_A, Phenotype_B, Phenotype_C, Phenotype_D, None
+  phenotypeConfidence   Float?
+  phenotypeReasoning    String?
+  insulinResistanceFlag Boolean   @default(false)
+  homaIrScore           Float?
+  bmiCategory           String?   // lean, normal, overweight, obese (Asian cut-offs)
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Consent {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose    String    // core_app, doctor_sharing, anonymised_research
+  granted    Boolean   @default(false)
+  grantedAt  DateTime  @default(now())
+  revokedAt  DateTime?
+  version    String    @default("1.0")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([userId, purpose])
+}
+
+model CheckIn {
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date                  DateTime  @default(now())
+  energy                Int       // 1-5
+  mood                  Int       // 1-5
+  cravings              Int       // 1-5
+  acne                  Int       // 0-3
+  bloating              Int       // 0-3
+  periodToday           Boolean   @default(false)
+  periodFlow            String?   // none, spotting, light, medium, heavy
+  adherenceToExperiment Boolean   @default(false)
+  notesEncrypted        String?
+  cyclePhase            String?   // menstrual, follicular, luteal
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId, date])
+}
+
+model CycleEvent {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate       DateTime
+  endDate         DateTime?
+  cycleLengthDays Int?
+  flowIntensity   String?   // light, medium, heavy
+  notes           String?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId, startDate])
+}
+
+model LabReport {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labName     String?
+  sampleDate  DateTime?
+  fileUrl     String?
+  rawOcrText  String?
+  status      String      @default("verified") // pending, verified
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  results     LabResult[]
+}
+
+model LabResult {
+  id              String    @id @default(cuid())
+  reportId        String
+  report          LabReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  testName        String
+  canonicalName   String    // fasting_glucose, fasting_insulin, hba1c, tsh, total_testosterone, etc.
+  numericValue    Float
+  unit            String
+  referenceRange  String?
+  isAbnormal      Boolean   @default(false)
+  confidence      Float     @default(1.0)
+  createdAt       DateTime  @default(now())
+
+  @@index([canonicalName])
+}
+
+model Food {
+  id                    String    @id @default(cuid())
+  name                  String
+  nameHindi             String?
+  category              String    // Grain, Pulse, Vegetable, Dairy, Snack, Sweet, Beverage
+  servingUnit           String    // cup, piece, bowl, plate, roti
+  servingSizeGrams      Float
+  calories              Float
+  carbs                 Float
+  protein               Float
+  fat                   Float
+  fiber                 Float
+  glycemicIndexEstimate Float
+  pcosScore             Float     // 1 to 10
+  swapSuggestion        String?
+  swapReason            String?
+  isIndb                Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+}
+
+model FoodLog {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodId      String?
+  dishName    String
+  mealType    String    // breakfast, lunch, dinner, snack
+  portion     Float     @default(1.0)
+  calories    Float
+  carbs       Float
+  protein     Float
+  fat         Float
+  fiber       Float
+  pcosScore   Float
+  loggedAt    DateTime  @default(now())
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, loggedAt])
+}
+
+model Intervention {
+  id                      String        @id @default(cuid())
+  code                    String        @unique
+  name                    String
+  category                String        // diet, supplement, exercise, sleep
+  protocol                String
+  baselineDays            Int           @default(14)
+  interventionDays        Int           @default(28)
+  primaryMetric           String        // energy, cravings, acne, bloating, cycle_regularity, mood
+  secondaryMetrics        Json          // array of string metric names
+  mcid                    Float         // Minimum Clinically Important Difference
+  monthlyCostINR          Float         @default(0)
+  contraindications       Json          // array of condition strings
+  requiresDoctorApproval  Boolean       @default(false)
+  evidenceLevel           String        @default("moderate") // high, moderate, low
+  description             String
+  createdAt               DateTime      @default(now())
+  experiments             Experiment[]
+}
+
+model Experiment {
+  id                    String            @id @default(cuid())
+  userId                String
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interventionId        String
+  intervention          Intervention      @relation(fields: [interventionId], references: [id])
+  status                ExperimentStatus  @default(proposed)
+  startDate             DateTime          @default(now())
+  baselineEndDate       DateTime?
+  interventionEndDate   DateTime?
+  designType            String            @default("AB") // AB, ABAB
+  targetMetric          String
+  doctorApprovalStatus  String?           // approved, rejected, pending
+  doctorApprovedById    String?
+  notes                 String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  result                ExperimentResult?
+
+  @@index([userId, status])
+}
+
+model ExperimentResult {
+  id                    String        @id @default(cuid())
+  experimentId          String        @unique
+  experiment            Experiment    @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  effectEstimate        Float         // delta hat
+  standardError         Float         // SE
+  rawEffect             Float
+  cyclePhaseAdjusted    Boolean       @default(true)
+  autocorrelationRho    Float         @default(0.0)
+  adherenceRate         Float         @default(1.0)
+  priorMean             Float
+  priorVariance         Float
+  posteriorMean         Float
+  posteriorVariance     Float
+  probBeneficial        Float         // P(benefit > MCID)
+  credibleIntervalLow   Float
+  credibleIntervalHigh  Float
+  verdict               VerdictType
+  verdictExplanation    String?       // generated by LLM (strictly read-only presentation)
+  computedAt            DateTime      @default(now())
+}
+
+model PopulationPrior {
+  id               String   @id @default(cuid())
+  interventionCode String
+  phenotype        String   // Phenotype_A, Phenotype_B, Phenotype_C, Phenotype_D, ALL
+  priorMean        Float
+  priorStd         Float
+  sampleSize       Int      @default(10)
+  source           String
+  updatedAt        DateTime @updatedAt
+
+  @@unique([interventionCode, phenotype])
+}
+
+model TestRecommendation {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testName      String
+  canonicalName String
+  reason        String
+  urgency       String    @default("recommended") // routine, recommended, urgent
+  dueDate       DateTime?
+  status        String    @default("pending") // pending, booked, completed
+  createdAt     DateTime  @default(now())
+}
+
+model Lab {
+  id                      String        @id @default(cuid())
+  name                    String
+  slug                    String        @unique
+  city                    String
+  address                 String
+  rating                  Float         @default(4.8)
+  homeCollectionAvailable Boolean       @default(true)
+  turnaroundHours         Int           @default(24)
+  priceINR                Float         @default(1200)
+  partnerDiscountPercent  Float         @default(20)
+  testCatalog             Json          // array of supported canonical test names
+  createdAt               DateTime      @default(now())
+  bookings                LabBooking[]
+}
+
+model LabBooking {
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labId              String
+  lab                Lab       @relation(fields: [labId], references: [id])
+  tests              Json      // array of test names
+  bookingDate        DateTime
+  timeSlot           String
+  patientAddress     String
+  homeCollection     Boolean   @default(true)
+  status             String    @default("confirmed") // confirmed, sample_collected, completed, cancelled
+  totalAmountINR     Float
+  simulatedReportId  String?
+  createdAt          DateTime  @default(now())
+}
+
+model Doctor {
+  id               String            @id @default(cuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName         String
+  specialty        String            // Gynaecologist, Endocrinologist, Dietitian, Dermatologist, Therapist
+  qualifications   String
+  experienceYears  Int
+  languages        Json              // array of string languages: ["English", "Hindi", "Telugu"]
+  feeINR           Float
+  avatarUrl        String?
+  bio              String
+  createdAt        DateTime          @default(now())
+
+  consults         ConsultBooking[]
+  doctorNotes      DoctorNote[]
+}
+
+model ConsultBooking {
+  id                    String          @id @default(cuid())
+  userId                String
+  user                  User            @relation("PatientConsults", fields: [userId], references: [id], onDelete: Cascade)
+  doctorId              String
+  doctor                Doctor          @relation(fields: [doctorId], references: [id])
+  appointmentDate       DateTime
+  timeSlot              String
+  status                String          @default("confirmed") // confirmed, in_progress, completed, cancelled
+  meetingLink           String?
+  patientConsentGranted Boolean         @default(true)
+  createdAt             DateTime        @default(now())
+
+  summary               ConsultSummary?
+  doctorNotes           DoctorNote[]
+}
+
+model ConsultSummary {
+  id                  String          @id @default(cuid())
+  bookingId           String          @unique
+  booking             ConsultBooking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  patientId           String
+  generatedSummary    String          // Encrypted or structured summary
+  estimatedPhenotype  String?
+  keyConcerns         Json
+  recentLabs          Json?
+  experimentHistory   Json?
+  patientQuestions    Json
+  generatedAt         DateTime        @default(now())
+}
+
+model DoctorNote {
+  id          String          @id @default(cuid())
+  doctorId    String
+  doctor      Doctor          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  consultId   String?
+  consult     ConsultBooking? @relation(fields: [consultId], references: [id], onDelete: SetNull)
+  patientId   String
+  content     String          // Encrypted note content
+  createdAt   DateTime        @default(now())
+}
+
+model KnowledgeChunk {
+  id        String   @id @default(cuid())
+  title     String
+  category  String   // basics, diet, exercise, labs, mental_health, fertility
+  slug      String   @unique
+  source    String
+  content   String
+  tags      Json
+  embedding String?  // JSON array of floats for lightweight portable vector search
+  createdAt DateTime @default(now())
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   // user, assistant, system
+  content   String   // Encrypted text
+  language  String   @default("en")
+  toolsUsed Json?
+  citations Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model AiUsage {
+  id              String   @id @default(cuid())
+  userId          String?
+  endpoint        String
+  provider        String
+  model           String
+  inputTokens     Int
+  outputTokens    Int
+  totalTokens     Int
+  estimatedCostINR Float
+  latencyMs       Int
+  createdAt       DateTime @default(now())
+
+  @@index([endpoint, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  actor     User     @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: Cascade)
+  actorRole String
+  patientId String
+  action    String   // VIEW_PROFILE, VIEW_LABS, VIEW_SUMMARY, APPROVE_EXPERIMENT, EXPORT_DATA, REVOKE_CONSENT
+  resource  String
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([patientId, createdAt])
+  @@index([actorId, createdAt])
+}

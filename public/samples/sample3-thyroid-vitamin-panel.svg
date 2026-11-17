@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="100%" height="100%">
+  <rect width="800" height="1000" fill="#ffffff" />
+  <!-- Watermark -->
+  <text x="400" y="500" font-family="Helvetica, Arial, sans-serif" font-size="90" font-weight="bold" fill="#f8fafc" text-anchor="middle" transform="rotate(-30, 400, 500)">SAMPLE REPORT - DEMO ONLY</text>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="800" height="90" fill="#0d9488" />
+  <text x="40" y="45" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">METROPOLIS HEALTHCARE</text>
+  <text x="40" y="70" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#ccfbf1">Central Reference Lab, Kohinoor Commercial Complex, Mumbai</text>
+  <text x="760" y="55" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="end">MICRONUTRIENT &amp; THYROID</text>
+
+  <!-- Patient Details Box -->
+  <rect x="40" y="110" width="720" height="110" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
+  <text x="60" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Patient Name:</text>
+  <text x="170" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">Priya Sharma</text>
+  <text x="420" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Sample Date:</text>
+  <text x="530" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">05-Feb-2026 08:00 AM</text>
+
+  <text x="60" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Age / Gender:</text>
+  <text x="170" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">26 Years / Female</text>
+  <text x="420" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Sample ID:</text>
+  <text x="530" y="170" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">MET-NUT-99812</text>
+
+  <text x="60" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Fast Duration:</text>
+  <text x="170" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">12 Hours Overnight</text>
+  <text x="420" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#334155">Ref. Doctor:</text>
+  <text x="530" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0d9488">Dr. Ananya Sen, MD</text>
+
+  <!-- Table Header -->
+  <rect x="40" y="240" width="720" height="35" fill="#f1f5f9" />
+  <text x="60" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">INVESTIGATION</text>
+  <text x="320" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">OBSERVED VALUE</text>
+  <text x="470" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">UNIT</text>
+  <text x="600" y="263" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">REFERENCE RANGE</text>
+
+  <!-- Test 1: TSH -->
+  <line x1="40" y1="310" x2="760" y2="310" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0f172a">Thyroid Stimulating Hormone (TSH)</text>
+  <text x="320" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">3.8</text>
+  <text x="470" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">µIU/mL</text>
+  <text x="600" y="295" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">0.4 - 4.2 (Normal)</text>
+
+  <!-- Test 2: Vitamin D -->
+  <line x1="40" y1="355" x2="760" y2="355" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">25-OH Vitamin D Total *</text>
+  <text x="320" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">14.2</text>
+  <text x="470" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">ng/mL</text>
+  <text x="600" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">&gt; 30.0 (Deficient &lt; 20)</text>
+
+  <!-- Test 3: Vitamin B12 -->
+  <line x1="40" y1="400" x2="760" y2="400" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">Vitamin B12 (Cyanocobalamin) *</text>
+  <text x="320" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#be123c">185.0</text>
+  <text x="470" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">pg/mL</text>
+  <text x="600" y="385" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#be123c">200.0 - 900.0 (Low Normal)</text>
+
+  <!-- Test 4: Serum Ferritin -->
+  <line x1="40" y1="445" x2="760" y2="445" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0f172a">Serum Ferritin (ECLIA)</text>
+  <text x="320" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">22.0</text>
+  <text x="470" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">ng/mL</text>
+  <text x="600" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">13.0 - 150.0 (Optimal &gt; 40)</text>
+
+  <!-- Test 5: CBC Haemoglobin -->
+  <line x1="40" y1="490" x2="760" y2="490" stroke="#f1f5f9" stroke-width="1" />
+  <text x="60" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0f172a">CBC Haemoglobin (SLS)</text>
+  <text x="320" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a">11.8</text>
+  <text x="470" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">g/dL</text>
+  <text x="600" y="475" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#64748b">12.0 - 15.0 (Borderline)</text>
+
+  <!-- Interpretation -->
+  <rect x="40" y="550" width="720" height="150" rx="8" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1" />
+  <text x="60" y="580" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0f766e">NUTRITIONAL INTERPRETATION:</text>
+  <text x="60" y="605" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#115e59">• TSH at 3.8 µIU/mL rules out overt hypothyroidism. Optimal preconception target is &lt; 2.5 µIU/mL.</text>
+  <text x="60" y="630" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#115e59">• Low Vitamin B12 (185 pg/mL) is common in vegetarian diets and can exacerbate fatigue and cognitive fog.</text>
+  <text x="60" y="655" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#115e59">• Ferritin (22 ng/mL) indicates low iron stores; iron-rich legumes and amla/lemon recommended.</text>
+
+  <!-- Signatures -->
+  <text x="100" y="870" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#334155">DR. M. JOSHI, MD</text>
+  <text x="100" y="888" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#64748b">Consultant Pathologist</text>
+  
+  <text x="660" y="870" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#334155" text-anchor="end">DR. P. DESHMUKH, MD</text>
+  <text x="660" y="888" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="end">Laboratory Director</text>
+
+  <!-- Footer -->
+  <line x1="40" y1="920" x2="760" y2="920" stroke="#cbd5e1" stroke-width="1" />
+  <text x="400" y="945" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">DEMO SAMPLE REPORT • GENERATED FOR RESEARCH SIMULATION • NOT A MEDICAL DIAGNOSIS</text>
+</svg>
