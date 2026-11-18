@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { locales } from '@/i18n';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
-import { SessionProvider } from '@/components/session-provider';
+import { PersonaProvider } from '@/components/persona-context';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -28,13 +28,13 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="h-full">
       <body className="flex min-h-full flex-col bg-slate-50/50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
-        <SessionProvider>
+        <PersonaProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Navbar />
             <main className="flex-1 pb-12">{children}</main>
             <Footer />
           </NextIntlClientProvider>
-        </SessionProvider>
+        </PersonaProvider>
       </body>
     </html>
   );

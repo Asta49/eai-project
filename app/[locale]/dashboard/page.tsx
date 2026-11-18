@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
+import { usePersona } from '@/components/persona-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,12 +46,42 @@ export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
+  const { currentPersona } = usePersona();
 
-  const [userName] = useState('Priya Sharma');
+  const userName = currentPersona.name;
   const [activeTab, setActiveTab] = useState<'trends' | 'biomarkers'>('trends');
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+      {/* Role Banner if Doctor or Admin */}
+      {currentPersona.type === 'doctor' && (
+        <div className="mb-4 flex items-center justify-between rounded-xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-xs text-teal-800 dark:border-teal-900/60 dark:bg-teal-950/40 dark:text-teal-200">
+          <div className="flex items-center gap-2">
+            <span className="font-bold">🩺 Doctor Review Mode:</span>
+            <span>You are viewing Priya Sharma&apos;s trial data as {currentPersona.name}.</span>
+          </div>
+          <Link href="/doctors">
+            <Button size="sm" variant="outline" className="h-7 border-teal-300 bg-white text-xs hover:bg-teal-100">
+              Open Doctor Portal →
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {currentPersona.type === 'admin' && (
+        <div className="mb-4 flex items-center justify-between rounded-xl border border-purple-200 bg-purple-50 px-4 py-2.5 text-xs text-purple-800 dark:border-purple-900/60 dark:bg-purple-950/40 dark:text-purple-200">
+          <div className="flex items-center gap-2">
+            <span className="font-bold">📊 Faculty Evaluation Mode:</span>
+            <span>Viewing as Course Evaluator / Admin.</span>
+          </div>
+          <Link href="/admin">
+            <Button size="sm" variant="outline" className="h-7 border-purple-300 bg-white text-xs hover:bg-purple-100">
+              Open Economics Moat Simulation →
+            </Button>
+          </Link>
+        </div>
+      )}
+
       {/* Top Banner: Greeting & Profile Quick Summary */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
@@ -59,11 +90,11 @@ export default function DashboardPage() {
               {t('greeting')}, {userName}
             </h1>
             <Badge variant="pcos" className="text-[10px]">
-              DEMO PERSONA
+              {currentPersona.badge}
             </Badge>
           </div>
           <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-            26 Years • Hyderabad • Rotterdam Phenotype A • Active N-of-1 Trial Day 18
+            {currentPersona.description}
           </p>
         </div>
 

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { usePersona } from '@/components/persona-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   const t = useTranslations('settings');
   const tCommon = useTranslations('common');
   const locale = useLocale();
+  const { currentPersona, setPersonaType, allPersonas } = usePersona();
 
   // DPDP Consent state
   const [consentCore, setConsentCore] = useState(true);
@@ -118,6 +120,50 @@ export default function SettingsPage() {
           {t('subtitle')}
         </p>
       </div>
+
+      {/* Active Persona Switcher Card */}
+      <Card className="mb-6 border-slate-200 shadow-sm dark:border-slate-800">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Active Profile & User Persona</CardTitle>
+              <CardDescription>
+                Switch roles without any login credentials to evaluate different workflows.
+              </CardDescription>
+            </div>
+            <span className={`rounded-lg px-2.5 py-1 text-xs font-bold border ${currentPersona.badgeClass}`}>
+              Active: {currentPersona.badge}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            {allPersonas.map((p) => {
+              const isSelected = p.type === currentPersona.type;
+              return (
+                <button
+                  key={p.type}
+                  type="button"
+                  onClick={() => setPersonaType(p.type)}
+                  className={`flex flex-col justify-between rounded-xl border p-3 text-left transition-all ${
+                    isSelected
+                      ? 'border-rose-300 bg-rose-50/80 shadow-sm dark:border-rose-800 dark:bg-rose-950/40'
+                      : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">{p.name}</span>
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold border ${p.badgeClass}`}>
+                      {p.badge}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 leading-snug">{p.description}</p>
+                </button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       {accountDeleted ? (
         <Card className="border-red-200 bg-red-50 p-6 text-center text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">

@@ -1,115 +1,100 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import React from 'react';
 import { useRouter } from '@/navigation';
+import { usePersona, PersonaType } from '@/components/persona-context';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { DisclaimerBanner } from '@/components/disclaimer-banner';
-import { Lock, User, Stethoscope, ShieldCheck, ArrowRight } from 'lucide-react';
+import { User, Stethoscope, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('priya@demo.pcos');
-  const [password, setPassword] = useState('demo123');
+  const { currentPersona, setPersonaType, allPersonas } = usePersona();
 
-  const handleQuickLogin = (userEmail: string, destination: string = '/dashboard') => {
-    setEmail(userEmail);
-    // Simulate instantaneous client auth for 3-minute demo
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('pcos_demo_auth_user', userEmail);
+  const handleSelect = (type: PersonaType, route: string) => {
+    setPersonaType(type);
+    router.push(route);
+  };
+
+  const getPersonaIcon = (type: PersonaType) => {
+    switch (type) {
+      case 'patient':
+        return <User className="h-5 w-5 text-rose-600 dark:text-rose-400" />;
+      case 'doctor':
+        return <Stethoscope className="h-5 w-5 text-teal-600 dark:text-teal-400" />;
+      case 'admin':
+        return <ShieldCheck className="h-5 w-5 text-purple-600 dark:text-purple-400" />;
     }
-    router.push(destination);
   };
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12">
-      <div className="text-center mb-6">
-        <Badge variant="pcos" className="mb-2">DEMO ACCESS</Badge>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Sign In to PCOS Research Assistant
+    <div className="mx-auto max-w-lg px-4 py-12">
+      <div className="mb-6 text-center">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-300">
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>NO LOGIN REQUIRED</span>
+        </div>
+        <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
+          Choose Your Persona
         </h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Select one of the preloaded demo personas for instantaneous access.
+        <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+          Authentication has been removed. Simply select a user role below or switch anytime from the top navigation bar.
         </p>
       </div>
 
-      <Card className="border-rose-100 shadow-sm dark:border-slate-800">
+      <Card className="border-slate-200 shadow-sm dark:border-slate-800">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">One-Click Demo Personas</CardTitle>
-          <CardDescription>No credentials needed for evaluation</CardDescription>
+          <CardTitle className="text-base">Preloaded Evaluation Personas</CardTitle>
+          <CardDescription>
+            Click any persona to enter directly with all state and mock records loaded.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('priya@demo.pcos', '/dashboard')}
-            className="flex w-full items-center justify-between rounded-xl border border-rose-200 bg-rose-50/50 p-3.5 text-left transition-all hover:bg-rose-50 dark:border-rose-900/60 dark:bg-rose-950/20"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-600 text-white">
-                <User className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">
-                  Priya Sharma (Patient)
+          {allPersonas.map((p) => {
+            const isSelected = p.type === currentPersona.type;
+            return (
+              <button
+                key={p.type}
+                type="button"
+                onClick={() => handleSelect(p.type, p.defaultRoute)}
+                className={`flex w-full items-center justify-between rounded-xl border p-4 text-left transition-all ${
+                  isSelected
+                    ? 'border-rose-300 bg-rose-50/70 shadow-sm dark:border-rose-900/60 dark:bg-rose-950/30'
+                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900'
+                }`}
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+                    {getPersonaIcon(p.type)}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">
+                        {p.name}
+                      </span>
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold border ${p.badgeClass}`}>
+                        {p.badge}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500">{p.description}</p>
+                  </div>
                 </div>
-                <div className="text-[11px] text-slate-500">
-                  26F, Hyderabad • Phenotype A • Active N-of-1 Trial
-                </div>
-              </div>
-            </div>
-            <ArrowRight className="h-4 w-4 text-rose-600" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('dr.ananya@pcoscare.in', '/doctors')}
-            className="flex w-full items-center justify-between rounded-xl border border-teal-200 bg-teal-50/50 p-3.5 text-left transition-all hover:bg-teal-50 dark:border-teal-900/60 dark:bg-teal-950/20"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-600 text-white">
-                <Stethoscope className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">
-                  Dr. Ananya Sen, MD (OB-GYN)
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  Specialist • Pre-consult summaries &amp; Trial approvals
-                </div>
-              </div>
-            </div>
-            <ArrowRight className="h-4 w-4 text-teal-600" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('admin@eai.iima.ac.in', '/admin')}
-            className="flex w-full items-center justify-between rounded-xl border border-purple-200 bg-purple-50/50 p-3.5 text-left transition-all hover:bg-purple-50 dark:border-purple-900/60 dark:bg-purple-950/20"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-600 text-white">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">
-                  Admin / Course Evaluator
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  Network effect simulation &amp; Unit economics panel
-                </div>
-              </div>
-            </div>
-            <ArrowRight className="h-4 w-4 text-purple-600" />
-          </button>
+                <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-slate-700" />
+              </button>
+            );
+          })}
         </CardContent>
       </Card>
 
-      <div className="mt-6">
-        <DisclaimerBanner type="wellness" />
+      <div className="mt-6 text-center">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => router.push('/dashboard')}
+          className="text-xs"
+        >
+          Skip & Open Dashboard as Default ({currentPersona.name}) →
+        </Button>
       </div>
     </div>
   );

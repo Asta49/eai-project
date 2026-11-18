@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { usePersona } from '@/components/persona-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -66,9 +67,18 @@ export default function DoctorsPage() {
   const t = useTranslations('doctors');
   const tCommon = useTranslations('common');
   const locale = useLocale() as 'en' | 'hi' | 'te' | 'ta';
+  const { currentPersona, setPersonaType } = usePersona();
 
   // Toggle between Patient Booking view and Doctor Clinical Portal view
-  const [viewRole, setViewRole] = useState<'patient' | 'doctor'>('patient');
+  const [viewRole, setViewRole] = useState<'patient' | 'doctor'>(
+    currentPersona.type === 'doctor' ? 'doctor' : 'patient'
+  );
+
+  useEffect(() => {
+    if (currentPersona.type === 'doctor') {
+      setViewRole('doctor');
+    }
+  }, [currentPersona.type]);
 
   // Booking Flow State
   const [selectedDoctor, setSelectedDoctor] = useState(SEEDED_DOCTORS[0]);
@@ -136,7 +146,10 @@ export default function DoctorsPage() {
         {/* Role Toggle for Presentation */}
         <div className="inline-flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
           <button
-            onClick={() => setViewRole('patient')}
+            onClick={() => {
+              setViewRole('patient');
+              setPersonaType('patient');
+            }}
             className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
               viewRole === 'patient'
                 ? 'bg-white text-rose-700 shadow-xs dark:bg-slate-900 dark:text-rose-300'
@@ -146,7 +159,10 @@ export default function DoctorsPage() {
             Patient Booking View
           </button>
           <button
-            onClick={() => setViewRole('doctor')}
+            onClick={() => {
+              setViewRole('doctor');
+              setPersonaType('doctor');
+            }}
             className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
               viewRole === 'doctor'
                 ? 'bg-white text-rose-700 shadow-xs dark:bg-slate-900 dark:text-rose-300'

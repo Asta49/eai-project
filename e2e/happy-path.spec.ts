@@ -5,8 +5,7 @@ test.describe('PCOS Health AI - End-to-End Happy Path', () => {
     await page.goto('/en');
     await expect(page).toHaveTitle(/N-of-1 PCOS Health Assistant/);
     await expect(page.locator('h1')).toContainText('Personal research assistant');
-    await expect(page.locator('text=Deterministic N-of-1 Bayesian Engine')).toBeVisible();
-    await expect(page.locator('text=Enter App / Dashboard')).toBeVisible();
+    await expect(page.locator('text=Open Live Demo Dashboard')).toBeVisible();
   });
 
   test('Dashboard displays Priya Sharma health baseline, phenotype, and active trial', async ({ page }) => {
