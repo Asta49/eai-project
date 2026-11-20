@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   LineChart,
   ArrowRight,
+  Heart,
+  Calendar,
 } from 'lucide-react';
 
 export default async function HomePage({
@@ -27,190 +29,156 @@ export default async function HomePage({
   const tNav = await getTranslations('nav');
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
-      {/* Hero Section */}
-      <div className="text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700 shadow-sm dark:border-rose-900 dark:bg-rose-950/50 dark:text-rose-300">
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>IIM Ahmedabad • Economics of AI Capstone Project</span>
-        </div>
+    <div className="space-y-6 sm:space-y-8">
+      {/* Hero Welcome Card in Forest Green (s1.jpeg style) */}
+      <div className="relative overflow-hidden rounded-4xl bg-forest p-6 sm:p-8 text-white text-center shadow-soft">
+        <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-forest-light/40 blur-2xl" />
+        <div className="pointer-events-none absolute left-0 bottom-0 h-32 w-32 rounded-full bg-sage/10 blur-xl" />
 
-        <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
-          A personal research assistant for{' '}
-          <span className="bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
-            your PCOS
-          </span>
-        </h1>
-
-        <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg dark:text-slate-300">
-          PCOS is different for every woman. We don’t guess or rely on generic internet advice.
-          Our Bayesian statistics engine runs personal N-of-1 trials to figure out what works for{' '}
-          <span className="font-semibold text-slate-800 dark:text-slate-100">your body</span>.
-        </p>
-
-        {/* Call to Actions */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/dashboard">
-            <Button size="lg" variant="pcos" className="gap-2 text-sm sm:text-base">
-              <Activity className="h-5 w-5" />
-              Open Live Demo Dashboard (Priya, 26)
-            </Button>
-          </Link>
-          <Link href="/onboarding">
-            <Button size="lg" variant="outline" className="gap-2 text-sm sm:text-base">
-              Start New Patient Onboarding
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/admin">
-            <Button size="lg" variant="secondary" className="gap-2 text-sm sm:text-base">
-              <LineChart className="h-4 w-4 text-purple-600" />
-              Course Moat & Economics Simulation
-            </Button>
-          </Link>
-        </div>
-
-        {/* Demo Quick Notice */}
-        <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500">
-          <ShieldCheck className="h-4 w-4 text-teal-600" />
-          <span>DPDP Compliant • Deterministic Bayesian Engine (No LLM hallucinations on verdicts)</span>
-        </div>
-      </div>
-
-      {/* 5 Core Pillars Grid */}
-      <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-rose-100 bg-gradient-to-b from-white to-rose-50/30 shadow-sm hover:shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/50">
-          <CardContent className="p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">
-              <FlaskConical className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
-              N-of-1 Bayesian Statistics Engine
-            </h3>
-            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed dark:text-slate-300">
-              Deterministic normal-normal conjugate update adjusted for cycle phases (menstrual, follicular, luteal) and autocorrelation. The LLM has zero write access to trial verdicts.
-            </p>
-            <div className="mt-4">
-              <Link href="/experiments" className="text-xs font-semibold text-rose-600 hover:underline">
-                Explore Trial Library →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-teal-100 bg-gradient-to-b from-white to-teal-50/30 shadow-sm hover:shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/50">
-          <CardContent className="p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
-              <FileSpreadsheet className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
-              Lab OCR & Standard Biomarkers
-            </h3>
-            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed dark:text-slate-300">
-              Vision model extracts lab reports into 15 canonical biomarkers (Fasting Insulin, HOMA-IR, Free Testosterone, AMH, Vitamin D) with human-in-the-loop review.
-            </p>
-            <div className="mt-4">
-              <Link href="/labs" className="text-xs font-semibold text-teal-600 hover:underline">
-                View Lab Extraction →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-amber-100 bg-gradient-to-b from-white to-amber-50/30 shadow-sm hover:shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/50">
-          <CardContent className="p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
-              <Utensils className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
-              Indian Nutrient Databank (INDB)
-            </h3>
-            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed dark:text-slate-300">
-              150+ regional Indian dishes with glycemic load and PCOS-friendliness scoring. Suggests practical swaps (e.g., Poha → Besan Chilla, Sugary Chai → Cardamom Green Tea).
-            </p>
-            <div className="mt-4">
-              <Link href="/food" className="text-xs font-semibold text-amber-700 hover:underline">
-                Track Food Log →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-purple-100 bg-gradient-to-b from-white to-purple-50/30 shadow-sm hover:shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/50">
-          <CardContent className="p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
-              <Bot className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
-              AI Coach & Indic Voice Support
-            </h3>
-            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed dark:text-slate-300">
-              RAG over curated clinical PCOS guidelines in Hindi, Telugu, Tamil & English. Browser Web Speech STT/TTS with pluggable Sarvam/Bhashini voice architecture.
-            </p>
-            <div className="mt-4">
-              <Link href="/coach" className="text-xs font-semibold text-purple-600 hover:underline">
-                Chat with AI Coach →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-blue-100 bg-gradient-to-b from-white to-blue-50/30 shadow-sm hover:shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/50">
-          <CardContent className="p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-              <UserCheck className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
-              Doctor Consult & AI Briefs
-            </h3>
-            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed dark:text-slate-300">
-              Doctors receive an AI pre-consult brief synthesizing Rotterdam phenotype, cycle history, and past trial results. Doctors approve or reject restricted supplements.
-            </p>
-            <div className="mt-4">
-              <Link href="/doctors" className="text-xs font-semibold text-blue-600 hover:underline">
-                Doctor Portal →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-emerald-100 bg-gradient-to-b from-white to-emerald-50/30 shadow-sm hover:shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/50">
-          <CardContent className="p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-              <LineChart className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
-              Data Network Effect & Unit Economics
-            </h3>
-            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed dark:text-slate-300">
-              Interactive simulation proving that hierarchical empirical Bayes priors shorten time-to-verdict from 38 days to 14 days, creating a defensible competitive moat.
-            </p>
-            <div className="mt-4">
-              <Link href="/admin" className="text-xs font-semibold text-emerald-600 hover:underline">
-                View Moat Simulation →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Seeded Persona Quick Banner */}
-      <div className="mt-10 rounded-2xl border border-rose-200 bg-rose-50/60 p-6 text-center sm:text-left dark:border-rose-900/60 dark:bg-rose-950/30">
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <div>
-            <Badge variant="pcos" className="mb-2">DEMO PERSONA READY</Badge>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">
-              Priya Sharma (26, Hyderabad, Telugu & English)
-            </h4>
-            <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
-              Preloaded with 60 days of check-ins, 2 lab reports, 1 completed trial (Low-GI Diet: LIKELY WORKED), and 1 active trial (Myo-Inositol).
-            </p>
+        <div className="relative z-10 space-y-4">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-forest-light px-3.5 py-1 text-xs font-semibold text-sage-light">
+            <Sparkles className="h-3.5 w-3.5 text-sage" />
+            <span>IIM Ahmedabad • Economics of AI Capstone Project</span>
           </div>
-          <Link href="/dashboard">
-            <Button variant="pcos" size="sm" className="whitespace-nowrap">
-              Launch Priya’s Experience
-            </Button>
-          </Link>
+
+          <h1 className="font-heading text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            A personal research assistant for{' '}
+            <span className="text-sage">your PCOS</span>
+          </h1>
+
+          <p className="mx-auto max-w-lg text-xs sm:text-sm text-sage-light font-body leading-relaxed">
+            PCOS is different for every woman. We don’t guess or rely on generic internet advice.
+            Our Bayesian statistics engine runs personal N-of-1 trials to figure out what works for{' '}
+            <span className="font-semibold text-white">your unique body</span>.
+          </p>
+
+          {/* Quick Action CTAs */}
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
+            <Link href="/dashboard">
+              <Button size="lg" variant="sage" className="gap-2 text-xs sm:text-sm font-bold shadow-md">
+                <Activity className="h-4 w-4" />
+                Open Live Demo Dashboard (Priya, 26)
+              </Button>
+            </Link>
+            <Link href="/onboarding">
+              <Button size="lg" variant="outline" className="gap-2 text-xs sm:text-sm font-bold bg-white/90">
+                Start Patient Onboarding
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button size="lg" variant="outlineForest" className="gap-2 text-xs sm:text-sm font-bold text-white border-white/80 hover:bg-white hover:text-forest">
+                <LineChart className="h-4 w-4" />
+                Course Moat Simulation
+              </Button>
+            </Link>
+          </div>
+
+          {/* Golden Rule Notice */}
+          <div className="pt-2 flex items-center justify-center gap-2 text-[11px] text-sage-light font-medium">
+            <ShieldCheck className="h-3.5 w-3.5 text-sage" />
+            <span>Deterministic Bayesian Engine: Generative AI never determines whether a trial worked.</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 5 Core Pillars Grid in Soft Pastel Colors */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="font-heading text-base font-bold text-slate-900">
+            5 Core Pillars of the Platform
+          </h2>
+          <span className="text-xs text-slate-500 font-medium">Mobile Architecture</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          {/* Pillar 1: Bayesian Stats Engine */}
+          <Card className="rounded-3xl p-5 border-slate-200/80 bg-white shadow-card">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pastel-blue text-pastel-blueText">
+                <FlaskConical className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-heading text-sm font-bold text-slate-900">
+                  N-of-1 Bayesian Engine
+                </h3>
+                <p className="mt-1 text-xs text-slate-500 font-body leading-relaxed">
+                  Deterministic normal-normal conjugate update adjusted for cycle phases (menstrual, follicular, luteal) and autocorrelation.
+                </p>
+                <div className="mt-3">
+                  <Link href="/experiments" className="text-xs font-bold text-forest hover:underline">
+                    View Trial Library →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Pillar 2: Vision Lab OCR */}
+          <Card className="rounded-3xl p-5 border-slate-200/80 bg-white shadow-card">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pastel-mint text-pastel-mintText">
+                <FileSpreadsheet className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-heading text-sm font-bold text-slate-900">
+                  Lab OCR &amp; Standard Biomarkers
+                </h3>
+                <p className="mt-1 text-xs text-slate-500 font-body leading-relaxed">
+                  Vision model extracts test reports into 15 canonical biomarkers (Fasting Insulin, HOMA-IR, Free Testosterone, AMH, Vitamin D).
+                </p>
+                <div className="mt-3">
+                  <Link href="/labs" className="text-xs font-bold text-forest hover:underline">
+                    Explore Diagnostic Labs →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Pillar 3: INDB Indian Food Bank */}
+          <Card className="rounded-3xl p-5 border-slate-200/80 bg-white shadow-card">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pastel-purple text-pastel-purpleText">
+                <Utensils className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-heading text-sm font-bold text-slate-900">
+                  Indian Nutrient Databank (INDB)
+                </h3>
+                <p className="mt-1 text-xs text-slate-500 font-body leading-relaxed">
+                  150+ regional Indian dishes with glycemic load and PCOS-friendliness scoring. Suggests practical swaps (e.g., Poha → Besan Chilla).
+                </p>
+                <div className="mt-3">
+                  <Link href="/food" className="text-xs font-bold text-forest hover:underline">
+                    Browse 150+ Foods →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Pillar 4: Indic Languages & Voice */}
+          <Card className="rounded-3xl p-5 border-slate-200/80 bg-white shadow-card">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pastel-peach text-pastel-peachText">
+                <Bot className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-heading text-sm font-bold text-slate-900">
+                  4 Indic Languages &amp; Voice AI
+                </h3>
+                <p className="mt-1 text-xs text-slate-500 font-body leading-relaxed">
+                  English, हिंदी, తెలుగు, தமிழ். Web Speech API with pluggable Sarvam/Bhashini voice adapters and automatic 112 emergency routing.
+                </p>
+                <div className="mt-3">
+                  <Link href="/coach" className="text-xs font-bold text-forest hover:underline">
+                    Try AI Coach →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

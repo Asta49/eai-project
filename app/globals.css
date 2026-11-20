@@ -1,69 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Soft sage/cream canvas as seen in reference images */
+    --background: 90 12% 96%; /* #F4F6F2 */
+    --foreground: 165 24% 15%; /* #1E352F */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 165 24% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 165 24% 15%;
 
-    /* Rose berry primary - warm, clinical, trustworthy */
-    --primary: 346 84% 47%;
-    --primary-foreground: 210 40% 98%;
+    /* Forest Green primary from reference style guide */
+    --primary: 165 30% 19%; /* #223F36 */
+    --primary-foreground: 90 20% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 105 20% 92%; /* #E8EFE6 */
+    --secondary-foreground: 165 30% 19%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 105 10% 90%;
+    --muted-foreground: 160 8% 45%;
 
-    --accent: 174 85% 31%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 12 80% 66%; /* #EE7A64 Coral accent */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 346 84% 47%;
+    --border: 105 15% 88%;
+    --input: 105 15% 88%;
+    --ring: 165 30% 19%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 165 35% 8%;
+    --foreground: 90 20% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 165 30% 12%;
+    --card-foreground: 90 20% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 165 30% 12%;
+    --popover-foreground: 90 20% 95%;
 
-    --primary: 346 84% 60%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 110 25% 66%;
+    --primary-foreground: 165 35% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 165 25% 18%;
+    --secondary-foreground: 90 20% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 165 20% 20%;
+    --muted-foreground: 110 15% 70%;
 
-    --accent: 174 70% 41%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 12 80% 66%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 346 84% 60%;
+    --border: 165 20% 20%;
+    --input: 165 20% 20%;
+    --ring: 110 25% 66%;
   }
 }
 
@@ -72,7 +75,35 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground antialiased font-body;
+    background-color: #F4F6F2;
+    -webkit-tap-highlight-color: transparent;
   }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+/* Custom smooth rounded scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Mobile tap ripple smoothing */
+.touch-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.touch-card:active {
+  transform: scale(0.98);
 }

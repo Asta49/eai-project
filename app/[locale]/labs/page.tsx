@@ -3,10 +3,8 @@
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { DisclaimerBanner } from '@/components/disclaimer-banner';
 import type { ExtractedLabReport } from '@/lib/ai/lab-extractor';
 import { scheduleDiagnosticTests } from '@/lib/engine/test-scheduler';
@@ -22,6 +20,8 @@ import {
   AlertCircle,
   Eye,
   ArrowRight,
+  ShieldCheck,
+  Building2,
 } from 'lucide-react';
 
 const PARTNER_LABS = [
@@ -69,8 +69,6 @@ export default function LabsPage() {
   const locale = useLocale() as 'en' | 'hi' | 'te' | 'ta';
 
   const [activeTab, setActiveTab] = useState<'upload' | 'book' | 'schedule'>('upload');
-
-  // OCR Extraction Review State
   const [isProcessingOcr, setIsProcessingOcr] = useState<boolean>(false);
   const [extractedReport, setExtractedReport] = useState<ExtractedLabReport | null>(null);
   const [selectedSample, setSelectedSample] = useState<string>('sample1');
@@ -78,24 +76,22 @@ export default function LabsPage() {
 
   // Booking Flow State
   const [selectedLab, setSelectedLab] = useState<string>('thyrocare');
-  const [bookingDate, setBookingDate] = useState<string>('2026-03-02');
-  const [timeSlot, setTimeSlot] = useState<string>('07:30 AM - 08:30 AM (Fasting)');
-  const [patientAddress, setPatientAddress] = useState<string>('Flat 402, Green Meadows, Banjara Hills, Hyderabad');
-  const [bookingConfirmed, setBookingConfirmed] = useState<boolean>(false);
+  const [bookedSuccess, setBookedSuccess] = useState<boolean>(false);
+  const [address, setAddress] = useState<string>('Flat 402, Banjara Hills Road No. 12, Hyderabad - 500034');
+  const [slot, setSlot] = useState<string>('Tomorrow, 07:30 AM (Fasting Sample)');
 
-  // Scheduled Test Rules
+  // Deterministic Scheduled Tests
   const scheduledTests = scheduleDiagnosticTests({
-    hasBaselineLabsInLast6Months: true,
+    hasBaselineLabsInLast6Months: false,
     isInsulinResistant: true,
-    activeExperimentCode: 'Myo-Inositol',
+    activeExperimentCode: 'myo_inositol',
     activeExperimentDaysRemaining: 24,
     hasVitaminDDeficiency: true,
   });
 
-  const handleRunSampleOcr = async (sampleId: string) => {
+  const handleRunOcr = async (sampleId: string) => {
     setSelectedSample(sampleId);
     setIsProcessingOcr(true);
-    setSaveSuccess(false);
     try {
       const response = await fetch('/api/labs', {
         method: 'POST',
@@ -113,434 +109,374 @@ export default function LabsPage() {
     }
   };
 
-  const handleConfirmAndSaveResults = () => {
-    setSaveSuccess(true);
-    setTimeout(() => {
-      setSaveSuccess(false);
-    }, 4000);
+  const handleSimulateResults = () => {
+    handleRunOcr('sample1');
+    setBookedSuccess(false);
+    setActiveTab('upload');
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
-      {/* Title */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-              {t('title')}
-            </h1>
-            <Badge variant="pcos" className="text-[10px]">
-              VISION OCR &amp; NORMALIZATION
-            </Badge>
-          </div>
-          <p className="mt-1 text-xs text-slate-600 sm:text-sm dark:text-slate-300">
-            {t('subtitle')}
-          </p>
-        </div>
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header Card in Forest Green */}
+      <div className="rounded-4xl bg-forest p-6 text-white text-center shadow-soft relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-forest-light px-3 py-1 text-xs font-semibold text-sage-light">
+          <FileSpreadsheet className="w-3.5 h-3.5 text-sage" />
+          Vision OCR &amp; Diagnostic Integrations
+        </span>
+        <h1 className="mt-3 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Lab Reports &amp; Biomarkers
+        </h1>
+        <p className="mt-1 text-xs text-sage-light max-w-md mx-auto">
+          Extract unstructured blood test PDFs/photos with Zod validation, book partner labs with home collection, and track insulin sensitivity.
+        </p>
 
-        {/* Tab Controls */}
-        <div className="inline-flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+        {/* Tab Switcher */}
+        <div className="mt-4 inline-flex rounded-full bg-forest-dark/80 p-1 text-xs font-semibold">
           <button
+            type="button"
             onClick={() => setActiveTab('upload')}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              activeTab === 'upload'
-                ? 'bg-white text-rose-700 shadow-xs dark:bg-slate-900 dark:text-rose-300'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+            className={`rounded-full px-4 py-1.5 transition-all ${
+              activeTab === 'upload' ? 'bg-white text-forest shadow-xs font-bold' : 'text-sage-light'
             }`}
           >
-            Upload &amp; AI Extraction
+            Vision OCR Upload
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('book')}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              activeTab === 'book'
-                ? 'bg-white text-rose-700 shadow-xs dark:bg-slate-900 dark:text-rose-300'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+            className={`rounded-full px-4 py-1.5 transition-all ${
+              activeTab === 'book' ? 'bg-white text-forest shadow-xs font-bold' : 'text-sage-light'
             }`}
           >
-            Book Partner Lab (₹)
+            Book Partner Lab
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('schedule')}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              activeTab === 'schedule'
-                ? 'bg-white text-rose-700 shadow-xs dark:bg-slate-900 dark:text-rose-300'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+            className={`rounded-full px-4 py-1.5 transition-all ${
+              activeTab === 'schedule' ? 'bg-white text-forest shadow-xs font-bold' : 'text-sage-light'
             }`}
           >
-            Retest Schedule
+            Test Schedule
           </button>
         </div>
       </div>
 
-      {/* Save Success Banner */}
-      {saveSuccess && (
-        <div className="mt-4 flex items-center gap-3 rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-emerald-900 shadow-xs dark:border-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-200">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-          <div className="text-xs">
-            <span className="font-bold">Verified Lab Values Saved to Profile!</span> HOMA-IR has been recalculated, and your doctor pre-consult brief is automatically synchronized.
-          </div>
-        </div>
-      )}
-
-      {/* Tab 1: Upload & Extraction Review */}
+      {/* Tab 1: Vision OCR Upload */}
       {activeTab === 'upload' && (
-        <div className="mt-6 space-y-6">
-          {/* Sample Picker (For Live 3-Minute Presentation Demo) */}
-          <Card className="border-rose-100 shadow-sm dark:border-slate-800">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-rose-600" />
-                <CardTitle className="text-base">{t('demoSamples')}</CardTitle>
-              </div>
-              <CardDescription>
-                Test the vision AI extraction with these preloaded diagnostic reports.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => handleRunSampleOcr('sample1')}
-                  className={`rounded-xl border p-3 text-left transition-all ${
-                    selectedSample === 'sample1'
-                      ? 'border-rose-300 bg-rose-50/70 shadow-xs dark:border-rose-800 dark:bg-rose-950/30'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
-                  }`}
-                >
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
-                    {t('sampleReport1')}
-                  </div>
-                  <p className="mt-1 text-[11px] text-slate-500">
-                    Fasting Glucose, Fasting Insulin, HOMA-IR, HbA1c
-                  </p>
-                  <div className="mt-2 text-[10px] text-rose-600 font-semibold">
-                    Thyrocare Technologies
-                  </div>
-                </button>
+        <div className="space-y-4">
+          {/* Sample Selectors Card */}
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                1-Click Demo Report Samples
+              </span>
+              <span className="text-[10px] text-forest font-semibold">
+                No upload needed
+              </span>
+            </div>
 
-                <button
-                  type="button"
-                  onClick={() => handleRunSampleOcr('sample2_hormone')}
-                  className={`rounded-xl border p-3 text-left transition-all ${
-                    selectedSample.includes('sample2')
-                      ? 'border-rose-300 bg-rose-50/70 shadow-xs dark:border-rose-800 dark:bg-rose-950/30'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
-                  }`}
-                >
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
-                    {t('sampleReport2')}
-                  </div>
-                  <p className="mt-1 text-[11px] text-slate-500">
-                    AMH, Total Testosterone, LH, FSH, Prolactin
-                  </p>
-                  <div className="mt-2 text-[10px] text-blue-600 font-semibold">
-                    Dr Lal PathLabs
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleRunSampleOcr('sample3_thyroid')}
-                  className={`rounded-xl border p-3 text-left transition-all ${
-                    selectedSample.includes('sample3')
-                      ? 'border-rose-300 bg-rose-50/70 shadow-xs dark:border-rose-800 dark:bg-rose-950/30'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
-                  }`}
-                >
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
-                    {t('sampleReport3')}
-                  </div>
-                  <p className="mt-1 text-[11px] text-slate-500">
-                    TSH, Vitamin D3, B12, Ferritin, Hemoglobin
-                  </p>
-                  <div className="mt-2 text-[10px] text-teal-600 font-semibold">
-                    Metropolis Healthcare
-                  </div>
-                </button>
-              </div>
-
-              {/* Upload Dropzone */}
-              <div className="mt-4 rounded-xl border-2 border-dashed border-slate-200 p-6 text-center dark:border-slate-800">
-                <Upload className="mx-auto h-8 w-8 text-slate-400" />
-                <h4 className="mt-2 text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Drag &amp; drop a blood report PDF or camera photo
-                </h4>
-                <p className="mt-1 text-[11px] text-slate-400">
-                  Accepts PDF, JPG, PNG up to 10MB • AES-256-GCM encrypted in transit
-                </p>
-                <div className="mt-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleRunSampleOcr('sample1')}
-                    className="text-xs"
-                  >
-                    Select File from Device
-                  </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleRunOcr('sample1')}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  selectedSample === 'sample1'
+                    ? 'border-forest bg-sage-light/70 shadow-xs'
+                    : 'border-slate-200 bg-[#F4F6F2] hover:bg-slate-100'
+                }`}
+              >
+                <div className="text-xs font-bold font-heading text-slate-900">
+                  Sample 1: Metabolic Panel
                 </div>
-              </div>
-            </CardContent>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  Fasting Glucose, Insulin &amp; HOMA-IR
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleRunOcr('sample2')}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  selectedSample === 'sample2'
+                    ? 'border-forest bg-sage-light/70 shadow-xs'
+                    : 'border-slate-200 bg-[#F4F6F2] hover:bg-slate-100'
+                }`}
+              >
+                <div className="text-xs font-bold font-heading text-slate-900">
+                  Sample 2: Hormone Panel
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  LH, FSH, Testosterone &amp; AMH
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleRunOcr('sample3')}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  selectedSample === 'sample3'
+                    ? 'border-forest bg-sage-light/70 shadow-xs'
+                    : 'border-slate-200 bg-[#F4F6F2] hover:bg-slate-100'
+                }`}
+              >
+                <div className="text-xs font-bold font-heading text-slate-900">
+                  Sample 3: Micronutrients
+                </div>
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  Vitamin D 25-OH &amp; TSH
+                </div>
+              </button>
+            </div>
           </Card>
 
-          {/* AI Extraction Review Table (Human in the Loop) */}
-          {extractedReport && (
-            <Card className="border-teal-200 shadow-sm dark:border-teal-900/60">
-              <CardHeader className="pb-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-teal-600" />
-                    <CardTitle className="text-base">{t('reviewTitle')}</CardTitle>
-                  </div>
-                  <Badge variant="teal">Extraction Complete (Zod Validated)</Badge>
-                </div>
-                <CardDescription>
-                  Lab: <span className="font-semibold text-slate-800 dark:text-slate-200">{extractedReport.labName}</span> • Sample Date: {extractedReport.sampleDate}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-                        <th className="py-2.5 px-3">Test Name</th>
-                        <th className="py-2.5 px-3">Canonical ID</th>
-                        <th className="py-2.5 px-3">Observed Value</th>
-                        <th className="py-2.5 px-3">Reference Range</th>
-                        <th className="py-2.5 px-3">Confidence</th>
-                        <th className="py-2.5 px-3">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      {extractedReport.results.map((r, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30">
-                          <td className="py-2.5 px-3 font-semibold text-slate-900 dark:text-white">
-                            {r.testName}
-                          </td>
-                          <td className="py-2.5 px-3 font-mono text-[11px] text-slate-500">
-                            {r.canonicalName}
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <span className="font-bold text-slate-900 dark:text-white">
-                              {r.value} {r.unit}
-                            </span>
-                          </td>
-                          <td className="py-2.5 px-3 text-slate-500">
-                            {r.referenceRange || 'N/A'}
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                              {Math.round(r.confidence * 100)}%
-                            </span>
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <Badge variant={r.isAbnormal ? 'destructive' : 'success'} className="text-[10px]">
-                              {r.isAbnormal ? 'Abnormal' : 'Normal'}
-                            </Badge>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between pt-2">
-                  <span className="text-xs text-slate-500">
-                    Review completed. Confirm to commit to clinical database.
-                  </span>
-                  <Button variant="teal" size="sm" onClick={handleConfirmAndSaveResults} className="gap-2 text-xs">
-                    <CheckCircle2 className="h-4 w-4" />
-                    {t('saveResults')}
-                  </Button>
-                </div>
-              </CardContent>
+          {/* Loading Indicator */}
+          {isProcessingOcr && (
+            <Card className="rounded-4xl p-6 border-slate-200/80 bg-white shadow-card text-center space-y-2">
+              <div className="flex justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-forest border-t-transparent" />
+              </div>
+              <h3 className="font-heading text-base font-bold text-slate-900">
+                Running Vision AI OCR &amp; Canonical Normalization...
+              </h3>
+              <p className="text-xs text-slate-500">
+                Validating units and extracting reference ranges with Zod schema.
+              </p>
             </Card>
+          )}
+
+          {/* Extracted Biomarkers Review Card */}
+          {extractedReport && !isProcessingOcr && (
+            <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading text-base font-bold text-slate-900">
+                      {extractedReport.labName}
+                    </span>
+                    <span className="rounded-full bg-pastel-mint px-2 py-0.2 text-[9px] font-bold text-pastel-mintText">
+                      Verified
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400">Sample Date: {extractedReport.sampleDate}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="forest"
+                  size="sm"
+                  onClick={() => {
+                    setSaveSuccess(true);
+                    setTimeout(() => setSaveSuccess(false), 3000);
+                  }}
+                  className="text-xs"
+                >
+                  Save to Health Profile
+                </Button>
+              </div>
+
+              {/* Biomarkers Grid */}
+              <div className="space-y-2.5">
+                {extractedReport.results.map((res, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-3 rounded-2xl bg-[#F4F6F2] border border-slate-200/60"
+                  >
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-heading text-xs font-bold text-slate-900">
+                          {res.testName}
+                        </span>
+                        {res.isAbnormal && (
+                          <span className="rounded-full bg-pastel-peach px-2 py-0.2 text-[9px] font-bold text-pastel-peachText">
+                            Out of Range
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-slate-400">
+                        Ref: {res.referenceRange || 'Standard adult'}
+                      </span>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="font-heading text-sm font-extrabold text-forest">
+                        {res.value} {res.unit}
+                      </span>
+                      <div className="text-[10px] text-slate-400">
+                        Confidence: {(res.confidence * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {saveSuccess && (
+            <div className="flex items-center gap-2 rounded-3xl bg-pastel-mint p-4 text-xs font-semibold text-pastel-mintText shadow-md">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <span>Biomarkers added to your health profile! Phenotype estimates updated.</span>
+            </div>
           )}
         </div>
       )}
 
-      {/* Tab 2: Book Partner Lab (Mock Flow) */}
+      {/* Tab 2: Book Partner Lab */}
       {activeTab === 'book' && (
-        <div className="mt-6 space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {PARTNER_LABS.map((lab) => (
-              <Card
-                key={lab.id}
-                className={`flex flex-col justify-between border transition-all ${
-                  selectedLab === lab.id
-                    ? 'border-rose-400 bg-rose-50/20 shadow-md dark:border-rose-800 dark:bg-rose-950/20'
-                    : 'border-slate-200 shadow-xs hover:border-slate-300 dark:border-slate-800'
-                }`}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="pcos">{lab.discount}</Badge>
-                    <span className="text-xs text-slate-500 font-semibold">★ {lab.rating}</span>
-                  </div>
-                  <CardTitle className="text-base">{lab.name}</CardTitle>
-                  <CardDescription className="text-xs">{lab.city}</CardDescription>
-                </CardHeader>
+        <div className="space-y-4">
+          <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-4">
+            <div>
+              <h2 className="font-heading text-base font-bold text-slate-900">
+                Partner Diagnostic Labs (Home Phlebotomy Collection)
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Certified NABL accredited partner labs with cold-chain sample handling.
+              </p>
+            </div>
 
-                <CardContent className="space-y-2 text-xs">
-                  <div className="rounded-lg bg-slate-50 p-2 text-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                    <span className="font-semibold">Featured Panel: </span>
-                    {lab.popularTest}
-                  </div>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="flex items-center gap-1 text-slate-500">
-                      <Home className="h-3.5 w-3.5 text-teal-600" /> Free Home Collection
-                    </span>
-                    <span className="text-slate-500">TAT: {lab.turnaround}</span>
-                  </div>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-xl font-bold text-slate-900 dark:text-white">
-                      ₹{lab.priceINR}
-                    </span>
-                    <span className="text-xs text-slate-400 line-through">
-                      ₹{lab.originalPrice}
-                    </span>
-                  </div>
-                </CardContent>
-
-                <CardFooter className="pt-2">
-                  <Button
-                    variant={selectedLab === lab.id ? 'pcos' : 'outline'}
-                    size="sm"
-                    onClick={() => {
-                      setSelectedLab(lab.id);
-                      setBookingConfirmed(false);
-                    }}
-                    className="w-full text-xs"
+            <div className="space-y-3">
+              {PARTNER_LABS.map((lab) => {
+                const isSelected = selectedLab === lab.id;
+                return (
+                  <div
+                    key={lab.id}
+                    onClick={() => setSelectedLab(lab.id)}
+                    className={`p-4 rounded-3xl border-2 transition-all cursor-pointer ${
+                      isSelected
+                        ? 'border-forest bg-sage-light/50 shadow-xs'
+                        : 'border-slate-200 bg-white hover:border-slate-300'
+                    }`}
                   >
-                    {selectedLab === lab.id ? 'Selected Lab' : 'Select This Lab'}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-heading text-sm font-bold text-slate-900">
+                            {lab.name}
+                          </h4>
+                          <span className="rounded-full bg-pastel-peach px-2 py-0.2 text-[9px] font-bold text-pastel-peachText">
+                            {lab.discount}
+                          </span>
+                        </div>
+                        <p className="text-xs text-forest font-semibold mt-1">
+                          {lab.popularTest}
+                        </p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          {lab.city} • Turnaround: {lab.turnaround}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-extrabold text-forest font-heading">
+                          ₹{lab.priceINR}
+                        </div>
+                        <div className="text-[10px] text-slate-400 line-through">
+                          ₹{lab.originalPrice}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
-          {/* Booking Confirmation Box */}
-          <Card className="border-slate-200 shadow-sm dark:border-slate-800">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Schedule Home Blood Collection</CardTitle>
-              <CardDescription>A certified phlebotomist visits your doorstep at the chosen fasting slot.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
-                  <Label htmlFor="bDate">Collection Date</Label>
-                  <Input
-                    id="bDate"
-                    type="date"
-                    value={bookingDate}
-                    onChange={(e) => setBookingDate(e.target.value)}
-                    className="mt-1.5"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="bSlot">Preferred Time Slot (12h Fasting)</Label>
-                  <select
-                    id="bSlot"
-                    value={timeSlot}
-                    onChange={(e) => setTimeSlot(e.target.value)}
-                    className="mt-1.5 flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-xs"
-                  >
-                    <option value="06:30 AM - 07:30 AM">06:30 AM - 07:30 AM (Fasting)</option>
-                    <option value="07:30 AM - 08:30 AM">07:30 AM - 08:30 AM (Fasting)</option>
-                    <option value="08:30 AM - 09:30 AM">08:30 AM - 09:30 AM (Fasting)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <Label htmlFor="bAddress">Collection Address</Label>
-                  <Input
-                    id="bAddress"
-                    value={patientAddress}
-                    onChange={(e) => setPatientAddress(e.target.value)}
-                    className="mt-1.5"
-                  />
-                </div>
+            {/* Address & Slot */}
+            <div className="space-y-2 pt-2 border-t border-slate-100 text-xs">
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">
+                  Home Collection Address:
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 bg-[#F4F6F2] p-2.5 text-xs text-slate-800 focus:border-forest focus:outline-none"
+                />
               </div>
 
-              {bookingConfirmed ? (
-                <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-200">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                      <span className="font-bold text-sm">Booking Confirmed! (Demo Booking Ref: #THY-9021)</span>
-                    </div>
-                    {/* Simulated Results Button for Demo Presentation */}
-                    <Button
-                      variant="teal"
-                      size="sm"
-                      onClick={() => handleRunSampleOcr('sample1')}
-                      className="gap-1.5 text-xs font-bold"
-                    >
-                      <Sparkles className="h-3.5 w-3.5" />
-                      Simulate Results
-                    </Button>
-                  </div>
-                  <p className="mt-1.5 text-xs text-emerald-800 dark:text-emerald-300">
-                    Phlebotomist assigned for {bookingDate} at {timeSlot}. Click &quot;Simulate Results&quot; to test instant OCR ingestion into your health profile.
-                  </p>
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">
+                  Scheduled Fasting Slot:
+                </label>
+                <input
+                  type="text"
+                  value={slot}
+                  onChange={(e) => setSlot(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 bg-[#F4F6F2] p-2.5 text-xs text-slate-800 focus:border-forest focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="forest"
+              size="lg"
+              onClick={() => setBookedSuccess(true)}
+              className="w-full text-sm font-bold shadow-md"
+            >
+              Confirm Phlebotomist Home Booking (₹1,299)
+            </Button>
+
+            {bookedSuccess && (
+              <div className="p-4 rounded-3xl bg-pastel-mint border border-emerald-200 text-xs text-pastel-mintText space-y-2 animate-in fade-in">
+                <div className="flex items-center gap-2 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Sample Collection Booked for Tomorrow 07:30 AM!</span>
                 </div>
-              ) : (
-                <div className="flex justify-end pt-2">
-                  <Button variant="pcos" onClick={() => setBookingConfirmed(true)} className="gap-2">
-                    <CheckCircle2 className="h-4 w-4" />
-                    Confirm Booking (Demo Payment ₹1,299)
-                  </Button>
-                </div>
-              )}
-            </CardContent>
+                <p>Thyrocare phlebotomist assigned (OTP will be sent via SMS).</p>
+                <Button
+                  type="button"
+                  variant="forest"
+                  size="sm"
+                  onClick={handleSimulateResults}
+                  className="w-full text-xs"
+                >
+                  Simulate Lab Results Arrival (Instant Demo OCR)
+                </Button>
+              </div>
+            )}
           </Card>
         </div>
       )}
 
-      {/* Tab 3: Retest Schedule */}
+      {/* Tab 3: Deterministic Test Schedule */}
       {activeTab === 'schedule' && (
-        <div className="mt-6 space-y-4">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-            <span className="font-bold">Deterministic Clinical Rule Schedule:</span> Recommendations are calculated based on your Rotterdam Phenotype, previous abnormal lab intervals, and active N-of-1 trial endpoints.
+        <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-3">
+          <div>
+            <h2 className="font-heading text-base font-bold text-slate-900">
+              Deterministic Test Scheduling Engine
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Strictly rules-based scheduling computed from your cycle day, phenotype, and active trial endpoints.
+            </p>
           </div>
 
-          <div className="space-y-3">
-            {scheduledTests.map((tItem, idx) => (
-              <Card key={idx} className="border-slate-200 shadow-2xs dark:border-slate-800">
-                <CardContent className="flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">
-                        {tItem.testName}
-                      </span>
-                      <Badge variant={tItem.urgency === 'urgent' ? 'destructive' : 'outline'} className="text-[10px]">
-                        Due in {tItem.dueWithinDays} Days
-                      </Badge>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-500">{tItem.reason}</p>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold text-slate-900 dark:text-white text-sm">
-                      ₹{tItem.estimatedCostINR}
+          <div className="space-y-2.5">
+            {scheduledTests.map((test, index) => (
+              <div
+                key={index}
+                className="p-3.5 rounded-3xl border border-slate-200/70 bg-[#F4F6F2] flex items-start justify-between gap-3"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading text-xs font-bold text-slate-900">
+                      {test.testName}
                     </span>
-                    <Button variant="outline" size="sm" onClick={() => setActiveTab('book')} className="text-xs">
-                      Book Now
-                    </Button>
+                    <span className="rounded-full bg-pastel-blue px-2 py-0.2 text-[9px] font-bold text-pastel-blueText">
+                      Due in {test.dueWithinDays}d
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
+                  <p className="text-[11px] text-slate-600 mt-1">
+                    {test.reason}
+                  </p>
+                </div>
+                <span className="font-heading text-xs font-bold text-forest shrink-0">
+                  ₹{test.estimatedCostINR}
+                </span>
+              </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Footer Disclaimer */}
-      <div className="mt-8">
-        <DisclaimerBanner type="wellness" />
-      </div>
+      <DisclaimerBanner type="wellness" />
     </div>
   );
 }

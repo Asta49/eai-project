@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePersona } from '@/components/persona-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { DisclaimerBanner } from '@/components/disclaimer-banner';
@@ -16,6 +16,9 @@ import {
   Bell,
   CheckCircle2,
   AlertTriangle,
+  User,
+  Heart,
+  Sparkles,
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -44,7 +47,6 @@ export default function SettingsPage() {
   };
 
   const handleExportDataJson = () => {
-    // Generate comprehensive JSON payload of Priya Sharma's health data
     const exportPayload = {
       exportTimestamp: new Date().toISOString(),
       patient: {
@@ -52,7 +54,7 @@ export default function SettingsPage() {
         age: 26,
         city: 'Hyderabad',
         diagnosisStatus: 'diagnosed',
-        estimatedPhenotype: 'Phenotype_A',
+        estimatedPhenotype: 'Phenotype_B',
         bmiCategory: 'overweight',
         homaIr: 3.61,
       },
@@ -74,20 +76,12 @@ export default function SettingsPage() {
       ],
       activeExperiments: [
         {
-          code: 'myo_inositol',
-          name: 'Myo-Inositol',
-          currentDay: 18,
+          code: 'morning_walk',
+          name: 'Morning 30-min brisk walk',
+          day: 18,
           totalDays: 42,
-          adherenceRate: 0.88,
+          adherence: 0.88,
         },
-      ],
-      latestBiomarkers: [
-        { test: 'Fasting Plasma Glucose', value: 94.0, unit: 'mg/dL' },
-        { test: 'Fasting Serum Insulin', value: 15.6, unit: 'microIU/mL' },
-        { test: 'HOMA-IR', value: 3.61, unit: 'ratio' },
-        { test: 'Total Testosterone', value: 68.4, unit: 'ng/dL' },
-        { test: 'AMH', value: 6.8, unit: 'ng/mL' },
-        { test: 'Vitamin D 25-OH', value: 14.2, unit: 'ng/mL' },
       ],
     };
 
@@ -97,299 +91,172 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `pcos_health_record_priya_sharma_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `priya_sharma_pcos_health_record_${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  const handleDeleteAccount = () => {
-    setAccountDeleted(true);
-    setDeleteConfirmOpen(false);
-  };
-
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      {/* Title */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-          {t('title')}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header in Forest Green */}
+      <div className="rounded-4xl bg-forest p-6 text-white text-center shadow-soft relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-forest-light px-3 py-1 text-xs font-semibold text-sage-light">
+          <SettingsIcon className="w-3.5 h-3.5 text-sage" />
+          Settings &amp; Data Governance
+        </span>
+        <h1 className="mt-3 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Profile &amp; DPDP Consent
         </h1>
-        <p className="mt-1 text-xs text-slate-600 sm:text-sm dark:text-slate-300">
-          {t('subtitle')}
+        <p className="mt-1 text-xs text-sage-light max-w-md mx-auto">
+          Manage your active role, download your encrypted health record, and control data privacy toggles under India&apos;s DPDP Act 2023.
         </p>
       </div>
 
       {/* Active Persona Switcher Card */}
-      <Card className="mb-6 border-slate-200 shadow-sm dark:border-slate-800">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-base">Active Profile & User Persona</CardTitle>
-              <CardDescription>
-                Switch roles without any login credentials to evaluate different workflows.
-              </CardDescription>
-            </div>
-            <span className={`rounded-lg px-2.5 py-1 text-xs font-bold border ${currentPersona.badgeClass}`}>
-              Active: {currentPersona.badge}
-            </span>
+      <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-heading text-base font-bold text-slate-900">
+              Active Evaluation Persona
+            </h3>
+            <p className="text-xs text-slate-500">
+              Switch roles directly without credentials to evaluate different workflows:
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-            {allPersonas.map((p) => {
-              const isSelected = p.type === currentPersona.type;
-              return (
-                <button
-                  key={p.type}
-                  type="button"
-                  onClick={() => setPersonaType(p.type)}
-                  className={`flex flex-col justify-between rounded-xl border p-3 text-left transition-all ${
-                    isSelected
-                      ? 'border-rose-300 bg-rose-50/80 shadow-sm dark:border-rose-800 dark:bg-rose-950/40'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800/60'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900 dark:text-white">{p.name}</span>
-                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold border ${p.badgeClass}`}>
-                      {p.badge}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-[11px] text-slate-500 leading-snug">{p.description}</p>
-                </button>
-              );
-            })}
-          </div>
-        </CardContent>
+          <span className={`rounded-full px-3 py-1 text-xs font-bold ${currentPersona.badgeClass}`}>
+            Active: {currentPersona.badge}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {allPersonas.map((p) => {
+            const isSelected = p.type === currentPersona.type;
+            return (
+              <button
+                key={p.type}
+                type="button"
+                onClick={() => setPersonaType(p.type)}
+                className={`flex flex-col justify-between rounded-3xl border p-3.5 text-left transition-all ${
+                  isSelected
+                    ? 'border-forest bg-sage-light/60 shadow-xs'
+                    : 'border-slate-200 bg-white hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-heading text-xs font-bold text-slate-900">{p.name}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${p.badgeClass}`}>
+                    {p.badge}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-[11px] text-slate-500 leading-snug">{p.description}</p>
+              </button>
+            );
+          })}
+        </div>
       </Card>
 
-      {accountDeleted ? (
-        <Card className="border-red-200 bg-red-50 p-6 text-center text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          <Trash2 className="mx-auto h-10 w-10 text-red-600" />
-          <h3 className="mt-3 text-lg font-bold">Account Successfully Erased</h3>
-          <p className="mt-1 text-xs">
-            Under DPDP guidelines, all personal identifiable records, check-in histories, and lab documents have been purged from our database.
-          </p>
-          <div className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setAccountDeleted(false)}>
-              Reset Demo Session
-            </Button>
+      {/* DPDP 2023 Granular Consent Toggles Card */}
+      <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-forest" />
+            <h3 className="font-heading text-base font-bold text-slate-900">
+              DPDP Act 2023 Consent Management
+            </h3>
           </div>
-        </Card>
-      ) : (
-        <div className="space-y-6">
-          {/* Section 1: Language & Locale */}
-          <Card className="border-slate-200 shadow-xs dark:border-slate-800">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t('languagePref')}</CardTitle>
-              <CardDescription>
-                Changes all UI labels, navigation buttons, and AI coaching responses.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  Select your preferred language:
-                </span>
-                <LanguageSwitcher />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 2: Notifications */}
-          <Card className="border-slate-200 shadow-xs dark:border-slate-800">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4 text-purple-600" />
-                <CardTitle className="text-base">{t('notifications')}</CardTitle>
-              </div>
-              <CardDescription>
-                Mock alerts for daily 30-second check-ins and quarterly diagnostic tests.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 p-3 text-xs dark:border-slate-800">
-                <div>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    Daily Check-in Reminder (08:30 PM)
-                  </span>
-                  <p className="text-slate-500 text-[11px]">Keeps your N-of-1 trial adherence above 80%</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={dailyCheckinReminder}
-                  onChange={(e) => setDailyCheckinReminder(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-rose-600"
-                />
-              </div>
-
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 p-3 text-xs dark:border-slate-800">
-                <div>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    Biomarker Retest Alerts
-                  </span>
-                  <p className="text-slate-500 text-[11px]">Notifies you when scheduled tests are due</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={retestAlerts}
-                  onChange={(e) => setRetestAlerts(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-rose-600"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 3: DPDP Consent Controls */}
-          <Card className="border-slate-200 shadow-xs dark:border-slate-800">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-teal-700 dark:text-teal-400">
-                  <ShieldCheck className="h-5 w-5" />
-                  <CardTitle className="text-base">{t('consentSettings')}</CardTitle>
-                </div>
-                <Badge variant="teal">DPDP COMPLIANT</Badge>
-              </div>
-              <CardDescription>
-                You have the legal right under India&apos;s DPDP Act to grant or revoke consent anytime.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-start justify-between rounded-lg border border-slate-100 p-3 text-xs dark:border-slate-800">
-                <div className="pr-4">
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    Core App Analytics &amp; Personal Science
-                  </span>
-                  <p className="text-slate-500 text-[11px]">
-                    Required to compute your Bayesian N-of-1 verdicts and track symptoms.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={consentCore}
-                  onChange={(e) => setConsentCore(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-rose-600"
-                />
-              </div>
-
-              <div className="flex items-start justify-between rounded-lg border border-slate-100 p-3 text-xs dark:border-slate-800">
-                <div className="pr-4">
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    Doctor Pre-Consult Profile Sharing
-                  </span>
-                  <p className="text-slate-500 text-[11px]">
-                    Enables treating doctors to review your Rotterdam phenotype and trial history.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={consentDoctor}
-                  onChange={(e) => setConsentDoctor(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-rose-600"
-                />
-              </div>
-
-              <div className="flex items-start justify-between rounded-lg border border-slate-100 p-3 text-xs dark:border-slate-800">
-                <div className="pr-4">
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    Anonymized Population Research Pool
-                  </span>
-                  <p className="text-slate-500 text-[11px]">
-                    Contributes aggregated, de-identified statistics to refine empirical Bayes priors.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={consentResearch}
-                  onChange={(e) => setConsentResearch(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-rose-600"
-                />
-              </div>
-
-              {consentSaved && (
-                <div className="text-xs font-semibold text-emerald-600">
-                  ✓ Consent preferences updated and timestamped.
-                </div>
-              )}
-
-              <div className="pt-2">
-                <Button variant="outline" size="sm" onClick={handleSaveConsent} className="text-xs">
-                  Save Consent Preferences
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 4: Data Portability (Export JSON) */}
-          <Card className="border-slate-200 shadow-xs dark:border-slate-800">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Download className="h-4 w-4 text-teal-600" />
-                <CardTitle className="text-base">{t('exportTitle')}</CardTitle>
-              </div>
-              <CardDescription>{t('exportDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportDataJson}
-                className="gap-2 text-xs"
-              >
-                <Download className="h-4 w-4" />
-                {t('downloadJson')}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Section 5: Danger Zone (Delete Account) */}
-          <Card className="border-red-200 bg-red-50/20 shadow-xs dark:border-red-950 dark:bg-red-950/10">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
-                <AlertTriangle className="h-4 w-4" />
-                <CardTitle className="text-base">{t('dangerZone')}</CardTitle>
-              </div>
-              <CardDescription className="text-red-600/80 dark:text-red-400/80">
-                {t('deleteDesc')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {deleteConfirmOpen ? (
-                <div className="space-y-3 rounded-lg border border-red-300 bg-white p-3 text-xs dark:border-red-900 dark:bg-slate-900">
-                  <p className="font-semibold text-red-700 dark:text-red-300">
-                    Are you sure? This action is permanent and cannot be undone.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button variant="destructive" size="sm" onClick={handleDeleteAccount} className="text-xs">
-                      Yes, Permanently Delete My Account
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setDeleteConfirmOpen(false)} className="text-xs">
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => setDeleteConfirmOpen(true)}
-                  className="gap-2 text-xs"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  {t('deleteButton')}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          <p className="text-xs text-slate-500 mt-0.5">
+            You maintain 100% data ownership. Toggle granular permissions anytime:
+          </p>
         </div>
-      )}
 
-      {/* Footer Disclaimer */}
-      <div className="mt-8">
-        <DisclaimerBanner type="wellness" />
-      </div>
+        <div className="space-y-3">
+          {/* Toggle 1 */}
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F4F6F2]">
+            <div>
+              <div className="text-xs font-bold text-slate-900 font-heading">1. Core App &amp; N-of-1 Bayesian Computation</div>
+              <div className="text-[11px] text-slate-500">Calculate cycle adjustments and personal treatment effect estimates</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={consentCore}
+              onChange={(e) => setConsentCore(e.target.checked)}
+              className="h-4 w-4 accent-forest rounded cursor-pointer"
+            />
+          </div>
+
+          {/* Toggle 2 */}
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F4F6F2]">
+            <div>
+              <div className="text-xs font-bold text-slate-900 font-heading">2. Doctor Clinical Handoff Sharing</div>
+              <div className="text-[11px] text-slate-500">Allow Dr. Ananya Sen to review 1-page pre-consult summaries &amp; approve trials</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={consentDoctor}
+              onChange={(e) => setConsentDoctor(e.target.checked)}
+              className="h-4 w-4 accent-forest rounded cursor-pointer"
+            />
+          </div>
+
+          {/* Toggle 3 */}
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F4F6F2]">
+            <div>
+              <div className="text-xs font-bold text-slate-900 font-heading">3. De-Identified Research Pooling (Empirical Bayes)</div>
+              <div className="text-[11px] text-slate-500">Contribute anonymized trial variances to update population priors for your phenotype</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={consentResearch}
+              onChange={(e) => setConsentResearch(e.target.checked)}
+              className="h-4 w-4 accent-forest rounded cursor-pointer"
+            />
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="forest"
+          size="sm"
+          onClick={handleSaveConsent}
+          className="text-xs"
+        >
+          Save Consent Preferences
+        </Button>
+
+        {consentSaved && (
+          <div className="flex items-center gap-2 rounded-2xl bg-pastel-mint p-3 text-xs font-semibold text-pastel-mintText">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span>Consent preferences securely timestamped under DPDP rules.</span>
+          </div>
+        )}
+      </Card>
+
+      {/* Data Export Card */}
+      <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-3">
+        <div>
+          <h3 className="font-heading text-base font-bold text-slate-900">
+            Export My Health Record (JSON)
+          </h3>
+          <p className="text-xs text-slate-500">
+            Download your complete history (60 days check-ins, lab values, and Bayesian results) in portable JSON format.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleExportDataJson}
+          className="text-xs gap-1.5"
+        >
+          <Download className="w-3.5 h-3.5" />
+          Download JSON Health Record
+        </Button>
+      </Card>
+
+      <DisclaimerBanner type="wellness" />
     </div>
   );
 }

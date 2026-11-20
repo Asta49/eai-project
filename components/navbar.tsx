@@ -6,6 +6,10 @@ import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from './language-switcher';
 import { PersonaSwitcher } from './persona-switcher';
 import {
+  Sparkles,
+  Calendar,
+  Bell,
+  Settings,
   Activity,
   CalendarCheck,
   FlaskConical,
@@ -14,117 +18,135 @@ import {
   Bot,
   UserCheck,
   LineChart,
-  Settings,
   Menu,
   X,
-  Sparkles,
 } from 'lucide-react';
 
 export function Navbar() {
   const t = useTranslations('nav');
-  const tCommon = useTranslations('common');
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Formatted date matching mobile UI kit: e.g. "Friday, 20 Nov 2026"
+  const formattedDate = new Intl.DateTimeFormat('en-IN', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  }).format(new Date());
 
   const navLinks = [
-    { href: '/dashboard', label: t('dashboard'), icon: Activity },
-    { href: '/checkin', label: t('checkin'), icon: CalendarCheck },
-    { href: '/experiments', label: t('experiments'), icon: FlaskConical },
-    { href: '/labs', label: t('labs'), icon: FileSpreadsheet },
-    { href: '/food', label: t('food'), icon: Utensils },
-    { href: '/coach', label: t('coach'), icon: Bot },
-    { href: '/doctors', label: t('doctors'), icon: UserCheck },
-    { href: '/admin', label: t('admin'), icon: LineChart },
-    { href: '/settings', label: t('settings'), icon: Settings },
+    { href: '/dashboard', label: 'Home', icon: Activity },
+    { href: '/checkin', label: 'Check-in', icon: CalendarCheck },
+    { href: '/experiments', label: 'Trials', icon: FlaskConical },
+    { href: '/labs', label: 'Labs', icon: FileSpreadsheet },
+    { href: '/food', label: 'Food', icon: Utensils },
+    { href: '/coach', label: 'AI Coach', icon: Bot },
+    { href: '/doctors', label: 'Doctors', icon: UserCheck },
+    { href: '/admin', label: 'IIM-A Moat', icon: LineChart },
+    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-rose-100 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6">
-        {/* Brand */}
-        <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 text-white shadow-sm">
-            <Sparkles className="h-5 w-5" />
+    <header className="sticky top-0 z-40 bg-[#F4F6F2]/90 backdrop-blur-md border-b border-slate-200/50">
+      <div className="mx-auto max-w-5xl px-4 py-2 sm:px-6">
+        <div className="flex items-center justify-between gap-2">
+          {/* Brand & Date (as seen in s1.jpeg, s4.avif) */}
+          <div className="flex items-center gap-2.5">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-forest text-white shadow-sm">
+                <Sparkles className="h-4 w-4 text-sage" />
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-heading font-bold text-sm tracking-tight text-slate-900">
+                    PCOS Assistant
+                  </span>
+                  <span className="rounded-full bg-pastel-mint px-2 py-0.2 text-[9px] font-bold text-pastel-mintText">
+                    IIM-A
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] text-slate-500 font-body">
+                  <Calendar className="w-3 h-3 text-slate-400" />
+                  <span>{formattedDate}</span>
+                </div>
+              </div>
+            </Link>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900 dark:text-white">
-                {tCommon('appName')}
-              </span>
-              <span className="rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700 dark:bg-rose-950/80 dark:text-rose-300">
-                IIMA DEMO
-              </span>
-            </div>
-            <p className="hidden text-[11px] text-slate-500 sm:block">
-              {tCommon('tagline')}
-            </p>
-          </div>
-        </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {navLinks.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'bg-rose-50 text-rose-700 font-semibold dark:bg-rose-950/60 dark:text-rose-300'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right side controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <PersonaSwitcher />
-          <LanguageSwitcher />
-
-          {/* Mobile menu trigger */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 lg:hidden dark:text-slate-300 dark:hover:bg-slate-800"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="border-b border-rose-100 bg-white px-4 py-3 lg:hidden dark:border-slate-800 dark:bg-slate-950">
-          <nav className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-            {navLinks.map((item) => {
+          {/* Desktop Direct Links */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.slice(0, 7).map((item) => {
               const Icon = item.icon;
               const isActive = pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2 rounded-lg p-2 text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
                     isActive
-                      ? 'bg-rose-50 text-rose-700 font-semibold dark:bg-rose-950/60 dark:text-rose-300'
-                      : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                      ? 'bg-forest text-white'
+                      : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900'
                   }`}
                 >
-                  <Icon className="h-4 w-4 text-rose-500" />
-                  <span className="truncate">{item.label}</span>
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
           </nav>
+
+          {/* Right Controls: Persona Switcher, Language Switcher, Settings */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <PersonaSwitcher />
+            <LanguageSwitcher />
+
+            <Link
+              href="/settings"
+              className="hidden sm:flex w-8 h-8 items-center justify-center rounded-full bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50 transition"
+              title="Settings & DPDP"
+            >
+              <Settings className="w-4 h-4 text-slate-600" />
+            </Link>
+
+            {/* Mobile Drawer Toggle */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="lg:hidden flex w-8 h-8 items-center justify-center rounded-full bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50"
+              aria-label="Toggle All Pages Menu"
+            >
+              {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Mobile Navigation Drawer */}
+        {menuOpen && (
+          <div className="lg:hidden mt-2 p-3 bg-white rounded-3xl border border-slate-200/80 shadow-lg animate-in slide-in-from-top-2">
+            <div className="grid grid-cols-3 gap-2">
+              {navLinks.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex flex-col items-center justify-center p-2 rounded-2xl text-center text-xs font-medium transition-all ${
+                      isActive
+                        ? 'bg-forest text-white font-bold'
+                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mb-1" />
+                    <span className="text-[11px]">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     </header>
   );
 }

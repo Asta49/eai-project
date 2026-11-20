@@ -12,6 +12,7 @@ export interface Persona {
   badge: string;
   badgeClass: string;
   avatarText: string;
+  avatarBg: string;
   description: string;
   defaultRoute: string;
   stats?: {
@@ -30,8 +31,9 @@ export const PERSONAS: Record<PersonaType, Persona> = {
     name: 'Priya Sharma',
     roleTitle: 'PCOS Patient',
     badge: 'Patient',
-    badgeClass: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800',
+    badgeClass: 'bg-pastel-peach text-pastel-peachText border border-amber-200/60',
     avatarText: 'PS',
+    avatarBg: 'bg-pastel-peach text-pastel-peachText',
     description: '26F, Hyderabad • Rotterdam Phenotype B • Active N-of-1 Walking Trial',
     defaultRoute: '/dashboard',
     stats: {
@@ -48,8 +50,9 @@ export const PERSONAS: Record<PersonaType, Persona> = {
     name: 'Dr. Ananya Sen, MD',
     roleTitle: 'Gynecologist & Endocrinologist',
     badge: 'Doctor',
-    badgeClass: 'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-950 dark:text-teal-300 dark:border-teal-800',
+    badgeClass: 'bg-pastel-mint text-pastel-mintText border border-emerald-200/60',
     avatarText: 'AS',
+    avatarBg: 'bg-pastel-mint text-pastel-mintText',
     description: 'Specialist • Reviewing patient clinical summaries & approving trial protocols',
     defaultRoute: '/doctors',
   },
@@ -59,8 +62,9 @@ export const PERSONAS: Record<PersonaType, Persona> = {
     name: 'Prof. / Course Admin',
     roleTitle: 'IIM-A Economics of AI',
     badge: 'Faculty / Admin',
-    badgeClass: 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800',
+    badgeClass: 'bg-pastel-blue text-pastel-blueText border border-blue-200/60',
     avatarText: 'EA',
+    avatarBg: 'bg-pastel-blue text-pastel-blueText',
     description: 'Course Evaluator • Inspecting Empirical Bayes simulation & unit economics',
     defaultRoute: '/admin',
   },
@@ -77,7 +81,6 @@ const PersonaContext = createContext<PersonaContextValue | undefined>(undefined)
 export function PersonaProvider({ children }: { children: React.ReactNode }) {
   const [personaType, setPersonaTypeState] = useState<PersonaType>('patient');
 
-  // Hydrate from localStorage on client mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem('pcos_active_persona_type') as PersonaType;
@@ -107,7 +110,6 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
 export function usePersona() {
   const context = useContext(PersonaContext);
   if (!context) {
-    // Fallback if rendered outside provider
     return {
       currentPersona: PERSONAS.patient,
       setPersonaType: () => {},

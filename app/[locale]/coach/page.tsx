@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DisclaimerBanner } from '@/components/disclaimer-banner';
 import { getVoiceProvider } from '@/lib/voice';
@@ -13,13 +12,13 @@ import {
   Send,
   Mic,
   MicOff,
-  Volume2,
-  VolumeX,
   Sparkles,
   BookOpen,
   Wrench,
   ShieldCheck,
   User,
+  Heart,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface ChatMessageItem {
@@ -31,6 +30,13 @@ interface ChatMessageItem {
   timestamp: string;
 }
 
+const QUICK_PROMPTS = [
+  'What are the best Indian snacks for PCOS?',
+  'How does insulin resistance cause cravings?',
+  'Explain my active Myo-Inositol trial',
+  'When should I schedule my next lab test?',
+];
+
 export default function CoachPage() {
   const t = useTranslations('coach');
   const tCommon = useTranslations('common');
@@ -39,7 +45,6 @@ export default function CoachPage() {
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
-  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [stopListeningFn, setStopListeningFn] = useState<(() => void) | null>(null);
   const [emergencyAlert, setEmergencyAlert] = useState<string | null>(null);
 
@@ -66,7 +71,6 @@ export default function CoachPage() {
     },
   ]);
 
-  // Voice Speech-to-Text
   const handleToggleVoiceInput = () => {
     if (isListening) {
       if (stopListeningFn) stopListeningFn();
@@ -80,7 +84,7 @@ export default function CoachPage() {
           setInputMessage(result.transcript);
         },
         (error) => {
-          console.warn(error);
+          console.warn('Voice recognition error:', error);
           setIsListening(false);
         }
       );
@@ -89,30 +93,16 @@ export default function CoachPage() {
     }
   };
 
-  // Voice Text-to-Speech
-  const handleSpeakText = (text: string) => {
-    const voice = getVoiceProvider();
-    if (isSpeaking) {
-      voice.stopSpeaking();
-      setIsSpeaking(false);
-    } else {
-      setIsSpeaking(true);
-      voice.speak(text, locale, () => {
-        setIsSpeaking(false);
-      });
-    }
-  };
-
   const handleSendMessage = async (textToSend?: string) => {
-    const query = (textToSend || inputMessage).trim();
-    if (!query) return;
+    const query = textToSend || inputMessage;
+    if (!query.trim()) return;
 
     setEmergencyAlert(null);
     const userMsg: ChatMessageItem = {
       id: String(Date.now()),
       sender: 'user',
       text: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: 'Just now',
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -123,31 +113,24 @@ export default function CoachPage() {
       const response = await fetch('/api/coach', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query, locale, userId: 'priya_sharma_demo' }),
+        body: JSON.stringify({ message: query, locale }),
       });
-      const res = await response.json();
+      const data = await response.json();
 
-      if (res.redFlag?.hasRedFlag) {
-        setEmergencyAlert(res.redFlag.emergencyMessageLocale);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: String(Date.now() + 1),
-            sender: 'assistant',
-            text: res.redFlag.emergencyMessageLocale,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          },
-        ]);
-      } else {
-        const botMsg: ChatMessageItem = {
+      if (data.redFlag?.hasRedFlag) {
+        setEmergencyAlert(data.redFlag.emergencyMessageLocale);
+      }
+
+      if (data.data) {
+        const assistantMsg: ChatMessageItem = {
           id: String(Date.now() + 1),
           sender: 'assistant',
-          text: res.data.answer,
-          citations: res.data.citations,
-          toolsUsed: res.data.toolsUsed,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          text: data.data.answer,
+          citations: data.data.citations,
+          toolsUsed: data.data.toolsUsed,
+          timestamp: 'Just now',
         };
-        setMessages((prev) => [...prev, botMsg]);
+        setMessages((prev) => [...prev, assistantMsg]);
       }
     } catch (err) {
       console.error(err);
@@ -157,202 +140,132 @@ export default function CoachPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-      {/* Title */}
-      <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-              {t('title')}
-            </h1>
-            <Badge variant="pcos" className="text-[10px]">
-              RAG CLINICAL GUIDELINES
-            </Badge>
-          </div>
-          <p className="mt-1 text-xs text-slate-600 sm:text-sm dark:text-slate-300">
-            {t('subtitle')}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-1.5 text-xs text-slate-500">
-          <ShieldCheck className="h-4 w-4 text-teal-600" />
-          <span>Non-Diagnostic Decision Support</span>
-        </div>
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header Card in Forest Green */}
+      <div className="rounded-4xl bg-forest p-6 text-white text-center shadow-soft relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-forest-light px-3 py-1 text-xs font-semibold text-sage-light">
+          <Bot className="w-3.5 h-3.5 text-sage" />
+          RAG Knowledge Engine &amp; Clinical Safety
+        </span>
+        <h1 className="mt-3 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          AI PCOS Health Coach
+        </h1>
+        <p className="mt-1 text-xs text-sage-light max-w-md mx-auto">
+          Grounded in peer-reviewed clinical guidelines and your structured personal trial records.
+        </p>
       </div>
 
-      {/* Emergency Red-Flag Alert if triggered */}
+      {/* Emergency Red Flag Notice if triggered */}
       {emergencyAlert && (
-        <div className="mb-6">
-          <DisclaimerBanner type="emergency" customMessage={emergencyAlert} />
-        </div>
+        <DisclaimerBanner type="emergency" customMessage={emergencyAlert} />
       )}
 
-      {/* Chat Container */}
-      <Card className="flex flex-col border-rose-100 shadow-sm dark:border-slate-800 min-h-[520px]">
-        {/* Messages Scroll Area */}
-        <CardContent className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
-          {messages.map((m) => {
-            const isUser = m.sender === 'user';
-            return (
+      {/* Chat Messages Stream */}
+      <div className="space-y-3 min-h-[300px]">
+        {messages.map((msg) => {
+          const isUser = msg.sender === 'user';
+          return (
+            <div
+              key={msg.id}
+              className={`flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`}
+            >
               <div
-                key={m.id}
-                className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-bold text-xs ${
+                  isUser
+                    ? 'bg-forest text-white'
+                    : 'bg-pastel-mint text-pastel-mintText border border-emerald-200'
+                }`}
               >
-                {!isUser && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-purple-600 text-white shadow-xs">
-                    <Bot className="h-4 w-4" />
-                  </div>
-                )}
+                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+              </div>
 
-                <div
-                  className={`max-w-[85%] rounded-2xl p-4 text-xs leading-relaxed sm:text-sm sm:max-w-[75%] ${
-                    isUser
-                      ? 'bg-rose-600 text-white'
-                      : 'border border-slate-200 bg-white text-slate-800 shadow-xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200'
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap">{m.text}</p>
+              <div
+                className={`max-w-[85%] rounded-3xl p-4 shadow-card text-xs sm:text-sm leading-relaxed ${
+                  isUser
+                    ? 'bg-forest text-white'
+                    : 'bg-white border border-slate-200/80 text-slate-800'
+                }`}
+              >
+                <p className="font-body">{msg.text}</p>
 
-                  {/* Tools Badge */}
-                  {!isUser && m.toolsUsed && m.toolsUsed.length > 0 && (
-                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                        <Wrench className="h-3 w-3" /> Consulted:
-                      </span>
-                      {m.toolsUsed.map((tool, idx) => (
-                        <span
-                          key={idx}
-                          className="rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-mono text-purple-700 dark:bg-purple-950/60 dark:text-purple-300"
-                        >
-                          {tool.toolName}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Citations */}
-                  {!isUser && m.citations && m.citations.length > 0 && (
-                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                      <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                        <BookOpen className="h-3 w-3" /> Sources:
-                      </span>
-                      {m.citations.map((c, idx) => (
-                        <span
-                          key={idx}
-                          className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                        >
-                          {c.title} ({c.source})
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Audio Read-Aloud Button */}
-                  {!isUser && (
-                    <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400 pt-1">
-                      <span>{m.timestamp}</span>
-                      <button
-                        onClick={() => handleSpeakText(m.text)}
-                        className="flex items-center gap-1 hover:text-purple-600"
-                      >
-                        {isSpeaking ? (
-                          <>
-                            <VolumeX className="h-3 w-3" /> Stop
-                          </>
-                        ) : (
-                          <>
-                            <Volume2 className="h-3 w-3" /> Listen
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {isUser && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-200 text-slate-700 shadow-xs dark:bg-slate-800 dark:text-slate-300">
-                    <User className="h-4 w-4" />
+                {/* Citations if available */}
+                {msg.citations && msg.citations.length > 0 && (
+                  <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-1">
+                    <span className="text-[10px] uppercase font-bold text-slate-400">
+                      Clinical Sources:
+                    </span>
+                    {msg.citations.map((c, i) => (
+                      <div key={i} className="text-[11px] text-forest font-semibold flex items-center gap-1">
+                        <BookOpen className="w-3 h-3 text-sage" />
+                        <span>{c.title} ({c.source})</span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
-            );
-          })}
-
-          {isLoading && (
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <Bot className="h-4 w-4 animate-spin text-purple-600" />
-              <span>Consulting clinical guidelines and health profile...</span>
             </div>
-          )}
-        </CardContent>
+          );
+        })}
 
-        {/* Input Bar */}
-        <div className="border-t border-slate-200 bg-slate-50/50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
-          {/* Quick Prompts */}
-          <div className="mb-3 flex flex-wrap gap-1.5 text-xs">
-            <button
-              onClick={() => handleSendMessage('What do my latest insulin and HOMA-IR lab tests mean?')}
-              className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
-            >
-              Analyze my latest labs
-            </button>
-            <button
-              onClick={() => handleSendMessage('Suggest a PCOS friendly Indian breakfast swap for poha')}
-              className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
-            >
-              Indian food swap for poha
-            </button>
-            <button
-              onClick={() => handleSendMessage('How does Myo-Inositol work in Phenotype A PCOS?')}
-              className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
-            >
-              How Myo-Inositol works
-            </button>
+        {isLoading && (
+          <div className="flex items-center gap-2 text-xs text-slate-500 italic p-3">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-forest border-t-transparent" />
+            <span>Consulting PCOS clinical guidelines...</span>
           </div>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="flex items-center gap-2"
-          >
-            <div className="relative flex-1">
-              <Input
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={t('askPlaceholder')}
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={handleToggleVoiceInput}
-                className={`absolute right-2.5 top-2.5 p-0.5 transition-colors ${
-                  isListening ? 'text-red-600 animate-pulse' : 'text-slate-400 hover:text-slate-700'
-                }`}
-                title="Voice input (Web Speech API)"
-              >
-                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-              </button>
-            </div>
-
-            <Button
-              type="submit"
-              variant="pcos"
-              disabled={!inputMessage.trim() || isLoading}
-              className="gap-1.5"
-            >
-              <Send className="h-4 w-4" />
-              <span>{t('send')}</span>
-            </Button>
-          </form>
-        </div>
-      </Card>
-
-      {/* Footer Disclaimer */}
-      <div className="mt-6">
-        <DisclaimerBanner type="wellness" />
+        )}
       </div>
+
+      {/* Quick Prompt Chips (s4.avif style) */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        {QUICK_PROMPTS.map((prompt) => (
+          <button
+            key={prompt}
+            type="button"
+            onClick={() => handleSendMessage(prompt)}
+            className="rounded-full bg-white border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 whitespace-nowrap hover:bg-slate-50 shadow-xs transition"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
+
+      {/* Input Field with Mic & Send */}
+      <div className="relative flex items-center">
+        <input
+          type="text"
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSendMessage();
+          }}
+          placeholder="Ask anything about your PCOS, diet, or trial..."
+          className="w-full rounded-full border border-slate-200 bg-white pl-5 pr-24 py-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 shadow-sm focus:border-forest focus:outline-none"
+        />
+
+        <div className="absolute right-2 flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handleToggleVoiceInput}
+            className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
+              isListening ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+            title="Speech to text"
+          >
+            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSendMessage()}
+            disabled={!inputMessage.trim()}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-forest text-white hover:bg-forest-light disabled:opacity-40"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <DisclaimerBanner type="wellness" />
     </div>
   );
 }

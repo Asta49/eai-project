@@ -3,27 +3,38 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold tracking-wide transition-colors focus:outline-none font-body',
   {
     variants: {
       variant: {
         default:
-          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+          'border-transparent bg-forest text-white',
+        forest:
+          'border-transparent bg-forest text-white',
+        sage:
+          'border-transparent bg-sage-light text-forest-dark',
+        coral:
+          'border-transparent bg-coral-light text-coral-dark',
         secondary:
-          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+          'border-transparent bg-slate-100 text-slate-700',
         destructive:
-          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-        outline: 'text-foreground',
+          'border-transparent bg-red-100 text-red-700',
+        outline:
+          'border-slate-200 text-slate-700 bg-white',
         success:
-          'border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
+          'border-transparent bg-pastel-mint text-pastel-mintText',
         warning:
-          'border-transparent bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
+          'border-transparent bg-pastel-yellow text-pastel-yellowText',
         info:
-          'border-transparent bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
+          'border-transparent bg-pastel-blue text-pastel-blueText',
         teal:
-          'border-transparent bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300',
+          'border-transparent bg-sage-light text-forest',
         pcos:
-          'border-transparent bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+          'border-transparent bg-sage-light text-forest-dark',
+        peach:
+          'border-transparent bg-pastel-peach text-pastel-peachText',
+        purple:
+          'border-transparent bg-pastel-purple text-pastel-purpleText',
       },
     },
     defaultVariants: {
