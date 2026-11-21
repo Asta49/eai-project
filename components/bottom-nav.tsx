@@ -2,6 +2,9 @@
 
 import React, { useState, useRef } from 'react';
 import { Link, usePathname, useRouter } from '@/navigation';
+import { useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import {
   Home,
   Calendar,
@@ -17,6 +20,8 @@ import {
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
   const isHomeActive = pathname === '/' || pathname.includes('/today') || pathname.includes('/dashboard');
   const isLogActive = pathname.includes('/checkin') || pathname.includes('/food') || pathname.includes('/labs');
@@ -75,7 +80,7 @@ export function BottomNav() {
             >
               <Home className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-semibold mt-0.5">Home</span>
+            <span className="text-[10px] font-semibold mt-0.5">{dict.nav.home}</span>
           </Link>
 
           {/* Tab 2: Calendar & Daily Log (With L1 Speak Anywhere long-press) */}
@@ -108,7 +113,7 @@ export function BottomNav() {
               >
                 <Calendar className="w-5 h-5 stroke-[2.2]" />
               </div>
-              <span className="text-[10px] font-semibold mt-0.5">Log</span>
+              <span className="text-[10px] font-semibold mt-0.5">{dict.nav.log}</span>
             </Link>
           </div>
 
@@ -129,7 +134,7 @@ export function BottomNav() {
             >
               <MessageCircle className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-semibold mt-0.5">Ask</span>
+            <span className="text-[10px] font-semibold mt-0.5">{dict.nav.ask}</span>
           </Link>
 
           {/* Tab 4: Care / Consult */}
@@ -149,7 +154,7 @@ export function BottomNav() {
             >
               <Stethoscope className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-semibold mt-0.5">Care</span>
+            <span className="text-[10px] font-semibold mt-0.5">{dict.nav.care}</span>
           </Link>
 
           {/* Tab 5: Profile */}
@@ -169,7 +174,7 @@ export function BottomNav() {
             >
               <User className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-semibold mt-0.5">Profile</span>
+            <span className="text-[10px] font-semibold mt-0.5">{dict.nav.profile}</span>
           </Link>
         </nav>
       </div>

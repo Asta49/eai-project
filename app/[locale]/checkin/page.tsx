@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -48,7 +50,8 @@ const QUICK_TAG_OPTIONS = [
 export default function CheckinPage() {
   const t = useTranslations('checkin');
   const tCommon = useTranslations('common');
-  const locale = useLocale() as 'en' | 'hi' | 'te' | 'ta';
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
   const [mode, setMode] = useState<'quick' | 'voice'>('quick');
 
@@ -167,13 +170,13 @@ export default function CheckinPage() {
         <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/20 blur-xl" />
         <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-rose-50">
           <Calendar className="w-3.5 h-3.5 text-white" />
-          Day 18 Daily Log • Luteal Phase
+          {dict.checkin.headerPhase}
         </span>
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          How are you feeling today?
+          {dict.checkin.headerTitle}
         </h1>
         <p className="mt-1 text-xs text-rose-100 max-w-sm mx-auto">
-          Log your mood, symptoms, and flow to update your cycle predictions.
+          {dict.checkin.headerSub}
         </p>
 
         {/* Mode Toggle: Quick Tap vs Voice Natural Language */}
@@ -185,7 +188,7 @@ export default function CheckinPage() {
               mode === 'quick' ? 'bg-white text-brand-pink shadow-xs font-bold' : 'text-white'
             }`}
           >
-            Quick Tap
+            {dict.checkin.quickTap}
           </button>
           <button
             type="button"
@@ -194,7 +197,7 @@ export default function CheckinPage() {
               mode === 'voice' ? 'bg-white text-brand-pink shadow-xs font-bold' : 'text-white'
             }`}
           >
-            Voice Note
+            {dict.checkin.voiceNote}
           </button>
         </div>
       </div>
@@ -210,7 +213,7 @@ export default function CheckinPage() {
           {/* Mood Selector (Large Emoji Cards) */}
           <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">
-              1. Overall Mood
+              {dict.checkin.moodLabel}
             </label>
             <div className="grid grid-cols-5 gap-2">
               {MOOD_EMOJIS.map((m) => {
@@ -238,7 +241,7 @@ export default function CheckinPage() {
             {/* L2. Sub-emotions selector */}
             <div className="mt-3 pt-3 border-t border-slate-100">
               <span className="text-[11px] font-semibold text-slate-500 block mb-2">
-                Specific feelings (Tap to tag):
+                {dict.checkin.feelingsLabel}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {SUB_EMOTION_OPTIONS.map((emotion) => {
@@ -560,7 +563,7 @@ export default function CheckinPage() {
             onClick={handleSaveCheckin}
             className="w-full text-base font-bold shadow-lg"
           >
-            Save Check-in
+            {dict.checkin.saveLog}
           </Button>
         </div>
       )}

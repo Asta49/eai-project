@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { Link, usePathname } from '@/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { LanguageSwitcher } from './language-switcher';
 import { PersonaSwitcher } from './persona-switcher';
 import { usePersona } from './persona-context';
@@ -21,6 +23,8 @@ import {
 
 export function Navbar() {
   const t = useTranslations('nav');
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
   const pathname = usePathname();
   const { currentPersona } = usePersona();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -29,8 +33,8 @@ export function Navbar() {
   const notifications = [
     {
       id: 'n1',
-      title: 'Ovulation Prediction Day!',
-      subtitle: 'High chance of ovulation & fertility window',
+      title: dict.navbar.ovulationNotif,
+      subtitle: dict.navbar.ovulationSub,
       icon: Heart,
       iconColor: 'bg-brand-purpleLight text-brand-purple',
       time: 'Just now',
@@ -38,8 +42,8 @@ export function Navbar() {
     },
     {
       id: 'n2',
-      title: 'Today is Your Day',
-      subtitle: 'Energy is rising. Take 30 mins for gentle movement',
+      title: dict.navbar.energyNotif,
+      subtitle: dict.navbar.energySub,
       icon: Smile,
       iconColor: 'bg-pastel-peach text-brand-pink',
       time: '2h ago',
@@ -47,8 +51,8 @@ export function Navbar() {
     },
     {
       id: 'n3',
-      title: 'Smart Cart Swap Ready',
-      subtitle: 'Zepto: Slurrp Farm Millet Noodles suggested',
+      title: dict.navbar.smartCartNotif,
+      subtitle: dict.navbar.smartCartSub,
       icon: ShoppingCart,
       iconColor: 'bg-pastel-yellow text-amber-800',
       time: '4h ago',
@@ -56,8 +60,8 @@ export function Navbar() {
     },
     {
       id: 'n4',
-      title: 'Medicine Reminder',
-      subtitle: 'Thyronorm 25mcg taken • Metformin due with dinner',
+      title: dict.navbar.medsNotif,
+      subtitle: dict.navbar.medsSub,
       icon: CheckCircle2,
       iconColor: 'bg-pastel-mint text-emerald-700',
       time: '6h ago',
@@ -74,7 +78,7 @@ export function Navbar() {
             <Link href="/today" className="flex items-center gap-2">
               <div className="flex flex-col">
                 <span className="text-[11px] font-medium text-rose-200/70 leading-none">
-                  Welcome
+                  {dict.navbar.welcome}
                 </span>
                 <span className="font-heading text-base font-bold text-white tracking-tight">
                   {currentPersona.name}
@@ -113,10 +117,10 @@ export function Navbar() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="font-heading text-lg font-bold text-slate-900">
-                  Notification
+                  {dict.navbar.notifications}
                 </span>
                 <span className="rounded-full bg-brand-pinkLight px-2 py-0.5 text-[10px] font-bold text-brand-pink">
-                  3 New
+                  {dict.navbar.unreadCount}
                 </span>
               </div>
               <button
@@ -138,15 +142,15 @@ export function Navbar() {
                       <Sparkles className="w-3.5 h-3.5" />
                     </span>
                     <span className="text-xs font-bold text-indigo-950 font-heading">
-                      Ritu noticed • Pattern Watch
+                      {dict.navbar.patternWatchTitle}
                     </span>
                   </div>
                   <span className="text-[10px] font-semibold text-brand-purple bg-white px-2 py-0.5 rounded-full border border-indigo-200">
-                    High Confidence
+                    {dict.navbar.patternWatchConfidence}
                   </span>
                 </div>
                 <p className="text-xs text-slate-700 mt-2 leading-relaxed">
-                  Your last 3 cycles were 38, 41 and 45 days. Long gaps are worth raising with Dr. Sen.
+                  {dict.navbar.patternWatchDesc}
                 </p>
                 <div className="mt-2.5 flex items-center gap-2">
                   <Link
@@ -154,14 +158,14 @@ export function Navbar() {
                     onClick={() => setNotificationsOpen(false)}
                     className="inline-flex items-center gap-1 rounded-xl bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 hover:bg-brand-purpleDark shadow-xs transition"
                   >
-                    + Add to visit questions
+                    {dict.navbar.addQuestionsBtn}
                   </Link>
                   <Link
                     href="/labs"
                     onClick={() => setNotificationsOpen(false)}
                     className="inline-flex items-center gap-1 rounded-xl bg-white text-brand-purple border border-indigo-200 text-[11px] font-semibold px-2.5 py-1.5 hover:bg-indigo-50 transition"
                   >
-                    Book test
+                    {dict.navbar.bookTestBtn}
                   </Link>
                 </div>
               </div>

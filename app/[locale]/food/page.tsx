@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +28,8 @@ const CATEGORIES = ['All', 'Breakfast', 'Roti & Breads', 'Dals & Curries', 'Snac
 export default function FoodPage() {
   const t = useTranslations('food');
   const tCommon = useTranslations('common');
-  const locale = useLocale() as 'en' | 'hi' | 'te' | 'ta';
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -142,15 +145,15 @@ export default function FoodPage() {
             onClick={() => setMealPlanOpen(true)}
             className="rounded-full bg-white/20 hover:bg-white/30 text-white px-3 py-1 text-xs font-bold transition shadow-xs"
           >
-            🗓️ Plan my week
+            🗓️ {dict.food.planWeek}
           </button>
         </div>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          PCOS Nutrition &amp; Glycemic Tracker
+          {dict.food.headerTitle}
         </h1>
         <p className="mt-1 text-xs text-sage-light max-w-md mx-auto">
-          Tailored for Indian kitchens. Scores dishes by fiber-to-carb ratio, glycemic impact, and provides smart swaps.
+          {dict.food.headerSub}
         </p>
 
         {/* View Switcher: Daily Foods vs Fasting Days */}
@@ -162,7 +165,7 @@ export default function FoodPage() {
               foodViewMode === 'daily' ? 'bg-white text-forest font-bold shadow-xs' : 'text-white'
             }`}
           >
-            Daily Foods &amp; Log
+            {dict.food.tabDaily}
           </button>
           <button
             type="button"
@@ -171,7 +174,7 @@ export default function FoodPage() {
               foodViewMode === 'fasting' ? 'bg-white text-forest font-bold shadow-xs' : 'text-white'
             }`}
           >
-            🌙 Fasting Days (Vrat Guide)
+            {dict.food.tabFasting}
           </button>
         </div>
       </div>

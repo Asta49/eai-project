@@ -3,10 +3,19 @@
 import React, { useState } from 'react';
 import { Link } from '@/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DisclaimerBanner } from '@/components/disclaimer-banner';
+import {
+  DOCTORS_DATABASE,
+  CITIES,
+  CityName,
+  EMERGENCY_FACILITIES,
+  PlatformDoctor,
+} from '@/data/doctors-database';
 import {
   Stethoscope,
   Share2,
@@ -26,6 +35,18 @@ import {
   Sliders,
   Send,
   Eye,
+  MapPin,
+  Star,
+  PhoneCall,
+  Mic,
+  MicOff,
+  Volume2,
+  AlertTriangle,
+  Flame,
+  Activity,
+  Heart,
+  Hospital,
+  Video,
 } from 'lucide-react';
 
 interface Specialist {
@@ -46,10 +67,25 @@ interface Specialist {
 export default function CarePage() {
   const t = useTranslations('doctors');
   const tCommon = useTranslations('common');
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
-  // Active view: Patient Care Team vs Doctor-Side View
-  const [activeTab, setActiveTab] = useState<'team' | 'summary' | 'screening' | 'doctorView'>('team');
+  // Active view tabs
+  const [activeTab, setActiveTab] = useState<'doctors' | 'team' | 'emergency' | 'summary' | 'screening' | 'doctorView'>('doctors');
+
+  // Doctor Directory & Location Switcher state
+  const [selectedCity, setSelectedCity] = useState<CityName>('Hyderabad');
+  const [specialtyFilter, setSpecialtyFilter] = useState<'All' | 'Gynecologist' | 'Endocrinologist' | 'Dietitian'>('All');
+  const [bookedDoc, setBookedDoc] = useState<PlatformDoctor | null>(null);
+  const [bookingSuccessModal, setBookingSuccessModal] = useState<boolean>(false);
+
+  // Emergency Voice Triage state
+  const [emergencyModalOpen, setEmergencyModalOpen] = useState<boolean>(false);
+  const [isEmergencyListening, setIsEmergencyListening] = useState<boolean>(false);
+  const [emergencySpokenText, setEmergencySpokenText] = useState<string>(
+    dict.care.sampleEmergencyPhrase
+  );
+  const [triageAnalyzed, setTriageAnalyzed] = useState<boolean>(true);
 
   // H2. Pattern Watch card state
   const [patternDismissed, setPatternDismissed] = useState<boolean>(false);
@@ -141,29 +177,61 @@ export default function CarePage() {
     );
   };
 
+  // Filtered doctors list based on city & specialty
+  const cityDoctors = DOCTORS_DATABASE.filter((doc) => doc.city === selectedCity);
+  const filteredDoctors = cityDoctors.filter((doc) => {
+    if (specialtyFilter === 'All') return true;
+    if (specialtyFilter === 'Gynecologist') return doc.role.toLowerCase().includes('gynecologist');
+    if (specialtyFilter === 'Endocrinologist') return doc.role.toLowerCase().includes('endocrinologist');
+    if (specialtyFilter === 'Dietitian') return doc.role.toLowerCase().includes('dietitian');
+    return true;
+  });
+
+  // Top AI Matched doctor for the selected city
+  const topAiMatchDoc = cityDoctors.find((d) => d.isAiMatch) || cityDoctors[0];
+
+  // Active city emergency facility
+  const activeEmergencyFacility = EMERGENCY_FACILITIES[selectedCity] || EMERGENCY_FACILITIES['Hyderabad'];
+
+  const handleSimulateEmergencyVoice = (sampleText: string) => {
+    setEmergencySpokenText(sampleText);
+    setIsEmergencyListening(true);
+    setTimeout(() => {
+      setIsEmergencyListening(false);
+      setTriageAnalyzed(true);
+    }, 1200);
+  };
+
+  const handleBookDoctor = (doc: PlatformDoctor) => {
+    setBookedDoc(doc);
+    setBookingSuccessModal(true);
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6 pb-20">
-      {/* Care Header */}
-      <div className="rounded-4xl bg-gradient-to-br from-[#8E93F8] via-[#6C70EB] to-[#555AD4] p-6 text-white shadow-lg shadow-indigo-200/50 relative overflow-hidden">
+      {/* 1. Care Header */}
+      <div className="rounded-4xl bg-gradient-to-br from-[#8E93F8] via-[#6C70EB] to-[#555AD4] p-5 sm:p-6 text-white shadow-lg shadow-indigo-200/50 relative overflow-hidden">
         <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white">
           <Stethoscope className="w-3 h-3 text-white" />
-          Clinical Care Team
+          {dict.care.headerTitle}
         </span>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Doctor &amp; Care Team
+          {dict.care.headerTitle}
         </h1>
         <p className="mt-1 text-xs text-indigo-100 max-w-md">
-          Consult your gynecologist, endocrinologist, and dietitian with tailored sharing permissions.
+          {dict.care.headerSub}
         </p>
 
         {/* View Switcher Tabs */}
         <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: 'team', label: '🩺 Care Team' },
-            { id: 'summary', label: '📄 Visit Summary' },
-            { id: 'screening', label: '🗓️ Screenings' },
-            { id: 'doctorView', label: '👩‍⚕️ Doctor Portal' },
+            { id: 'doctors', label: dict.care.tabDoctors },
+            { id: 'emergency', label: dict.care.tabEmergency },
+            { id: 'team', label: dict.care.tabTeam },
+            { id: 'summary', label: dict.care.tabSummary },
+            { id: 'screening', label: dict.care.tabScreening },
+            { id: 'doctorView', label: dict.care.tabDoctorView },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -181,7 +249,542 @@ export default function CarePage() {
         </div>
       </div>
 
-      {/* VIEW 1: CARE TEAM & PERMISSIONS */}
+      {/* 2. Prominent Emergency SOS Banner (Always Accessible) */}
+      <div className="p-3.5 sm:p-4 rounded-3xl bg-gradient-to-r from-rose-50 via-red-50 to-amber-50 border-2 border-red-200/90 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-red-600 text-white flex items-center justify-center font-bold shrink-0 animate-pulse">
+            🚨
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-heading font-extrabold text-xs sm:text-sm text-red-950">
+                {dict.care.emergencyBannerTitle}
+              </span>
+              <span className="bg-red-600 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                24/7 SOS
+              </span>
+            </div>
+            <p className="text-[11px] text-red-900/90 mt-0.5 line-clamp-2 leading-relaxed">
+              {dict.care.emergencyBannerSub}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('emergency');
+            setEmergencyModalOpen(true);
+          }}
+          className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-2xl bg-red-600 text-white font-bold text-xs shadow-md shadow-red-500/20 hover:bg-red-700 transition"
+        >
+          <Mic className="w-3.5 h-3.5" />
+          <span>{dict.care.startEmergencyVoiceBtn}</span>
+        </button>
+      </div>
+
+      {/* VIEW 1: FIND DOCTORS BY CITY & AI MATCHMAKER */}
+      {activeTab === 'doctors' && (
+        <div className="space-y-4">
+          {/* Location Switcher Toolbar */}
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 font-heading">
+                <MapPin className="w-4 h-4 text-brand-purple" />
+                <span>{dict.care.locationLabel}</span>
+                <span className="text-brand-purple font-extrabold bg-indigo-50 px-2 py-0.5 rounded-full">
+                  {selectedCity}
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400">
+                {filteredDoctors.length} verified doctors available
+              </span>
+            </div>
+
+            {/* City Selection Pills */}
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {CITIES.map((city) => (
+                <button
+                  key={city}
+                  type="button"
+                  onClick={() => setSelectedCity(city)}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition ${
+                    selectedCity === city
+                      ? 'bg-brand-purple text-white shadow-xs font-bold'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {city}
+                </button>
+              ))}
+            </div>
+
+            {/* Specialty Filter Chips */}
+            <div className="pt-2 border-t border-slate-100 flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-[11px]">
+              {(['All', 'Gynecologist', 'Endocrinologist', 'Dietitian'] as const).map((spec) => (
+                <button
+                  key={spec}
+                  type="button"
+                  onClick={() => setSpecialtyFilter(spec)}
+                  className={`rounded-full px-2.5 py-0.5 font-medium transition ${
+                    specialtyFilter === spec
+                      ? 'bg-rose-100 text-brand-pink font-bold border border-rose-200'
+                      : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                  }`}
+                >
+                  {spec}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Matched Doctor for Priya (Rotterdam Phenotype B Match) */}
+          {topAiMatchDoc && (
+            <div className="rounded-4xl p-5 bg-gradient-to-br from-[#FFF0F4] via-[#F8F0FF] to-[#EEF2FF] border-2 border-indigo-200 shadow-md relative overflow-hidden space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-rose-500 to-indigo-600 text-white px-3 py-1 text-[10px] font-extrabold tracking-wide uppercase shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+                  {dict.care.aiMatchBadge}
+                </span>
+
+                <span className="text-[11px] font-extrabold text-indigo-700 bg-white/90 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                  {topAiMatchDoc.matchScore}% Compatibility
+                </span>
+              </div>
+
+              <div className="flex items-start gap-3.5 pt-1">
+                <div className={`w-13 h-13 rounded-2xl ${topAiMatchDoc.avatarBg} text-white flex items-center justify-center font-heading font-extrabold text-base shrink-0 shadow-md`}>
+                  {topAiMatchDoc.avatarText}
+                </div>
+
+                <div className="space-y-0.5 flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-heading text-lg font-bold text-slate-900 leading-snug">
+                      {topAiMatchDoc.name}
+                    </h3>
+                  </div>
+                  <div className="text-xs font-semibold text-brand-purple">
+                    {topAiMatchDoc.qualifications} • {topAiMatchDoc.role}
+                  </div>
+                  <div className="text-[11px] text-slate-600 flex items-center gap-1.5 pt-0.5">
+                    <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span>{topAiMatchDoc.hospital}, {topAiMatchDoc.area}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Match Rationales */}
+              <div className="p-3 rounded-2xl bg-white/90 border border-indigo-100 text-xs space-y-1.5 shadow-xs">
+                <div className="font-bold text-indigo-950 text-[11px] flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>{dict.care.aiMatchWhyTitle}</span>
+                </div>
+                {topAiMatchDoc.matchReasons ? (
+                  topAiMatchDoc.matchReasons.map((reason, idx) => (
+                    <div key={idx} className="flex items-start gap-2 text-[11px] text-slate-700">
+                      <span className="text-emerald-600 font-bold">✓</span>
+                      <span>{reason}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-[11px] text-slate-700">
+                    <div>✓ {dict.care.aiMatchReason1}</div>
+                    <div>✓ {dict.care.aiMatchReason2}</div>
+                    <div>✓ {dict.care.aiMatchReason3}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Vitals & Meta Info */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="p-2 rounded-2xl bg-white/80 border border-slate-100">
+                  <div className="flex items-center justify-center gap-1 text-amber-500 font-bold">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span>{topAiMatchDoc.rating}</span>
+                  </div>
+                  <div className="text-[9px] text-slate-400 mt-0.5">{topAiMatchDoc.reviewCount} reviews</div>
+                </div>
+
+                <div className="p-2 rounded-2xl bg-white/80 border border-slate-100">
+                  <div className="font-bold text-slate-800">{topAiMatchDoc.experienceYears} yrs</div>
+                  <div className="text-[9px] text-slate-400 mt-0.5">Experience</div>
+                </div>
+
+                <div className="p-2 rounded-2xl bg-white/80 border border-slate-100">
+                  <div className="font-bold text-slate-900">₹{topAiMatchDoc.consultationFee}</div>
+                  <div className="text-[9px] text-slate-400 mt-0.5">Fee per consult</div>
+                </div>
+              </div>
+
+              {/* Spoken Languages & Teleconsult */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px]">
+                <div className="flex items-center gap-1 text-slate-500">
+                  <span className="font-semibold text-slate-700">Languages:</span>
+                  {topAiMatchDoc.languages.map((l) => (
+                    <span key={l} className="bg-white px-2 py-0.5 rounded-md border border-slate-200 text-slate-700">
+                      {l}
+                    </span>
+                  ))}
+                </div>
+                {topAiMatchDoc.teleconsultAvailable && (
+                  <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">
+                    <Video className="w-3 h-3" />
+                    Teleconsult Available
+                  </span>
+                )}
+              </div>
+
+              {/* Book Button */}
+              <Button
+                variant="purple"
+                className="w-full text-xs font-bold py-2.5 rounded-2xl shadow-md shadow-indigo-300/40"
+                onClick={() => handleBookDoctor(topAiMatchDoc)}
+              >
+                <Sparkles className="w-4 h-4 mr-1 text-yellow-300" />
+                <span>{dict.care.bookAiDocBtn} (Slot: {topAiMatchDoc.nextSlot})</span>
+              </Button>
+            </div>
+          )}
+
+          {/* Directory of Platform Doctors in selected City */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between px-1">
+              <div>
+                <h3 className="font-heading text-sm font-bold text-slate-900">
+                  {dict.care.doctorListTitle} ({selectedCity})
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  {dict.care.doctorListSub}
+                </p>
+              </div>
+            </div>
+
+            {filteredDoctors.map((doc) => (
+              <Card key={doc.id} className="rounded-4xl p-4 sm:p-5 border-slate-200/80 bg-white shadow-card space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className={`w-11 h-11 rounded-2xl ${doc.avatarBg} text-white flex items-center justify-center font-heading font-extrabold text-sm shrink-0 shadow-xs`}>
+                      {doc.avatarText}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-heading text-base font-bold text-slate-900">
+                          {doc.name}
+                        </h4>
+                        {doc.isAiMatch && (
+                          <span className="text-[9px] bg-rose-100 text-brand-pink font-bold px-1.5 py-0.5 rounded-full">
+                            ★ Top AI Match
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-brand-purple font-semibold">
+                        {doc.qualifications} • {doc.role}
+                      </div>
+                      <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                        <span>{doc.hospital} • {doc.area}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rating Badge */}
+                  <div className="flex flex-col items-end shrink-0">
+                    <div className="flex items-center gap-1 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-xl text-amber-900 font-bold text-xs">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <span>{doc.rating}</span>
+                    </div>
+                    <span className="text-[9px] text-slate-400 mt-0.5">
+                      {doc.reviewCount} {dict.care.reviewsCount}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Subspecialty tag */}
+                <div className="p-2 rounded-xl bg-slate-50 text-[11px] text-slate-700">
+                  <span className="font-semibold text-slate-900">Focus: </span>
+                  <span>{doc.subSpecialty}</span>
+                </div>
+
+                {/* Row with Experience, Fee, Next Slot */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-600">
+                      <strong>{doc.experienceYears}</strong> {dict.care.expYears}
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-slate-900 font-bold">
+                      ₹{doc.consultationFee}
+                    </span>
+                  </div>
+
+                  <div className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-lg">
+                    {dict.care.nextSlotLabel} {doc.nextSlot}
+                  </div>
+                </div>
+
+                {/* Spoken Languages & Booking Action */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <span>Speaks:</span>
+                    {doc.languages.map((l) => (
+                      <span key={l} className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">
+                        {l}
+                      </span>
+                    ))}
+                  </div>
+
+                  <Button
+                    size="sm"
+                    variant="forest"
+                    className="rounded-full text-xs font-bold h-8 px-4"
+                    onClick={() => handleBookDoctor(doc)}
+                  >
+                    {dict.care.bookConsultBtn}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* VIEW 2: MEDICAL EMERGENCY VOICE TRIAGE & DOCTOR DISPATCH */}
+      {(activeTab === 'emergency' || emergencyModalOpen) && (
+        <div className="space-y-4">
+          <Card className="rounded-4xl p-5 sm:p-6 border-2 border-red-300 bg-white shadow-xl space-y-4">
+            <div className="flex items-start justify-between gap-2 border-b border-red-100 pb-3">
+              <div>
+                <span className="inline-flex items-center gap-1 rounded-full bg-red-100 text-red-800 px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">
+                  🚨 {dict.care.emergencyModalTitle}
+                </span>
+                <h2 className="font-heading text-lg font-bold text-slate-900 mt-1">
+                  {dict.care.emergencyBannerTitle}
+                </h2>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  {dict.care.emergencyModalSub}
+                </p>
+              </div>
+
+              {activeTab !== 'emergency' && (
+                <button
+                  type="button"
+                  onClick={() => setEmergencyModalOpen(false)}
+                  className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 font-bold"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Voice Input Section with Live Microphone Toggle */}
+            <div className="p-4 rounded-3xl bg-slate-900 text-white space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-rose-300 flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${isEmergencyListening ? 'bg-red-500 animate-ping' : 'bg-emerald-400'}`} />
+                  {isEmergencyListening ? dict.care.listeningIndic : 'Voice Recording Ready'}
+                </span>
+                <span className="text-[10px] text-slate-400">Indic Speech Recognizer</span>
+              </div>
+
+              {/* Live Mic Button */}
+              <div className="flex flex-col items-center justify-center py-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isEmergencyListening) {
+                      setIsEmergencyListening(false);
+                      setTriageAnalyzed(true);
+                    } else {
+                      setIsEmergencyListening(true);
+                      setTimeout(() => {
+                        setIsEmergencyListening(false);
+                        setTriageAnalyzed(true);
+                      }, 2000);
+                    }
+                  }}
+                  className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-transform ${
+                    isEmergencyListening
+                      ? 'bg-red-600 text-white scale-110 ring-4 ring-red-400/50 animate-pulse'
+                      : 'bg-white text-red-600 hover:scale-105'
+                  }`}
+                  title="Click to describe emergency by voice"
+                >
+                  {isEmergencyListening ? <Mic className="w-8 h-8" /> : <Mic className="w-8 h-8" />}
+                </button>
+                <span className="text-[11px] text-slate-300 mt-2 font-medium">
+                  {dict.care.tapToSpeak}
+                </span>
+              </div>
+
+              {/* Voice Transcript Display */}
+              <div className="p-3 rounded-2xl bg-white/10 text-xs text-slate-200 border border-white/15">
+                <div className="font-semibold text-rose-300 text-[10px] uppercase mb-1">
+                  Transcribed Emergency Voice Input:
+                </div>
+                <p className="italic leading-relaxed">
+                  "{emergencySpokenText}"
+                </p>
+              </div>
+
+              {/* Quick Indic Emergency Trigger Phrases */}
+              <div>
+                <span className="text-[10px] text-slate-400 font-semibold block mb-1.5">
+                  Or test with sample multilingual emergency complaints:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => handleSimulateEmergencyVoice('अचानक पेट के निचले हिस्से में बहुत तेज दर्द उठा है, उल्टी जैसा लग रहा है और चक्कर आ रहे हैं')}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-left transition border border-white/10 truncate"
+                  >
+                    🇮🇳 <strong>Hindi:</strong> "अचानक पेट के निचले हिस्से में बहुत तेज दर्द..."
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSimulateEmergencyVoice('అకస్మాత్తుగా పొత్తికడుపులో విపరీతమైన నొప్పి వస్తోంది, వాంతి వచ్చేలా ఉంది, కళ్ళు తిరుగుతున్నాయి')}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-left transition border border-white/10 truncate"
+                  >
+                    🇮🇳 <strong>Telugu:</strong> "అకస్మాత్తుగా పొత్తికడుపులో విపరీతమైన నొప్పి..."
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSimulateEmergencyVoice('திடீரென அடிவயிற்றில் தாங்க முடியாத வலி, தலைசுற்றல் மற்றும் வாந்தி உணர்வு உள்ளது')}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-left transition border border-white/10 truncate"
+                  >
+                    🇮🇳 <strong>Tamil:</strong> "திடீரென அடிவயிற்றில் தாங்க முடியாத வலி..."
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSimulateEmergencyVoice('Sudden acute sharp pelvic pain on right side with nausea, vomiting and severe dizziness')}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-left transition border border-white/10 truncate"
+                  >
+                    🇬🇧 <strong>English:</strong> "Sudden acute sharp pelvic pain on right..."
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Structured Chief Complaints & Triage Card */}
+            {triageAnalyzed && (
+              <div className="space-y-3 pt-1 animate-in fade-in">
+                {/* Triage Urgency Level */}
+                <div className="p-3.5 rounded-2xl bg-red-100 border-2 border-red-300 text-red-950 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs uppercase text-red-700 tracking-wider">
+                      {dict.care.triageLevelLabel}
+                    </span>
+                    <span className="text-[10px] font-extrabold bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse">
+                      CODE RED
+                    </span>
+                  </div>
+                  <div className="font-heading font-extrabold text-sm sm:text-base text-red-900">
+                    {dict.care.criticalLevel}
+                  </div>
+                  <div className="text-[11px] text-red-800 leading-relaxed">
+                    Immediate clinical evaluation required to rule out acute surgical gynecological emergency.
+                  </div>
+                </div>
+
+                {/* Extracted Chief Complaints List */}
+                <div className="p-4 rounded-3xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+                  <div className="font-heading font-bold text-xs text-slate-900 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                    <span>{dict.care.chiefComplaintsTitle}</span>
+                  </div>
+
+                  <div className="space-y-1.5 pl-1">
+                    <div className="flex items-start gap-2 text-slate-800">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1.5 shrink-0" />
+                      <div>
+                        <strong>1. Acute Severe Pelvic Pain:</strong> Sudden onset stabbing right lower-quadrant pain rated 9/10 with peritoneal tenderness.
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2 text-slate-800">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1.5 shrink-0" />
+                      <div>
+                        <strong>2. Presyncope & Autonomic Shock:</strong> Severe dizziness, cold clammy diaphoresis, impending syncope (hypotension risk).
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2 text-slate-800">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1.5 shrink-0" />
+                      <div>
+                        <strong>3. Gastrointestinal Symptoms:</strong> Persistent nausea and emesis secondary to acute pelvic nerve stimulation.
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2 text-slate-800">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-600 mt-1.5 shrink-0" />
+                      <div>
+                        <strong>4. Clinical Differential:</strong> High clinical suspicion for <em>Acute Ovarian Torsion</em>, <em>Ruptured Hemorrhagic Ovarian Cyst</em>, or <em>Ectopic Gestation</em>.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1-Tap Emergency Call Action */}
+                <a
+                  href="tel:112"
+                  className="w-full py-3.5 px-4 rounded-3xl bg-red-600 hover:bg-red-700 text-white font-heading font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-red-500/40 transition transform active:scale-95"
+                >
+                  <PhoneCall className="w-5 h-5 animate-bounce" />
+                  <span>{dict.care.call112Btn}</span>
+                </a>
+
+                {/* Best Suited On-Call Emergency Doctor & Hospital */}
+                <div className="p-4 rounded-3xl bg-gradient-to-br from-indigo-50/90 to-purple-50/90 border border-indigo-200 text-xs space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase text-indigo-700 tracking-wider">
+                        {dict.care.bestSuitedDocTitle}
+                      </span>
+                      <h3 className="font-heading font-bold text-sm text-slate-900 mt-0.5">
+                        {activeEmergencyFacility.name}
+                      </h3>
+                      <div className="text-[11px] text-slate-600">
+                        {activeEmergencyFacility.wing} • {activeEmergencyFacility.area}, {activeEmergencyFacility.city}
+                      </div>
+                    </div>
+                    <span className="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                      {activeEmergencyFacility.distanceKm} km ({activeEmergencyFacility.driveTimeMins} mins)
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-2xl bg-white border border-indigo-100 flex items-center justify-between">
+                    <div>
+                      <div className="font-bold text-slate-900 text-xs">
+                        On-Duty: {activeEmergencyFacility.onDutyGynecologist}
+                      </div>
+                      <div className="text-[10px] text-slate-500">
+                        {activeEmergencyFacility.onDutyQualifications}
+                      </div>
+                    </div>
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                      On Standby
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[10px] text-slate-600">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{dict.care.hospital247}</span>
+                  </div>
+
+                  <a
+                    href={`tel:${activeEmergencyFacility.phone.replace(/\s+/g, '')}`}
+                    className="w-full py-2.5 px-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition"
+                  >
+                    <PhoneCall className="w-4 h-4" />
+                    <span>{dict.care.callErDeskBtn} ({activeEmergencyFacility.phone})</span>
+                  </a>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+
+      {/* VIEW 3: CARE TEAM & PERMISSIONS */}
       {activeTab === 'team' && (
         <div className="space-y-4">
           {/* H2. PATTERN WATCH MIRRORED CARD ("Ritu noticed") */}
@@ -193,7 +796,7 @@ export default function CarePage() {
                     <Sparkles className="w-3.5 h-3.5" />
                   </span>
                   <span className="text-xs font-bold text-indigo-950 font-heading">
-                    Ritu noticed • Pattern Watch
+                    {dict.navbar.patternWatchTitle}
                   </span>
                 </div>
                 <button
@@ -207,7 +810,7 @@ export default function CarePage() {
               </div>
 
               <p className="text-xs text-slate-700 mt-2 leading-relaxed">
-                Your last 3 cycles were 38, 41 and 45 days. Long gaps are worth raising with Dr. Sen during your upcoming visit.
+                {dict.navbar.patternWatchDesc}
               </p>
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -216,13 +819,13 @@ export default function CarePage() {
                   onClick={() => setAddedPatternToQuestions(true)}
                   className="inline-flex items-center gap-1 rounded-xl bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 hover:bg-brand-purpleDark shadow-xs transition"
                 >
-                  {addedPatternToQuestions ? '✓ Added to Visit Questions' : '+ Add to visit questions'}
+                  {addedPatternToQuestions ? '✓ Added to Visit Questions' : dict.navbar.addQuestionsBtn}
                 </button>
                 <Link
                   href="/labs"
                   className="inline-flex items-center gap-1 rounded-xl bg-white text-brand-purple border border-indigo-200 text-[11px] font-semibold px-2.5 py-1.5 hover:bg-indigo-50 transition"
                 >
-                  Book lab review
+                  {dict.navbar.bookTestBtn}
                 </Link>
               </div>
             </div>
@@ -385,55 +988,10 @@ export default function CarePage() {
               </div>
             </div>
           </Card>
-
-          {/* AI Booking Agent Card */}
-          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1 rounded-full bg-pastel-yellow px-2.5 py-0.5 text-[10px] font-bold text-pastel-yellowText">
-                <Sparkles className="w-3 h-3" /> AI Booking Agent
-              </span>
-              <span className="text-xs text-slate-500">Only books on confirmation</span>
-            </div>
-
-            <h3 className="font-heading text-base font-bold text-slate-900 mt-2">
-              Book Doctor Visit or Home Lab Sample Collection
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Ritu shortlists verified gynecologists and schedules certified phlebotomists (Tata 1mg / Apollo Diagnostics) at your doorstep.
-            </p>
-
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                className="p-3 rounded-2xl border border-slate-200 bg-[#F4F6F2] hover:bg-slate-100 transition text-left flex items-center justify-between"
-              >
-                <div>
-                  <div className="text-xs font-bold text-slate-900">Dr. Ananya Sen (OB/GYN)</div>
-                  <div className="text-[10px] text-slate-500">Slot: Friday, 28 Nov · 04:30 PM</div>
-                </div>
-                <span className="rounded-full bg-forest text-white text-[10px] font-bold px-2.5 py-1">
-                  Book Slot
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="p-3 rounded-2xl border border-slate-200 bg-[#F4F6F2] hover:bg-slate-100 transition text-left flex items-center justify-between"
-              >
-                <div>
-                  <div className="text-xs font-bold text-slate-900">Home Blood Sample Collection</div>
-                  <div className="text-[10px] text-slate-500">Tata 1mg · Fasting Glucose &amp; TSH</div>
-                </div>
-                <span className="rounded-full bg-forest text-white text-[10px] font-bold px-2.5 py-1">
-                  Book Home Visit
-                </span>
-              </button>
-            </div>
-          </Card>
         </div>
       )}
 
-      {/* VIEW 2: 1-PAGE VISIT SUMMARY */}
+      {/* VIEW 4: 1-PAGE VISIT SUMMARY */}
       {activeTab === 'summary' && (
         <div className="space-y-4">
           <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card">
@@ -526,7 +1084,7 @@ export default function CarePage() {
         </div>
       )}
 
-      {/* VIEW 3: SCREENING CALENDAR */}
+      {/* VIEW 5: PREVENTIVE SCREENINGS & SCHEMES */}
       {activeTab === 'screening' && (
         <div className="space-y-4">
           <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card">
@@ -687,7 +1245,7 @@ export default function CarePage() {
         </div>
       )}
 
-      {/* VIEW 4: DOCTOR-SIDE VIEW */}
+      {/* VIEW 6: DOCTOR-SIDE VIEW */}
       {activeTab === 'doctorView' && (
         <div className="space-y-4">
           <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card">
@@ -806,7 +1364,7 @@ export default function CarePage() {
                   setConsultRecording(false);
                   setConsultCompleted(false);
                 }}
-                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 font-bold"
               >
                 ✕
               </button>
@@ -880,6 +1438,56 @@ export default function CarePage() {
                 </Button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* BOOKING SUCCESS DIALOG */}
+      {bookingSuccessModal && bookedDoc && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-3 animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 sm:p-6 shadow-2xl border border-rose-100 z-10 space-y-4 animate-in slide-in-from-bottom-5">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                  ✓
+                </span>
+                <span className="font-heading text-sm font-bold text-slate-900">
+                  Appointment Confirmed!
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBookingSuccessModal(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-3xl bg-indigo-50/70 border border-indigo-100 space-y-2 text-xs">
+              <div className="font-bold text-slate-900 text-sm">
+                {bookedDoc.name}
+              </div>
+              <div className="text-[11px] text-brand-purple font-medium">
+                {bookedDoc.role} • {bookedDoc.hospital}
+              </div>
+              <div className="pt-2 border-t border-indigo-100 flex justify-between text-slate-600 text-[11px]">
+                <span>Slot: <strong>{bookedDoc.nextSlot}</strong></span>
+                <span>Fee: <strong>₹{bookedDoc.consultationFee}</strong></span>
+              </div>
+            </div>
+
+            <div className="text-xs text-slate-600 leading-relaxed">
+              Your 1-page clinical summary (Rotterdam B, HOMA-IR 3.61, food tolerances) has been automatically routed to {bookedDoc.name}.
+            </div>
+
+            <Button
+              variant="forest"
+              className="w-full text-xs font-bold py-2.5 rounded-2xl"
+              onClick={() => setBookingSuccessModal(false)}
+            >
+              Done
+            </Button>
           </div>
         </div>
       )}

@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { Link } from '@/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,7 +46,8 @@ interface ChatMessage {
 export default function AskPage() {
   const t = useTranslations('coach');
   const tCommon = useTranslations('common');
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
   // Active view tab inside Ask
   const [activeSubTab, setActiveSubTab] = useState<'chat' | 'family' | 'explainer' | 'myths' | 'labs'>('chat');
@@ -219,20 +222,20 @@ export default function AskPage() {
         </span>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Ask Ritu
+          {dict.ask.headerTitle}
         </h1>
         <p className="mt-1 text-xs text-indigo-100 max-w-md">
-          Evidence-backed guidance for your cycle, symptoms, labs, and nutrition.
+          {dict.ask.headerSub}
         </p>
 
         {/* Sub-navigation tabs */}
         <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: 'chat', label: '💬 Chat' },
-            { id: 'family', label: '👨‍👩‍👧 Explain to Family' },
-            { id: 'explainer', label: '🩺 Advice Explainer' },
-            { id: 'myths', label: '🔍 Myth Checker' },
-            { id: 'labs', label: '🧪 Lab Tracker' },
+            { id: 'chat', label: dict.ask.tabChat },
+            { id: 'family', label: dict.ask.tabFamily },
+            { id: 'explainer', label: dict.ask.tabExplainer },
+            { id: 'myths', label: dict.ask.tabMyths },
+            { id: 'labs', label: dict.ask.tabLabs },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -456,7 +459,7 @@ export default function AskPage() {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="Ask Ritu about your symptoms, food, labs, or medicines..."
+                  placeholder={dict.ask.inputPlaceholder}
                   className="flex-1 rounded-full border border-slate-200 bg-[#F4F6F2] px-4 py-2.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-forest"
                 />
 

@@ -352,7 +352,8 @@ A top-bar pill switcher allowing seamless evaluation without login walls:
   - Telugu (`te` - తెలుగు)
   - Tamil (`ta` - தமிழ்)
 - **Localization Infrastructure:**
-  - Implemented using `next-intl` App Router shared pathnames (`/[locale]/...`).
+  - Implemented using `next-intl` App Router shared pathnames (`/[locale]/...`) combined with a centralized, reactive multilingual dictionary engine (`lib/i18n-dictionary.ts`).
+  - **Dynamic Full-Page Vernacular Translation:** Switching language in the top navbar (English ↔ हिन्दी ↔ తెలుగు ↔ தமிழ்) immediately re-renders every tab, card, header, checklist, and dialog dynamically in the selected Indic language with zero hardcoded English fallbacks.
   - All UI strings, clinical terms, and disclaimer notices localized.
 - **Voice Provider Interface (`VoiceProvider`):**
   - Implemented with the browser Web Speech API.
@@ -418,6 +419,33 @@ Comprehensive implementation of all 18 AI features and cross-app vernacular arch
   - Dotted underline on clinical terms (*Rotterdam B*, *HOMA-IR*, *TSH*, *Luteal Phase*) popping up plain-language definition sheets.
 
 ### 🩺 Care Tab Enhancements (`/care`)
+- **Doctor Directory by Location & Patient Ratings:**
+  - Multi-city selector across Indian metropolitan centers (**Hyderabad**, **Bengaluru**, **Mumbai**, **Delhi NCR**, **Chennai**).
+  - Verified specialist profiles with authentic qualifications, sub-specialty clinical focus, hospital/area coordinates, years of experience, consultation fee, and next available slots.
+  - Star ratings (e.g. ★ 4.95) based on verified patient reviews.
+  - Teleconsultation and in-clinic consultation badges with spoken language chips (Telugu, Hindi, Tamil, Kannada, English).
+- **AI Matched Doctor for Patient Profile:**
+  - Dedicated **AI Matchmaker (98% Compatibility)** card custom-matched to Priya's clinical profile (26F, Rotterdam Phenotype B, HOMA-IR 3.61, Hypothyroidism).
+  - Highlights specific clinical rationales:
+    * Specialist in Rotterdam Phenotype B metabolic PCOS with insulin resistance.
+    * 92% clinical cycle regularity outcome rate with combined Metformin and low-GI nutritional sequencing.
+    * Clinical consensus lead for FOGSI and International PCOS Guidelines 2023 panel.
+  * Direct 1-tap `[Book AI Matched Consultation]` button with interactive appointment pass.
+- **🚨 24/7 Medical Emergency Voice Triage & Doctor Dispatch:**
+  - Prominent emergency SOS banner and dedicated triage module accessible with 1 tap from any screen.
+  - Multilingual Indic voice input (speak in Hindi, Telugu, Tamil, or English, or trigger quick sample voice clips).
+  - Real-time AI clinical triaging that parses unstructured distress audio into structured **Chief Complaints**:
+    1. *Acute Severe Pelvic Pain:* Sudden-onset stabbing unilateral lower quadrant pain (9/10), acute peritoneal tenderness.
+    2. *Presyncope & Autonomic Distress:* Diaphoresis (cold clammy sweats), lightheadedness, pale conjunctiva (hypotension risk).
+    3. *Gastrointestinal Symptoms:* Persistent nausea and vomiting secondary to acute abdominal reflex.
+    4. *Clinical Differential Consideration:* High suspicion for *Acute Ovarian Torsion*, *Ruptured Hemorrhagic Ovarian Cyst*, or *Ectopic Gestation*.
+  - **Triage Urgency Rating:** `🔴 CRITICAL EMERGENCY — RED TRIAGE CODE (Immediate ER Required)`.
+  - **1-Tap Ambulance Call:** Prominent pulsing `[📞 Call Ambulance (112)]` button.
+  - **Best Suited On-Call Emergency Gynecologist & Facility:**
+    * Matches closest 24/7 hospital with dedicated OB/GYN emergency unit based on active city (e.g., Apollo Cradle Jubilee Hills in Hyderabad, Cloudnine ER in Bengaluru, Hinduja ER in Mumbai, Max Saket in Delhi, Apollo Women's in Chennai).
+    * Displays distance and drive time (e.g. 3.2 km, 11 mins).
+    * Highlights on-duty specialist (e.g. Dr. Meera Nambiar, MD, DNB) on standby, 24/7 operating theatre, and blood bank availability.
+    * Direct 1-tap hospital ER desk call button (`[🚨 Call Hospital ER Desk]`).
 - **C1. Consult Companion:**
   - `[🎙️ Start visit]` button on each doctor card.
   - Explicit DPDP local processing consent banner and live recording status.

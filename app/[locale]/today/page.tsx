@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { Link, useRouter } from '@/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +35,8 @@ import {
 
 export default function TodayPage() {
   const router = useRouter();
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
   // Heart mode: 'period' (Pink heart) vs 'ovulation' (Periwinkle heart)
   const [heartMode, setHeartMode] = useState<'period' | 'ovulation'>('period');
@@ -66,13 +70,13 @@ export default function TodayPage() {
   const [workoutsModalOpen, setWorkoutsModalOpen] = useState<boolean>(false);
 
   const weekDays = [
-    { date: 15, day: 'S', isPeriod: false },
-    { date: 16, day: 'M', isPeriod: false },
-    { date: 17, day: 'T', isPeriod: false },
-    { date: 18, day: 'W', isPeriod: true }, // Today
-    { date: 19, day: 'T', isPeriod: false },
-    { date: 20, day: 'F', isPeriod: false },
-    { date: 21, day: 'S', isPeriod: false },
+    { date: 15, day: dict.home.daysOfWeek[0], isPeriod: false },
+    { date: 16, day: dict.home.daysOfWeek[1], isPeriod: false },
+    { date: 17, day: dict.home.daysOfWeek[2], isPeriod: false },
+    { date: 18, day: dict.home.daysOfWeek[3], isPeriod: true }, // Today
+    { date: 19, day: dict.home.daysOfWeek[4], isPeriod: false },
+    { date: 20, day: dict.home.daysOfWeek[5], isPeriod: false },
+    { date: 21, day: dict.home.daysOfWeek[6], isPeriod: false },
   ];
 
   const handleSelectMood = (moodId: string) => {
@@ -121,29 +125,29 @@ export default function TodayPage() {
             {heartMode === 'period' ? (
               <>
                 <span className="text-xs font-semibold text-rose-100 uppercase tracking-wider">
-                  Period:
+                  {dict.home.periodTitle}
                 </span>
                 <h2 className="font-heading text-3xl sm:text-4xl font-extrabold tracking-tight mt-0.5">
-                  Day 18
+                  {dict.home.day18}
                 </h2>
                 <div className="mt-1 text-[10px] font-medium text-rose-100">
-                  Estimated Conception Chance:
+                  {dict.home.conceptionChance}
                 </div>
-                <div className="font-heading text-sm font-bold">Low (8–15%)</div>
+                <div className="font-heading text-sm font-bold">{dict.home.conceptionValue}</div>
                 <div className="text-[9px] text-rose-200/90 leading-none mt-0.5">
-                  Can't predict exactly with irregular cycles
+                  {dict.home.irregularCycleNote}
                 </div>
               </>
             ) : (
               <>
                 <span className="text-xs font-semibold text-indigo-100 uppercase tracking-wider">
-                  Prediction:
+                  {dict.home.ovulationTitle}
                 </span>
                 <h2 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight mt-0.5">
-                  Ovulation
+                  {dict.home.ovulationPred}
                 </h2>
                 <div className="mt-1 text-[11px] font-medium text-indigo-100 max-w-[140px] leading-tight">
-                  High chance of fertile window
+                  {dict.home.fertileWindow}
                 </div>
               </>
             )}
@@ -152,7 +156,7 @@ export default function TodayPage() {
 
         {/* Tap to Toggle Hint */}
         <div className="mt-2 text-[11px] text-slate-400 font-medium">
-          Tap heart to switch view (Period / Ovulation)
+          {dict.home.tapHeartHint}
         </div>
       </div>
 
@@ -162,13 +166,13 @@ export default function TodayPage() {
           <div className="space-y-1 flex-1">
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-blue-900 font-heading">
               <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span>Today’s Forecast</span>
+              <span>{dict.home.forecastTitle}</span>
               <span className="text-[9px] font-semibold bg-blue-100/90 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">
-                High Confidence
+                {dict.home.highConfidence}
               </span>
             </div>
             <p className="text-xs text-blue-950 leading-relaxed font-medium">
-              Day 18. In your last 4 cycles, energy dipped and sugar cravings rose around now. Keep a roasted chana snack handy after 4 pm.
+              {dict.home.forecastText}
             </p>
           </div>
 
@@ -189,7 +193,7 @@ export default function TodayPage() {
         {isSpeakingForecast && (
           <div className="mt-2 px-2.5 py-1.5 rounded-xl bg-blue-100 text-blue-900 text-[11px] flex items-center gap-2 animate-in fade-in">
             <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
-            <span>Ritu is reading aloud in English (Indian accent)</span>
+            <span>{dict.home.speakingNotice}</span>
           </div>
         )}
 
@@ -200,10 +204,10 @@ export default function TodayPage() {
             onClick={() => setForecastExpanded(!forecastExpanded)}
             className="text-[11px] font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1"
           >
-            <span>{forecastExpanded ? 'Hide 3-day outlook' : 'View 3-day outlook'}</span>
+            <span>{forecastExpanded ? dict.home.hideOutlook : dict.home.viewOutlook}</span>
             <ChevronRight className={`w-3 h-3 transition-transform ${forecastExpanded ? 'rotate-90' : ''}`} />
           </button>
-          <span className="text-[10px] text-blue-600/70">From your personal logs</span>
+          <span className="text-[10px] text-blue-600/70">{dict.home.fromLogs}</span>
         </div>
 
         {forecastExpanded && (
@@ -229,7 +233,7 @@ export default function TodayPage() {
               </div>
             </div>
             <div className="text-[10px] text-blue-800/80 italic mt-1 text-center">
-              Guideline safety: If pain rises above 7/10, seek emergency medical care (112).
+              {dict.home.safetyGuideline}
             </div>
           </div>
         )}
@@ -240,13 +244,13 @@ export default function TodayPage() {
         <div className="flex items-center justify-between px-1 mb-3">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 font-heading">
             <CalendarIcon className="w-3.5 h-3.5 text-brand-pink" />
-            <span>November 2026</span>
+            <span>{dict.home.monthName}</span>
           </div>
           <Link
             href="/checkin"
             className="text-[11px] font-semibold text-brand-purple hover:underline"
           >
-            View Calendar
+            {dict.home.viewCalendar}
           </Link>
         </div>
 
@@ -289,11 +293,11 @@ export default function TodayPage() {
       <div>
         <div className="flex items-center justify-between px-1 mb-2.5">
           <h3 className="font-heading text-sm font-bold text-slate-900">
-            Your Mood
+            {dict.home.yourMood}
           </h3>
           {moodSuccess && (
             <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-              ✓ Logged!
+              {dict.home.loggedToast}
             </span>
           )}
         </div>
@@ -308,7 +312,7 @@ export default function TodayPage() {
               <Plus className="w-5 h-5 stroke-[2.5]" />
             </div>
             <span className="text-[10px] font-bold text-brand-purple mt-0.5">
-              Add Mood
+              {dict.home.addMood}
             </span>
           </Link>
 
@@ -323,7 +327,7 @@ export default function TodayPage() {
             }`}
           >
             <span className="text-2xl mb-1">😭</span>
-            <span className="text-[10px] font-semibold text-slate-700">Sad</span>
+            <span className="text-[10px] font-semibold text-slate-700">{dict.home.moodSad}</span>
           </button>
 
           {/* 😫 Badmood */}
@@ -337,7 +341,7 @@ export default function TodayPage() {
             }`}
           >
             <span className="text-2xl mb-1">😫</span>
-            <span className="text-[10px] font-semibold text-slate-700">Badmood</span>
+            <span className="text-[10px] font-semibold text-slate-700">{dict.home.moodBad}</span>
           </button>
 
           {/* 😍 Happy */}
@@ -351,7 +355,7 @@ export default function TodayPage() {
             }`}
           >
             <span className="text-2xl mb-1">😍</span>
-            <span className="text-[10px] font-semibold text-slate-700">Happy</span>
+            <span className="text-[10px] font-semibold text-slate-700">{dict.home.moodHappy}</span>
           </button>
         </div>
       </div>
@@ -360,13 +364,13 @@ export default function TodayPage() {
       <div>
         <div className="flex items-center justify-between px-1 mb-2.5">
           <h3 className="font-heading text-sm font-bold text-slate-900">
-            Article
+            {dict.home.articlesTitle}
           </h3>
           <Link
             href="/ask"
             className="text-[11px] font-semibold text-brand-purple hover:underline flex items-center gap-0.5"
           >
-            See all
+            {dict.home.seeAll}
           </Link>
         </div>
 
@@ -377,14 +381,14 @@ export default function TodayPage() {
               <div className="flex items-center justify-between">
                 <span className="text-base">🎙️</span>
                 <span className="text-[9px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded-full">
-                  75 sec
+                  {dict.home.duration75s}
                 </span>
               </div>
               <div className="font-heading font-bold text-xs text-blue-950 mt-1 leading-snug">
-                Weekly Audio Recap
+                {dict.home.weeklyRecapTitle}
               </div>
               <p className="text-[9px] text-blue-700 line-clamp-1 mt-0.5">
-                Sunday log summary
+                {dict.home.weeklyRecapSub}
               </p>
             </div>
             <div className="flex items-center justify-between gap-1 mt-1">
@@ -393,14 +397,14 @@ export default function TodayPage() {
                 onClick={() => setAudioRecapPlaying(!audioRecapPlaying)}
                 className="flex items-center gap-1 rounded-xl bg-blue-600 text-white px-2 py-1 text-[10px] font-bold hover:bg-blue-700 shadow-xs transition"
               >
-                {audioRecapPlaying ? 'Pause ⏸' : 'Play ▶'}
+                {audioRecapPlaying ? dict.home.pause : dict.home.play}
               </button>
               <button
                 type="button"
                 onClick={() => setAudioTranscriptOpen(!audioTranscriptOpen)}
                 className="text-[9px] text-blue-700 underline font-semibold"
               >
-                {audioTranscriptOpen ? 'Hide' : 'Text'}
+                {audioTranscriptOpen ? dict.home.hideTranscript : dict.home.textTranscript}
               </button>
             </div>
           </div>
@@ -413,15 +417,15 @@ export default function TodayPage() {
             <div>
               <span className="text-lg">🥗</span>
               <div className="font-heading font-bold text-xs text-rose-950 mt-1 leading-snug">
-                Mood Booster
+                {dict.home.moodBooster}
               </div>
             </div>
             <span className="text-[9px] text-rose-600 font-semibold">
-              Smart swaps →
+              {dict.home.smartSwaps}
             </span>
           </Link>
 
-          {/* Card 3: Spread Happiness (Typo Fixed!) */}
+          {/* Card 3: Spread Happiness */}
           <Link
             href="/experiments"
             className="flex flex-col justify-between p-3 rounded-2xl bg-[#E8F8F5] border border-emerald-100/80 hover:scale-[1.02] transition shadow-xs h-32"
@@ -429,11 +433,11 @@ export default function TodayPage() {
             <div>
               <span className="text-lg">✨</span>
               <div className="font-heading font-bold text-xs text-emerald-950 mt-1 leading-snug">
-                Spread Happiness
+                {dict.home.spreadHappiness}
               </div>
             </div>
             <span className="text-[9px] text-emerald-700 font-semibold">
-              Active trials →
+              {dict.home.activeTrials}
             </span>
           </Link>
         </div>
@@ -442,11 +446,11 @@ export default function TodayPage() {
         {audioTranscriptOpen && (
           <div className="mt-2.5 p-3 rounded-2xl bg-white border border-blue-100 text-xs text-slate-700 shadow-xs animate-in fade-in space-y-1">
             <div className="font-bold text-blue-900 text-[11px] flex items-center justify-between">
-              <span>Recap Transcript (Nov 15–21, 2026)</span>
+              <span>{dict.home.weeklyRecapTitle} ({dict.home.monthName})</span>
               <span className="text-slate-400 text-[10px]">Read by Ritu</span>
             </div>
             <p className="text-[11px] leading-relaxed text-slate-600">
-              "Here is your week, Priya: You logged 6 of 7 days. Your energy was highest on Tuesday after the Besan Chilla breakfast. Metformin adherence was 100%. Two mild cramps were recorded around ovulation. Sleep averaged 7.2 hours."
+              {dict.home.recapTranscriptText}
             </p>
           </div>
         )}
@@ -457,10 +461,10 @@ export default function TodayPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 font-heading text-xs font-bold text-slate-900">
             <Pill className="w-3.5 h-3.5 text-brand-pink" />
-            <span>Daily Medicine Checklist</span>
+            <span>{dict.home.medsChecklistTitle}</span>
           </div>
           <span className="text-[10px] text-slate-400 font-semibold">
-            Prescribed by Care Team
+            {dict.home.careTeamPrescribed}
           </span>
         </div>
 
@@ -488,15 +492,15 @@ export default function TodayPage() {
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-900">
-                  Thyronorm 25mcg
+                  {dict.home.thyronormName}
                 </div>
                 <div className="text-[10px] text-slate-500">
-                  Empty stomach • 30m before tea • Dr. Ramesh Gupta
+                  {dict.home.thyronormDesc}
                 </div>
               </div>
             </div>
             <span className="text-[10px] text-rose-600 font-bold">
-              {medsTaken.thyronorm ? 'Taken ✓' : 'Due'}
+              {medsTaken.thyronorm ? dict.home.takenLabel : dict.home.dueLabel}
             </span>
           </div>
 
@@ -523,15 +527,15 @@ export default function TodayPage() {
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-900">
-                  Metformin 500mg
+                  {dict.home.metforminName}
                 </div>
                 <div className="text-[10px] text-slate-500">
-                  With dinner • Dr. Ananya Sen
+                  {dict.home.metforminDesc}
                 </div>
               </div>
             </div>
             <span className="text-[10px] text-slate-400 font-semibold">
-              {medsTaken.metformin ? 'Taken ✓' : 'Evening'}
+              {medsTaken.metformin ? dict.home.takenLabel : dict.home.eveningLabel}
             </span>
           </div>
         </div>
@@ -543,7 +547,7 @@ export default function TodayPage() {
           className="w-full mt-2 py-2.5 px-3 rounded-2xl border border-dashed border-brand-pink text-brand-pink bg-rose-50/50 hover:bg-rose-100/60 font-bold text-xs flex items-center justify-center gap-2 transition"
         >
           <Camera className="w-4 h-4" />
-          <span>+ Scan prescription</span>
+          <span>{dict.home.scanPrescriptionBtn}</span>
         </button>
 
         {prescriptionSaved && (
@@ -558,9 +562,9 @@ export default function TodayPage() {
       <div>
         <div className="flex items-center justify-between px-1 mb-2.5">
           <h3 className="font-heading text-sm font-bold text-slate-900">
-            Care Tools & Services
+            {dict.home.toolsTitle}
           </h3>
-          <span className="text-[11px] text-slate-400 font-medium">1-Tap Access</span>
+          <span className="text-[11px] text-slate-400 font-medium">{dict.home.oneTapAccess}</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -573,8 +577,8 @@ export default function TodayPage() {
               🥗
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900 leading-tight">Food & You</div>
-              <div className="text-[10px] text-slate-500">Tolerances & Thali</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{dict.home.toolFoodTitle}</div>
+              <div className="text-[10px] text-slate-500">{dict.home.toolFoodSub}</div>
             </div>
           </Link>
 
@@ -587,8 +591,8 @@ export default function TodayPage() {
               🧪
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900 leading-tight">Lab Records</div>
-              <div className="text-[10px] text-slate-500">OCR & Trends</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{dict.home.toolLabsTitle}</div>
+              <div className="text-[10px] text-slate-500">{dict.home.toolLabsSub}</div>
             </div>
           </Link>
 
@@ -601,8 +605,8 @@ export default function TodayPage() {
               🔬
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900 leading-tight">N-of-1 Trials</div>
-              <div className="text-[10px] text-slate-500">Personal tests</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{dict.home.toolTrialsTitle}</div>
+              <div className="text-[10px] text-slate-500">{dict.home.toolTrialsSub}</div>
             </div>
           </Link>
 
@@ -615,8 +619,8 @@ export default function TodayPage() {
               🛒
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900 leading-tight">Smart Cart</div>
-              <div className="text-[10px] text-slate-500">Zepto & Blinkit</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{dict.home.toolCartTitle}</div>
+              <div className="text-[10px] text-slate-500">{dict.home.toolCartSub}</div>
             </div>
           </Link>
 
@@ -630,8 +634,8 @@ export default function TodayPage() {
               🏃‍♀️
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900 leading-tight">Workouts</div>
-              <div className="text-[10px] text-slate-500">PCOS & Thyroid</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{dict.home.toolWorkoutsTitle}</div>
+              <div className="text-[10px] text-slate-500">{dict.home.toolWorkoutsSub}</div>
             </div>
           </button>
 
@@ -644,8 +648,8 @@ export default function TodayPage() {
               🌙
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900 leading-tight">Fasting Days</div>
-              <div className="text-[10px] text-slate-500">Navratri & Ekadashi</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{dict.home.toolFastingTitle}</div>
+              <div className="text-[10px] text-slate-500">{dict.home.toolFastingSub}</div>
             </div>
           </Link>
         </div>

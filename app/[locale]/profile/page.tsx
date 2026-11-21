@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { Locale } from '@/i18n';
+import { getDictionary } from '@/lib/i18n-dictionary';
 import { Link } from '@/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,7 +33,8 @@ import {
 export default function ProfilePage() {
   const t = useTranslations('settings');
   const tCommon = useTranslations('common');
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
+  const dict = getDictionary(locale);
 
   // Active view: Profile Baseline vs Calibration Engine vs Smart Cart vs DPDP Privacy
   const [activeTab, setActiveTab] = useState<'profile' | 'calibration' | 'cart' | 'privacy'>('profile');
@@ -124,10 +127,10 @@ export default function ProfilePage() {
         {/* Navigation Tabs */}
         <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: 'profile', label: '👤 Profile' },
-            { id: 'calibration', label: '⚖️ Calibration' },
-            { id: 'cart', label: '🛒 Smart Cart' },
-            { id: 'privacy', label: '🔒 Privacy & Export' },
+            { id: 'profile', label: dict.profile.tabProfile },
+            { id: 'calibration', label: dict.profile.tabCalibration },
+            { id: 'cart', label: dict.profile.tabCart },
+            { id: 'privacy', label: dict.profile.tabPrivacy },
           ].map((tab) => (
             <button
               key={tab.id}
