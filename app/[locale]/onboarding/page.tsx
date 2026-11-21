@@ -316,10 +316,10 @@ export default function OnboardingPage() {
             type="button"
             variant="forest"
             size="lg"
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/today')}
             className="w-full text-sm font-bold shadow-lg"
           >
-            Launch My Personal Dashboard →
+            Launch Ritu Companion →
           </Button>
         </Card>
       )}

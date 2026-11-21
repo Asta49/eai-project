@@ -17,19 +17,19 @@ export function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 text-xs text-slate-500 sm:flex-row">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              IIM Ahmedabad • Economics of AI Course Project
+            <span className="font-semibold text-slate-700">
+              Ritu • Private Health Companion
             </span>
             <span>•</span>
-            <span className="flex items-center gap-1 text-teal-600 dark:text-teal-400">
-              <ShieldCheck className="h-3.5 w-3.5" /> DPDP Compliant Architecture
+            <span className="flex items-center gap-1 text-forest">
+              <ShieldCheck className="h-3.5 w-3.5 text-sage" /> DPDP Compliant • The doctor decides; AI fine-tunes
             </span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span>Designed for Indian Women with PCOS</span>
+            <span>Designed for Hormonal &amp; Lifestyle Health</span>
             <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
-            <span>• N-of-1 Personal Science</span>
+            <span>• IIM-A Economics of AI</span>
           </div>
         </div>
       </div>

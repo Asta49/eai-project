@@ -23,93 +23,86 @@ export function BottomNav() {
   const router = useRouter();
   const [quickActionOpen, setQuickActionOpen] = useState(false);
 
-  const navItems = [
-    { href: '/dashboard', label: 'Home', icon: Home },
-    { href: '/experiments', label: 'Trials', icon: FlaskConical },
-    // Center FAB is handled separately
-    { href: '/food', label: 'Food', icon: Utensils },
-    { href: '/coach', label: 'AI Coach', icon: Bot },
-  ];
-
   const quickActions = [
     {
-      title: 'Daily Check-in',
-      desc: 'Log energy, mood, period, adherence',
+      title: '10-Second Daily Check-in',
+      desc: 'Log energy, mood, symptoms, and pain level',
       icon: CalendarCheck,
       color: 'bg-pastel-peach text-pastel-peachText',
       href: '/checkin',
     },
     {
-      title: 'Log Indian Meal',
-      desc: '150+ INDB dishes, glycemic score & swaps',
+      title: 'Log Meal & Check Tolerance',
+      desc: '150+ INDB dishes, personal tolerance & smart swaps',
       icon: Utensils,
       color: 'bg-pastel-purple text-pastel-purpleText',
       href: '/food',
     },
     {
-      title: 'Scan Lab Report',
-      desc: 'Extract fasting insulin, HOMA-IR & androgens',
-      icon: FileSpreadsheet,
-      color: 'bg-pastel-mint text-pastel-mintText',
-      href: '/labs',
+      title: 'Smart Cart Agent',
+      desc: 'Live Zepto/Blinkit cart review & healthier picks',
+      icon: Sparkles,
+      color: 'bg-pastel-yellow text-pastel-yellowText',
+      href: '/cart',
     },
     {
-      title: 'Doctor Pre-Consult',
-      desc: '1-page AI clinical summary & booking',
+      title: 'Ask Ritu: Trusted Info',
+      desc: 'Personal AI chat, doctor advice explainer, myth checker',
+      icon: Bot,
+      color: 'bg-pastel-mint text-pastel-mintText',
+      href: '/ask',
+    },
+    {
+      title: 'Care Team & Visit Summary',
+      desc: '1-page clinical brief, doctor review & screening calendar',
       icon: Stethoscope,
       color: 'bg-pastel-blue text-pastel-blueText',
-      href: '/doctors',
-    },
-    {
-      title: 'Economics Moat Simulation',
-      desc: 'IIM-A Hierarchical Empirical Bayes data moat',
-      icon: LineChart,
-      color: 'bg-pastel-yellow text-pastel-yellowText',
-      href: '/admin',
+      href: '/care',
     },
   ];
+
+  const isTodayActive = pathname.includes('/today') || pathname.includes('/dashboard');
+  const isAskActive = pathname.includes('/ask') || pathname.includes('/coach');
+  const isCareActive = pathname.includes('/care') || pathname.includes('/doctors');
+  const isProfileActive = pathname.includes('/profile') || pathname.includes('/settings');
 
   return (
     <>
       {/* Floating Bottom Nav Container */}
       <div className="fixed bottom-3 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
         <nav className="pointer-events-auto flex items-center justify-between w-full max-w-md bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-float rounded-full px-4 py-2.5">
-          {/* Left Item 1: Home */}
+          {/* Tab 1: Today */}
           <Link
-            href="/dashboard"
+            href="/today"
             className={`flex flex-col items-center justify-center gap-0.5 px-2 py-1 text-[11px] font-semibold transition-colors ${
-              pathname.includes('/dashboard')
-                ? 'text-forest'
-                : 'text-slate-400 hover:text-slate-700'
+              isTodayActive ? 'text-forest font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
-                pathname.includes('/dashboard') ? 'bg-sage-light text-forest' : ''
+                isTodayActive ? 'bg-sage-light text-forest' : ''
               }`}
             >
               <Home className="w-5 h-5" />
             </div>
-            <span className="text-[10px]">Home</span>
+            <span className="text-[10px]">Today</span>
           </Link>
 
-          {/* Left Item 2: Trials */}
+          {/* Tab 2: Ask */}
           <Link
-            href="/experiments"
+            href="/ask"
             className={`flex flex-col items-center justify-center gap-0.5 px-2 py-1 text-[11px] font-semibold transition-colors ${
-              pathname.includes('/experiments')
-                ? 'text-forest'
-                : 'text-slate-400 hover:text-slate-700'
+              isAskActive ? 'text-forest font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
-                pathname.includes('/experiments') ? 'bg-sage-light text-forest' : ''
+                isAskActive ? 'bg-sage-light text-forest' : ''
               }`}
             >
-              <FlaskConical className="w-5 h-5" />
+              <Bot className="w-5 h-5" />
             </div>
-            <span className="text-[10px]">Trials</span>
+            <span className="text-[10px]">Ask</span>
           </Link>
 
           {/* Center Elevated Floating Action Button */}
@@ -128,42 +121,38 @@ export function BottomNav() {
             </button>
           </div>
 
-          {/* Right Item 1: Food */}
+          {/* Tab 3: Care */}
           <Link
-            href="/food"
+            href="/care"
             className={`flex flex-col items-center justify-center gap-0.5 px-2 py-1 text-[11px] font-semibold transition-colors ${
-              pathname.includes('/food')
-                ? 'text-forest'
-                : 'text-slate-400 hover:text-slate-700'
+              isCareActive ? 'text-forest font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
-                pathname.includes('/food') ? 'bg-sage-light text-forest' : ''
+                isCareActive ? 'bg-sage-light text-forest' : ''
               }`}
             >
-              <Utensils className="w-5 h-5" />
+              <Stethoscope className="w-5 h-5" />
             </div>
-            <span className="text-[10px]">Food</span>
+            <span className="text-[10px]">Care</span>
           </Link>
 
-          {/* Right Item 2: Coach */}
+          {/* Tab 4: Profile */}
           <Link
-            href="/coach"
+            href="/profile"
             className={`flex flex-col items-center justify-center gap-0.5 px-2 py-1 text-[11px] font-semibold transition-colors ${
-              pathname.includes('/coach')
-                ? 'text-forest'
-                : 'text-slate-400 hover:text-slate-700'
+              isProfileActive ? 'text-forest font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
-                pathname.includes('/coach') ? 'bg-sage-light text-forest' : ''
+                isProfileActive ? 'bg-sage-light text-forest' : ''
               }`}
             >
-              <Bot className="w-5 h-5" />
+              <FileSpreadsheet className="w-5 h-5" />
             </div>
-            <span className="text-[10px]">AI Coach</span>
+            <span className="text-[10px]">Profile</span>
           </Link>
         </nav>
       </div>

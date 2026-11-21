@@ -35,15 +35,14 @@ export function Navbar() {
   }).format(new Date());
 
   const navLinks = [
-    { href: '/dashboard', label: 'Home', icon: Activity },
-    { href: '/checkin', label: 'Check-in', icon: CalendarCheck },
+    { href: '/today', label: 'Today', icon: Activity },
+    { href: '/ask', label: 'Ask', icon: Bot },
+    { href: '/care', label: 'Care', icon: UserCheck },
+    { href: '/profile', label: 'Profile', icon: Settings },
     { href: '/experiments', label: 'Trials', icon: FlaskConical },
-    { href: '/labs', label: 'Labs', icon: FileSpreadsheet },
-    { href: '/food', label: 'Food', icon: Utensils },
-    { href: '/coach', label: 'AI Coach', icon: Bot },
-    { href: '/doctors', label: 'Doctors', icon: UserCheck },
+    { href: '/food', label: 'Food & You', icon: Utensils },
+    { href: '/cart', label: 'Smart Cart', icon: CalendarCheck },
     { href: '/admin', label: 'IIM-A Moat', icon: LineChart },
-    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -52,17 +51,17 @@ export function Navbar() {
         <div className="flex items-center justify-between gap-2">
           {/* Brand & Date (as seen in s1.jpeg, s4.avif) */}
           <div className="flex items-center gap-2.5">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/today" className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-forest text-white shadow-sm">
                 <Sparkles className="h-4 w-4 text-sage" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-heading font-bold text-sm tracking-tight text-slate-900">
-                    PCOS Assistant
+                  <span className="font-heading font-bold text-base tracking-tight text-slate-900">
+                    Ritu
                   </span>
                   <span className="rounded-full bg-pastel-mint px-2 py-0.2 text-[9px] font-bold text-pastel-mintText">
-                    IIM-A
+                    Companion
                   </span>
                 </div>
                 <div className="flex items-center gap-1 text-[11px] text-slate-500 font-body">
@@ -75,16 +74,16 @@ export function Navbar() {
 
           {/* Desktop Direct Links */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.slice(0, 7).map((item) => {
+            {navLinks.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname.startsWith(item.href);
+              const isActive = pathname.startsWith(item.href) || (item.href === '/today' && pathname.startsWith('/dashboard')) || (item.href === '/ask' && pathname.startsWith('/coach')) || (item.href === '/care' && pathname.startsWith('/doctors')) || (item.href === '/profile' && pathname.startsWith('/settings'));
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                     isActive
-                      ? 'bg-forest text-white'
+                      ? 'bg-forest text-white shadow-xs'
                       : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900'
                   }`}
                 >
@@ -101,9 +100,9 @@ export function Navbar() {
             <LanguageSwitcher />
 
             <Link
-              href="/settings"
+              href="/profile"
               className="hidden sm:flex w-8 h-8 items-center justify-center rounded-full bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50 transition"
-              title="Settings & DPDP"
+              title="Profile & Privacy"
             >
               <Settings className="w-4 h-4 text-slate-600" />
             </Link>
