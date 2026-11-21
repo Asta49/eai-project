@@ -72,16 +72,24 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-[#1E171B]/85 backdrop-blur-md border-b border-white/10 text-white shadow-sm">
-        <div className="mx-auto max-w-md sm:max-w-lg px-3.5 sm:px-4 py-2.5">
+        <div className={`mx-auto ${pathname.includes('/doctor') ? 'max-w-7xl px-4 sm:px-6' : 'max-w-md sm:max-w-lg px-3.5 sm:px-4'} py-2.5`}>
           <div className="flex items-center justify-between">
-            {/* Left: User Welcome */}
-            <Link href="/today" className="flex items-center gap-2">
+            {/* Left: User / Doctor Welcome */}
+            <Link
+              href={currentPersona.type === 'doctor' ? '/doctor' : '/today'}
+              className="flex items-center gap-2"
+            >
               <div className="flex flex-col">
                 <span className="text-[11px] font-medium text-rose-200/70 leading-none">
-                  {dict.navbar.welcome}
+                  {currentPersona.type === 'doctor' ? 'Clinical Doctor Portal' : dict.navbar.welcome}
                 </span>
-                <span className="font-heading text-base font-bold text-white tracking-tight">
+                <span className="font-heading text-base font-bold text-white tracking-tight flex items-center gap-1.5">
                   {currentPersona.name}
+                  {currentPersona.type === 'doctor' && (
+                    <span className="text-[10px] bg-indigo-500/30 text-indigo-200 border border-indigo-400/40 px-2 py-0.5 rounded-full font-sans font-medium">
+                      OPD Lead
+                    </span>
+                  )}
                 </span>
               </div>
             </Link>

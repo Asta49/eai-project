@@ -4,9 +4,8 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { locales } from '@/i18n';
 import { Navbar } from '@/components/navbar';
-import { Footer } from '@/components/footer';
-import { BottomNav } from '@/components/bottom-nav';
 import { PersonaProvider } from '@/components/persona-context';
+import { AppLayoutWrapper } from '@/components/app-layout-wrapper';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -34,15 +33,8 @@ export default async function LocaleLayout({
             {/* Top Bar Navigation */}
             <Navbar />
 
-            {/* Main Content Area: Responsive Mobile-First Canvas (iPhone 14/15 profile max-w-md sm:max-w-lg) */}
-            <main className="flex-1 pb-24 pt-1">
-              <div className="mx-auto max-w-md sm:max-w-lg px-3.5 sm:px-4">
-                {children}
-              </div>
-            </main>
-
-            {/* Signature Floating / Docked Bottom Navigation */}
-            <BottomNav />
+            {/* Responsive Layout Canvas & Conditional Navigation */}
+            <AppLayoutWrapper>{children}</AppLayoutWrapper>
           </NextIntlClientProvider>
         </PersonaProvider>
       </body>
