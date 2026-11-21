@@ -360,6 +360,100 @@ A top-bar pill switcher allowing seamless evaluation without login walls:
 
 ---
 
+## 18. New AI & Vernacular Spec Implementation (Nov 2026 Spec)
+
+Comprehensive implementation of all 18 AI features and cross-app vernacular architecture:
+
+### 🏠 Home Tab Enhancements (`/today`)
+- **H1. Today's Forecast:**
+  - Slim full-width soft sky-blue (`#EEF2FF`) card positioned directly below the Period/Ovulation Heart.
+  - Generates cycle-day personalized forecasts (e.g. *"Day 18: In your last 4 cycles, energy dipped and sugar cravings rose around now. Keep a roasted chana snack handy after 4 pm."*).
+  - Tapping expands a **3-day outlook** with confidence ratings (*High Conf.*, *Medium Conf.*).
+  - Speaker icon provides instant Indic audio read-aloud.
+  - Safe medical guardrails: alerts emergency care (112) if severe pain is forecast.
+- **H2. Pattern Watch ("Ritu noticed"):**
+  - Pinned as the first item in the notification bell drawer with a distinctive periwinkle border (`border-l-4 border-l-brand-purple`).
+  - Mirrored directly at the top of the `/care` tab until dismissed.
+  - Actionable observations: *"Your last 3 cycles were 38, 41 and 45 days. Long gaps are worth raising with Dr. Sen."* with `[+ Add to visit questions]` and `[Book test]`.
+- **H3. Weekly Audio Recap:**
+  - Featured Sunday card with a 75-second audio player (`Play ▶` / `Pause ⏸`) and expandable transcript drawer.
+  - Summarizes weekly check-in consistency, high-energy meal days, and medication adherence.
+- **H4. Prescription Scan + Smart Timing:**
+  - `+ Scan prescription` row at the bottom of the Daily Medicine Checklist.
+  - Simulated OCR scanner extracts doctor instructions (Thyronorm, Metformin, Shelcal-HD).
+  - Flags critical Smart Timing rules:
+    - *Thyronorm:* Empty stomach, wait 30 minutes before tea/coffee.
+    - *Calcium & Iron:* Separate by at least 4 hours to prevent absorption inhibition.
+- **2×3 Tools Grid:**
+  - Direct 1-tap shortcuts below the medicine checklist to *Food & You*, *Lab Records*, *N-of-1 Trials*, *Smart Cart*, *Targeted Workouts*, and *Fasting Planner*.
+- **Top Bar Differentiation:**
+  - Darker translucent glassmorphism bar (`bg-[#1E171B]/85 backdrop-blur-md border-b border-white/10 text-white`).
+
+### 📅 Log Tab Enhancements (`/checkin`)
+- **L1. Speak Anywhere (Global):**
+  - 450ms long-press on the Log icon in the bottom navigation bar from any screen.
+  - Pulsing rose microphone modal with code-mixed Indic recognition (*"Kal raat se pet phool raha hai, aur Metformin le liya"*).
+  - Automatically extracts editable chips (*Bloating*, *Metformin taken*) with instant save.
+- **L2. Mood Journal + DRSP Luteal Screener:**
+  - Sub-emotion tagging: *Anxious*, *Irritable*, *Grateful*, *Exhausted*, *Grounded*, *Tearful*.
+  - Bi-weekly Daily Record of Severity of Problems (DRSP) screener for PMDD/luteal mood clustering.
+  - Confidential **Tele-MANAS (14416)** national mental health helpline card with 1-tap call button.
+- **L3. Skin & Hair Progress Photos:**
+  - Collapsible weekly photo row with face guide overlay (oval for jawline acne, midline guide for hair parting thinning).
+  - Lesion reduction tracker (6 ➔ 2 lesions).
+  - DPDP Act 2023 on-device encrypted vault guarantee.
+
+### 💬 Ask Tab Enhancements (`/ask`)
+- **A1. Explain to My Family:**
+  - Fourth tool chip with recipient picker (*Mother-in-law / Saas*, *Husband*, *Mother*, *Sister*).
+  - Respectful, culturally empathetic WhatsApp card generator in Hindi, Telugu, Tamil, and English.
+  - Generates spoken voice notes and 1-tap WhatsApp sharing links.
+- **A2. Simple Mode + Listen:**
+  - `Aa↓ Simpler` toggle on every assistant answer converts clinical text to 6th-grade plain colloquial language.
+  - Speaker icon reads answers aloud in Indic conversational accent.
+- **A3. Forward-to-Ritu Myth Check:**
+  - Simulated WhatsApp forward rumor debunker (*"Drink papaya seed decoction twice a day to force late periods"* ➔ *DANGEROUS / BUSTED*).
+  - **Polite Group Reply Generator:** Produces respectful responses to paste back into family WhatsApp groups without offending elders.
+- **V6. Tap-to-Explain Glossary:**
+  - Dotted underline on clinical terms (*Rotterdam B*, *HOMA-IR*, *TSH*, *Luteal Phase*) popping up plain-language definition sheets.
+
+### 🩺 Care Tab Enhancements (`/care`)
+- **C1. Consult Companion:**
+  - `[🎙️ Start visit]` button on each doctor card.
+  - Explicit DPDP local processing consent banner and live recording status.
+  - Post-visit draft rules queue awaiting patient and doctor approval before applying.
+- **C2. Schemes & Costs Navigator:**
+  - Comprehensive guide to *Ayushman Bharat PM-JAY*, *Telangana Aarogyasri*, *PMMVY*, and *JSSK*.
+  - Fair diagnostic price range guide for Hyderabad (HOMA-IR ₹450–₹800, Thyroid ₹350–₹600, Pelvic USG ₹800–₹1,500).
+- **C3. Trusted Person Access:**
+  - Family & ASHA worker roster with narrow opt-in permissions (Emergency 112 alerts and medicine adherence visible; intimate logs strictly hidden).
+- **Evidence Safeguard:**
+  - Community insights aggregated with $N \ge 120$ privacy floor without exposing individual doctor identities.
+
+### 👤 Profile Tab Enhancements (`/profile`)
+- **P1. Life-Stage Modes:**
+  - Segmented selector at top: *Tracking cycles*, *TTC (Fertility)*, *Pregnant*, *Postpartum*, *Perimenopause*.
+  - Dynamically reshapes the Home Heart widget and guidance limits.
+- **P2. Wearable & BBT Ovulation Confirm:**
+  - Health Connect / Apple Health step and resting HR sync.
+  - Basal Body Temperature (BBT) biphasic thermal shift (+0.32°C for 3 days) confirming ovulation.
+- **V1, V3, V4 Vernacular Settings:**
+  - Indic voice selection (Aditi, Deepa, Kavitha).
+  - **Saathi Mode:** Hands-free voice-first toggle for non-typing users and mothers.
+  - Ritu on WhatsApp companion connection (+91 98765 43210).
+
+### 🥗 Food Screen Enhancements (`/food`)
+- **F1. Thali Photo Logging:**
+  - Floating Action Button (FAB) on bottom-right launching camera plate recognition.
+  - Visual portion segmentation (millet, dal, palak paneer, salad) with net glycemic load score and personal tolerance verdict.
+- **F2. Festival & Fasting Planner:**
+  - Seasonal Vrat banner and dedicated Fasting Days tab with safe swaps for Navratri, Ekadashi, and Ramzan.
+- **F3. Regional & Budget Meal Plans:**
+  - `[🗓️ Plan my week]` header button with regional cuisine filters (Telugu/Deccan, North Indian, Tamil/Kerala).
+  - Budget mode (under ₹80/meal) and cook-for-whole-family scaling toggles.
+
+---
+
 ## 📊 Summary Matrix of Application Routes
 
 | Route | Purpose | Key Capabilities |

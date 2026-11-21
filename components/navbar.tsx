@@ -67,16 +67,16 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#FFF6F8]/95 backdrop-blur-md border-b border-rose-100/60">
+      <header className="sticky top-0 z-40 bg-[#1E171B]/85 backdrop-blur-md border-b border-white/10 text-white shadow-sm">
         <div className="mx-auto max-w-md sm:max-w-lg px-3.5 sm:px-4 py-2.5">
           <div className="flex items-center justify-between">
-            {/* Left: User Welcome as seen in reference s1.png & s2.png */}
+            {/* Left: User Welcome */}
             <Link href="/today" className="flex items-center gap-2">
               <div className="flex flex-col">
-                <span className="text-[11px] font-medium text-slate-400 leading-none">
+                <span className="text-[11px] font-medium text-rose-200/70 leading-none">
                   Welcome
                 </span>
-                <span className="font-heading text-base font-bold text-slate-900 tracking-tight">
+                <span className="font-heading text-base font-bold text-white tracking-tight">
                   {currentPersona.name}
                 </span>
               </div>
@@ -87,14 +87,14 @@ export function Navbar() {
               <PersonaSwitcher />
               <LanguageSwitcher />
 
-              {/* Notification Bell with Badge (s1.png) */}
+              {/* Notification Bell with Badge */}
               <button
                 type="button"
                 onClick={() => setNotificationsOpen(true)}
-                className="relative flex w-9 h-9 items-center justify-center rounded-full bg-white border border-rose-200/70 text-slate-700 hover:bg-rose-50/50 shadow-xs transition"
+                className="relative flex w-9 h-9 items-center justify-center rounded-full bg-white/10 border border-white/15 text-white hover:bg-white/20 shadow-xs transition"
                 aria-label="Notifications"
               >
-                <Bell className="w-4 h-4 text-slate-700" />
+                <Bell className="w-4 h-4 text-white" />
                 <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-brand-pink animate-pulse" />
               </button>
             </div>
@@ -102,7 +102,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Notification Drawer matching right side of reference s1.png */}
+      {/* Notification Drawer */}
       {notificationsOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs p-3 animate-in fade-in">
           <div
@@ -116,7 +116,7 @@ export function Navbar() {
                   Notification
                 </span>
                 <span className="rounded-full bg-brand-pinkLight px-2 py-0.5 text-[10px] font-bold text-brand-pink">
-                  2 New
+                  3 New
                 </span>
               </div>
               <button
@@ -128,8 +128,43 @@ export function Navbar() {
               </button>
             </div>
 
-            {/* Notifications list matching s1.png */}
-            <div className="mt-3 space-y-2.5 max-h-[380px] overflow-y-auto">
+            {/* Notifications list with H2 Pattern Watch pinned */}
+            <div className="mt-3 space-y-2.5 max-h-[400px] overflow-y-auto">
+              {/* H2. Pattern Watch ("Ritu noticed") - Pinned with Periwinkle border */}
+              <div className="p-3 rounded-2xl bg-indigo-50/70 border border-indigo-100 border-l-4 border-l-brand-purple transition">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-purple text-white text-[10px]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                    </span>
+                    <span className="text-xs font-bold text-indigo-950 font-heading">
+                      Ritu noticed • Pattern Watch
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-semibold text-brand-purple bg-white px-2 py-0.5 rounded-full border border-indigo-200">
+                    High Confidence
+                  </span>
+                </div>
+                <p className="text-xs text-slate-700 mt-2 leading-relaxed">
+                  Your last 3 cycles were 38, 41 and 45 days. Long gaps are worth raising with Dr. Sen.
+                </p>
+                <div className="mt-2.5 flex items-center gap-2">
+                  <Link
+                    href="/care"
+                    onClick={() => setNotificationsOpen(false)}
+                    className="inline-flex items-center gap-1 rounded-xl bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 hover:bg-brand-purpleDark shadow-xs transition"
+                  >
+                    + Add to visit questions
+                  </Link>
+                  <Link
+                    href="/labs"
+                    onClick={() => setNotificationsOpen(false)}
+                    className="inline-flex items-center gap-1 rounded-xl bg-white text-brand-purple border border-indigo-200 text-[11px] font-semibold px-2.5 py-1.5 hover:bg-indigo-50 transition"
+                  >
+                    Book test
+                  </Link>
+                </div>
+              </div>
               {notifications.map((n) => {
                 const Icon = n.icon;
                 return (

@@ -35,6 +35,19 @@ export default function FoodPage() {
   const [extractedMeal, setExtractedMeal] = useState<ExtractedFoodLog | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
 
+  // F1. Thali Photo Logging state
+  const [thaliModalOpen, setThaliModalOpen] = useState<boolean>(false);
+  const [thaliLoggedSuccess, setThaliLoggedSuccess] = useState<boolean>(false);
+
+  // F2. Fasting planner tab state
+  const [foodViewMode, setFoodViewMode] = useState<'daily' | 'fasting'>('daily');
+
+  // F3. Regional & Budget meal plan state
+  const [mealPlanOpen, setMealPlanOpen] = useState<boolean>(false);
+  const [cuisineRegion, setCuisineRegion] = useState<'telugu' | 'north' | 'tamil'>('telugu');
+  const [budgetMode, setBudgetMode] = useState<boolean>(true);
+  const [familyScale, setFamilyScale] = useState<boolean>(true);
+
   const [loggedMeals, setLoggedMeals] = useState<any[]>([
     {
       mealType: 'breakfast',
@@ -117,17 +130,121 @@ export default function FoodPage() {
     <div className="space-y-4 sm:space-y-6">
       {/* Header Banner in Forest Green */}
       <div className="rounded-4xl bg-forest p-6 text-white text-center shadow-soft relative overflow-hidden">
-        <span className="inline-flex items-center gap-1 rounded-full bg-forest-light px-3 py-1 text-xs font-semibold text-sage-light">
-          <Utensils className="w-3.5 h-3.5 text-sage" />
-          Indian Nutrient Databank (INDB)
-        </span>
-        <h1 className="mt-3 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
+        <div className="flex items-center justify-between mb-2">
+          <span className="inline-flex items-center gap-1 rounded-full bg-forest-light px-3 py-1 text-xs font-semibold text-sage-light">
+            <Utensils className="w-3.5 h-3.5 text-sage" />
+            Indian Nutrient Databank (INDB)
+          </span>
+
+          {/* F3. Plan My Week Header Button */}
+          <button
+            type="button"
+            onClick={() => setMealPlanOpen(true)}
+            className="rounded-full bg-white/20 hover:bg-white/30 text-white px-3 py-1 text-xs font-bold transition shadow-xs"
+          >
+            🗓️ Plan my week
+          </button>
+        </div>
+
+        <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
           PCOS Nutrition &amp; Glycemic Tracker
         </h1>
         <p className="mt-1 text-xs text-sage-light max-w-md mx-auto">
           Tailored for Indian kitchens. Scores dishes by fiber-to-carb ratio, glycemic impact, and provides smart swaps.
         </p>
+
+        {/* View Switcher: Daily Foods vs Fasting Days */}
+        <div className="mt-4 inline-flex rounded-full bg-black/20 p-1 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setFoodViewMode('daily')}
+            className={`rounded-full px-4 py-1.5 transition ${
+              foodViewMode === 'daily' ? 'bg-white text-forest font-bold shadow-xs' : 'text-white'
+            }`}
+          >
+            Daily Foods &amp; Log
+          </button>
+          <button
+            type="button"
+            onClick={() => setFoodViewMode('fasting')}
+            className={`rounded-full px-4 py-1.5 transition ${
+              foodViewMode === 'fasting' ? 'bg-white text-forest font-bold shadow-xs' : 'text-white'
+            }`}
+          >
+            🌙 Fasting Days (Vrat Guide)
+          </button>
+        </div>
       </div>
+
+      {/* F2. Seasonal Fasting Banner */}
+      <div className="p-3.5 rounded-3xl bg-pastel-yellow/40 border border-amber-200/80 flex items-center justify-between text-xs text-amber-950">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🌙</span>
+          <div>
+            <span className="font-bold">Seasonal Fasting: Navratri &amp; Ekadashi Vrat swaps available.</span>
+            <span className="block text-[11px] text-amber-800">Prevent glucose spikes during traditional fasts.</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setFoodViewMode('fasting')}
+          className="text-xs font-bold text-amber-900 underline hover:text-amber-950 shrink-0"
+        >
+          View Swaps →
+        </button>
+      </div>
+
+      {/* F2. FASTING DAYS VIEW */}
+      {foodViewMode === 'fasting' && (
+        <div className="space-y-4 animate-in fade-in">
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-3">
+            <h3 className="font-heading text-base font-bold text-slate-900">
+              Vrat &amp; Fasting Nutrition for PCOS &amp; Thyroid
+            </h3>
+            <p className="text-xs text-slate-500">
+              Traditional fasting foods often cause rapid insulin spikes. Here are evidence-grounded Indian swaps:
+            </p>
+
+            <div className="space-y-2.5 pt-2 border-t border-slate-100 text-xs">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Sabudana Vada / Khichdi Swap</span>
+                  <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
+                    High GI (85)
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  <strong>Better Swap:</strong> Kuttu (Buckwheat) or Rajgira (Amaranth) cheela cooked in minimal A2 ghee. Slows glucose absorption and preserves thyroid metabolism.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Fried Potato Chips Swap</span>
+                  <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                    High Saturated Fat
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  <strong>Better Swap:</strong> Dry roasted Phool Makhana with sendha namak and roasted peanuts. High magnesium helps prevent luteal evening headaches.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Ramzan Suhoor &amp; Iftar Strategy</span>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                    Steady Energy
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  Break fast with 1 date and cucumber/buttermilk before warm moong soup. Avoid opening fast with sherbet or sugary fried pakoras to prevent reactive hypoglycemia.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Natural Language Voice/Text Log Card */}
       <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-3">
@@ -337,6 +454,209 @@ export default function FoodPage() {
           })}
         </div>
       </div>
+
+      {/* F1. THALI PHOTO LOGGING FLOATING ACTION BUTTON (FAB) */}
+      <div className="fixed bottom-20 right-4 z-40">
+        <button
+          type="button"
+          onClick={() => setThaliModalOpen(true)}
+          className="flex items-center gap-2 rounded-full bg-brand-pink text-white px-4 py-3 shadow-xl shadow-rose-300 hover:scale-105 active:scale-95 transition font-heading font-bold text-xs"
+          title="Snap your Thali for AI meal breakdown"
+        >
+          <Camera className="w-5 h-5 animate-pulse" />
+          <span>Snap Thali</span>
+        </button>
+      </div>
+
+      {/* F1. THALI SCANNER MODAL */}
+      {thaliModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-3 animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 shadow-2xl border border-rose-100 z-10 space-y-4 animate-in slide-in-from-bottom-5">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🥗</span>
+                <span className="font-heading text-base font-bold text-slate-900">
+                  Thali Photo Recognition
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setThaliModalOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Viewfinder with Segmentation Boxes */}
+            <div className="relative rounded-3xl bg-slate-900 h-44 flex flex-col items-center justify-center text-white overflow-hidden border-2 border-dashed border-rose-300/80 p-3">
+              <div className="grid grid-cols-2 gap-2 w-full h-full text-[10px]">
+                <div className="border border-emerald-400 bg-emerald-950/40 rounded-xl p-1.5 flex flex-col justify-between">
+                  <span className="font-bold text-emerald-300">1. Foxtail Millet (150g)</span>
+                  <span className="text-emerald-400 font-semibold">Low GI Carb</span>
+                </div>
+                <div className="border border-indigo-400 bg-indigo-950/40 rounded-xl p-1.5 flex flex-col justify-between">
+                  <span className="font-bold text-indigo-300">2. Palak Paneer (1 Katori)</span>
+                  <span className="text-indigo-400 font-semibold">Protein &amp; Calcium</span>
+                </div>
+                <div className="border border-amber-400 bg-amber-950/40 rounded-xl p-1.5 flex flex-col justify-between">
+                  <span className="font-bold text-amber-300">3. Moong Dal Tadka (1 Katori)</span>
+                  <span className="text-amber-400 font-semibold">Fiber &amp; Bioactives</span>
+                </div>
+                <div className="border border-teal-400 bg-teal-950/40 rounded-xl p-1.5 flex flex-col justify-between">
+                  <span className="font-bold text-teal-300">4. Cucumber Salad (50g)</span>
+                  <span className="text-teal-400 font-semibold">Fiber First Starter</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Glycemic Load & Tolerance Prediction */}
+            <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-xs space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-indigo-950">Estimated Glycemic Load:</span>
+                <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">
+                  12 (Low / Optimal)
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-600">
+                <strong>Tolerance Verdict:</strong> Suits You. Fiber-first sequencing prevents postprandial glucose spike.
+              </div>
+            </div>
+
+            <Button
+              variant="pink"
+              className="w-full text-xs font-bold py-2.5"
+              onClick={() => {
+                setLoggedMeals([
+                  {
+                    mealType: 'dinner',
+                    time: 'Just now',
+                    dish: 'Thali: Foxtail Millet + Palak Paneer + Moong Dal + Salad',
+                    calories: 460,
+                    carbs: 42,
+                    protein: 21,
+                    fiber: 9.8,
+                    pcosScore: 9.4,
+                    swap: 'Thali photo validated by INDB engine',
+                  },
+                  ...loggedMeals,
+                ]);
+                setThaliModalOpen(false);
+                setThaliLoggedSuccess(true);
+                setTimeout(() => setThaliLoggedSuccess(false), 3500);
+              }}
+            >
+              Confirm &amp; Log Thali
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* F3. REGIONAL & BUDGET MEAL PLAN MODAL */}
+      {mealPlanOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-3 animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 shadow-2xl border border-rose-100 z-10 space-y-4 animate-in slide-in-from-bottom-5">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🗓️</span>
+                <span className="font-heading text-base font-bold text-slate-900">
+                  Regional &amp; Budget Meal Planner
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMealPlanOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Region Selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Select Cuisine Region:</label>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { id: 'telugu', label: 'Telugu / Deccan' },
+                  { id: 'north', label: 'North Indian' },
+                  { id: 'tamil', label: 'Tamil / Kerala' },
+                ].map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setCuisineRegion(c.id as any)}
+                    className={`p-2 rounded-xl text-xs font-semibold border transition text-center ${
+                      cuisineRegion === c.id
+                        ? 'bg-forest text-white border-forest'
+                        : 'bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Toggles: Budget & Family */}
+            <div className="space-y-2 text-xs pt-1 border-t border-slate-100">
+              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-900">Budget Mode (Under ₹80/meal)</div>
+                  <div className="text-[10px] text-slate-500">Focuses on local millets, seasonal greens, and eggs</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBudgetMode(!budgetMode)}
+                  className={`w-9 h-5 rounded-full p-0.5 transition flex items-center ${
+                    budgetMode ? 'bg-forest justify-end' : 'bg-slate-300 justify-start'
+                  }`}
+                >
+                  <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </button>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-900">Cook for Family (No Separate Cooking)</div>
+                  <div className="text-[10px] text-slate-500">Base family gravies with easy personal protein swaps</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFamilyScale(!familyScale)}
+                  className={`w-9 h-5 rounded-full p-0.5 transition flex items-center ${
+                    familyScale ? 'bg-forest justify-end' : 'bg-slate-300 justify-start'
+                  }`}
+                >
+                  <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </button>
+              </div>
+            </div>
+
+            {/* Sample Day Preview */}
+            <div className="p-3 rounded-2xl bg-forest/5 border border-forest/20 text-xs text-slate-800 space-y-1">
+              <div className="font-bold text-forest">Tomorrow's Planned Menu:</div>
+              <div className="text-[11px]">• <strong>Breakfast:</strong> Pesarattu (Green Gram Dosa) + Ginger Chutney (12g protein)</div>
+              <div className="text-[11px]">• <strong>Lunch:</strong> Jowar Roti + Palak Pappu + Curd (Cooked for family)</div>
+              <div className="text-[11px]">• <strong>Snack:</strong> Roasted Chana + Buttermilk (Under ₹15)</div>
+            </div>
+
+            <Button
+              variant="forest"
+              className="w-full text-xs font-bold py-2.5"
+              onClick={() => setMealPlanOpen(false)}
+            >
+              Save Weekly Meal Schedule
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {thaliLoggedSuccess && (
+        <div className="fixed bottom-24 left-4 right-4 z-50 p-3 rounded-2xl bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xl animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4" />
+          <span>Thali logged to today's nutrition record!</span>
+        </div>
+      )}
 
       <DisclaimerBanner type="wellness" />
     </div>

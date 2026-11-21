@@ -57,19 +57,19 @@ export function PersonaSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/95 px-3 py-1.5 text-xs font-semibold text-forest shadow-xs hover:bg-slate-50 transition"
+        className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-white/15 transition"
         title="Switch user role without login"
       >
         <div className={`flex h-5 w-5 items-center justify-center rounded-full font-bold text-[10px] ${currentPersona.avatarBg}`}>
           {currentPersona.avatarText}
         </div>
-        <span className="font-heading tracking-tight truncate max-w-[90px] sm:max-w-none">
+        <span className="font-heading tracking-tight truncate max-w-[90px] sm:max-w-none text-white">
           {currentPersona.name.split(' ')[0]}
         </span>
-        <span className="text-[10px] text-slate-400 font-normal">
+        <span className="text-[10px] text-rose-200/80 font-normal">
           ({currentPersona.badge})
         </span>
-        <ChevronDown className="h-3 w-3 text-slate-400 ml-0.5" />
+        <ChevronDown className="h-3 w-3 text-rose-200/80 ml-0.5" />
       </button>
 
       {isOpen && (

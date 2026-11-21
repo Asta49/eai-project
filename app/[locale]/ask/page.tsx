@@ -29,6 +29,7 @@ import {
   PhoneCall,
   Clock,
   ArrowRight,
+  Volume2,
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -46,7 +47,28 @@ export default function AskPage() {
   const locale = useLocale();
 
   // Active view tab inside Ask
-  const [activeSubTab, setActiveSubTab] = useState<'chat' | 'explainer' | 'myths' | 'labs'>('chat');
+  const [activeSubTab, setActiveSubTab] = useState<'chat' | 'family' | 'explainer' | 'myths' | 'labs'>('chat');
+
+  // A2. Simpler reading level and voice states
+  const [simpleModeActive, setSimpleModeActive] = useState<Record<string, boolean>>({
+    m1: false,
+    m3: false,
+  });
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
+
+  // V6. Glossary popover state
+  const [activeGlossaryTerm, setActiveGlossaryTerm] = useState<{ term: string; explanation: string } | null>(null);
+
+  // A1. Explain to Family state
+  const [familyRecipient, setFamilyRecipient] = useState<'husband' | 'mother' | 'saas' | 'sister'>('saas');
+  const [familyTopic, setFamilyTopic] = useState<string>('gluten');
+  const [familyLang, setFamilyLang] = useState<'hi' | 'te' | 'ta' | 'en'>('hi');
+  const [familyCopied, setFamilyCopied] = useState<boolean>(false);
+  const [familyVoicePlaying, setFamilyVoicePlaying] = useState<boolean>(false);
+
+  // A3. Forward Myth state
+  const [whatsappForwardText, setWhatsappForwardText] = useState<string>('Drink papaya seed decoction twice a day to force late periods immediately');
+  const [replyCopied, setReplyCopied] = useState<boolean>(false);
 
   // Chat state
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -115,20 +137,20 @@ export default function AskPage() {
     {
       id: 'm_cruciferous',
       claim: 'Women with thyroid and PCOS must strictly stop eating cabbage, cauliflower, and broccoli.',
-      verdict: 'NUANCED / BUSTED',
-      verdictColor: 'bg-amber-100 text-amber-800 border-amber-300',
-      icon: AlertTriangle,
-      summary: 'Cooked cruciferous vegetables are completely safe and highly beneficial. Goitrogens (isothiocyanates) are denatured by boiling and steaming. They contain indole-3-carbinol, which helps clear excess estrogen metabolites.',
-      evidence: 'American Thyroid Association (ATA) & Endocrine Society: Normal dietary intake of cooked cruciferous vegetables has no adverse effect on thyroid function with adequate iodine.',
+      verdict: 'SAFE IN NORMAL AMOUNTS',
+      verdictColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      icon: CheckCircle2,
+      summary: 'Cooked cruciferous vegetables are safe in normal dietary amounts. Cooking and steaming deactivates goitrogenic glucosinolates. They provide valuable dietary fiber and indole-3-carbinol which aids estrogen metabolism.',
+      evidence: 'American Thyroid Association (ATA) & Endocrine Society: Normal dietary intake of cooked cruciferous vegetables has no adverse clinical effect on thyroid function.',
     },
     {
       id: 'm_spearmint',
       claim: 'Spearmint tea twice daily helps reduce facial hair (hirsutism) in PCOS.',
-      verdict: 'EVIDENCE SUPPORTED',
-      verdictColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      verdict: 'LIMITED BUT PROMISING',
+      verdictColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
       icon: CheckCircle2,
-      summary: 'Multiple randomized controlled trials show spearmint (Mentha spicata) tea has measurable anti-androgenic properties, significantly lowering free testosterone in hirsute women over 30–60 days.',
-      evidence: 'Phytotherapy Research (Grant et al.): Significant reduction in free testosterone with spearmint tea 2x daily over a 30-day trial.',
+      summary: 'Preliminary small-scale clinical studies show spearmint (Mentha spicata) tea has modest anti-androgenic effects on free testosterone, but larger multi-center randomized trials are required before it can be recommended as a standalone medical therapy.',
+      evidence: 'Phytotherapy Research: Preliminary 30-day trial showed modest anti-androgenic trends; lifestyle foundation remains primary.',
     },
   ];
 
@@ -207,6 +229,7 @@ export default function AskPage() {
         <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
             { id: 'chat', label: '💬 Chat' },
+            { id: 'family', label: '👨‍👩‍👧 Explain to Family' },
             { id: 'explainer', label: '🩺 Advice Explainer' },
             { id: 'myths', label: '🔍 Myth Checker' },
             { id: 'labs', label: '🧪 Lab Tracker' },
@@ -230,13 +253,13 @@ export default function AskPage() {
       {/* TAB 1: PERSONAL AI CHAT */}
       {activeSubTab === 'chat' && (
         <div className="space-y-3">
-          {/* Community aggregate insight pill */}
+          {/* Community aggregate insight pill (Evidence fix: generic aggregate, no named doctor) */}
           <div className="rounded-2xl bg-pastel-blue/40 border border-blue-200/70 p-3 text-xs text-blue-950 flex items-start gap-2.5">
             <Users className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold">Community Insight (Hyderabad Aggregate):</span> 42 women with similar hormonal profiles and HOMA-IR &gt; 3.0 consulted Dr. Ananya Sen and found low-GI diet sequencing helpful for cycle regularity.
+              <span className="font-bold">Community Insight (Hyderabad Aggregate):</span> 120+ women in your region with similar hormonal profiles (Rotterdam B, HOMA-IR &gt; 3.0) found low-GI meal sequencing and evening strength walks helpful for cycle regularity.
               <span className="block text-[10px] text-blue-800 mt-0.5">
-                (Aggregated privately: N ≥ 40 threshold. Individual data is never shared.)
+                (Aggregated privately: N ≥ 120 threshold. Individual patient and doctor identities are never exposed.)
               </span>
             </div>
           </div>
@@ -244,55 +267,172 @@ export default function AskPage() {
           {/* Chat Stream */}
           <Card className="rounded-4xl p-4 sm:p-5 border-slate-200/80 bg-white shadow-card min-h-[380px] flex flex-col justify-between">
             <div className="space-y-3 overflow-y-auto max-h-[460px] pr-1">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${
-                    msg.sender === 'user' ? 'items-end' : 'items-start'
-                  }`}
-                >
+              {messages.map((msg) => {
+                const isSimple = simpleModeActive[msg.id];
+                const isSpeaking = speakingMsgId === msg.id;
+
+                let displayText = msg.text;
+                if (isSimple) {
+                  if (msg.id === 'm1') {
+                    displayText = 'Namaste Priya. I am Ritu. I remember your hormone checks and Dr. Sen\'s advice. You can ask me any question about your food, stomach, tiredness or medicines.';
+                  } else if (msg.id === 'm3') {
+                    displayText = 'For your body right now, white poha breaks down into sugar very fast, giving you a quick boost followed by tiredness and cravings after 2 hours. Besan chilla with paneer keeps your stomach full and gives steady energy through the whole morning.';
+                  }
+                }
+
+                return (
                   <div
-                    className={`max-w-[88%] sm:max-w-[80%] rounded-3xl p-3.5 text-xs leading-relaxed ${
-                      msg.sender === 'user'
-                        ? 'bg-forest text-white rounded-br-xs'
-                        : msg.isRedFlag
-                        ? 'bg-rose-50 border border-rose-300 text-rose-900 rounded-bl-xs'
-                        : 'bg-[#F4F6F2] border border-slate-200/70 text-slate-800 rounded-bl-xs'
+                    key={msg.id}
+                    className={`flex flex-col ${
+                      msg.sender === 'user' ? 'items-end' : 'items-start'
                     }`}
                   >
-                    {msg.isRedFlag && (
-                      <div className="flex items-center gap-1.5 font-bold text-rose-700 mb-1">
-                        <PhoneCall className="w-4 h-4 animate-bounce" />
-                        <span>Emergency Medical Protocol (Call 112)</span>
-                      </div>
-                    )}
+                    <div
+                      className={`max-w-[88%] sm:max-w-[80%] rounded-3xl p-3.5 text-xs leading-relaxed ${
+                        msg.sender === 'user'
+                          ? 'bg-forest text-white rounded-br-xs'
+                          : msg.isRedFlag
+                          ? 'bg-rose-50 border border-rose-300 text-rose-900 rounded-bl-xs'
+                          : 'bg-[#F4F6F2] border border-slate-200/70 text-slate-800 rounded-bl-xs'
+                      }`}
+                    >
+                      {msg.isRedFlag && (
+                        <div className="flex items-center gap-1.5 font-bold text-rose-700 mb-1">
+                          <PhoneCall className="w-4 h-4 animate-bounce" />
+                          <span>Emergency Medical Protocol (Call 112)</span>
+                        </div>
+                      )}
 
-                    <p>{msg.text}</p>
+                      {/* Message Body with Tap-to-Explain V6 Glossary Terms */}
+                      <p>
+                        {msg.sender === 'assistant' && !isSimple ? (
+                          <>
+                            {msg.id === 'm1' ? (
+                              <>
+                                Namaste Priya. I am Ritu, your private companion. I know your PCOS (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setActiveGlossaryTerm({
+                                      term: 'Rotterdam B Phenotype',
+                                      explanation:
+                                        'An international medical classification for PCOS based on irregular menstrual cycles and androgen symptoms without polycystic ovary ultrasound findings.',
+                                    })
+                                  }
+                                  className="border-b border-dotted border-brand-purple text-brand-purple font-semibold hover:bg-indigo-50"
+                                >
+                                  Rotterdam B
+                                </button>
+                                ) profile, your latest{' '}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setActiveGlossaryTerm({
+                                      term: 'HOMA-IR',
+                                      explanation:
+                                        'Homeostatic Model Assessment of Insulin Resistance: a formula checking whether your pancreas is working harder to regulate sugar.',
+                                    })
+                                  }
+                                  className="border-b border-dotted border-brand-purple text-brand-purple font-semibold hover:bg-indigo-50"
+                                >
+                                  HOMA-IR (3.61)
+                                </button>
+                                , and Dr. Sen’s guidance. Ask me anything about your symptoms, food choices, or lab values.
+                              </>
+                            ) : msg.id === 'm3' ? (
+                              <>
+                                For you, Priya, having Phenotype B with a{' '}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setActiveGlossaryTerm({
+                                      term: 'HOMA-IR',
+                                      explanation:
+                                        'A calculation indicating insulin resistance, which can stimulate ovarian theca cells to produce excess androgens.',
+                                    })
+                                  }
+                                  className="border-b border-dotted border-brand-purple text-brand-purple font-semibold hover:bg-indigo-50"
+                                >
+                                  HOMA-IR of 3.61
+                                </button>{' '}
+                                means flattened white rice (poha) has a high glycemic load that causes a rapid glucose and insulin excursion, leaving you fatigued 2 hours later. A much better Indian swap is Besan Chilla with grated paneer: it provides 3x more protein (11g) and dietary fiber (6.5g) to stabilize your morning energy.
+                              </>
+                            ) : (
+                              displayText
+                            )}
+                          </>
+                        ) : (
+                          displayText
+                        )}
+                      </p>
 
-                    {/* Source citation */}
-                    {msg.sourceCitation && (
-                      <div className="mt-2.5 pt-2 border-t border-slate-200/60 text-[10px] text-slate-500 font-semibold flex items-center gap-1">
-                        <BookOpen className="w-3 h-3 text-sage" />
-                        <span>{msg.sourceCitation}</span>
-                      </div>
-                    )}
+                      {/* Source citation + A2 Simpler & Listen buttons */}
+                      {msg.sender === 'assistant' && (
+                        <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-1 text-[10px]">
+                          {msg.sourceCitation && (
+                            <div className="text-slate-500 font-semibold flex items-center gap-1">
+                              <BookOpen className="w-3 h-3 text-sage" />
+                              <span>{msg.sourceCitation}</span>
+                            </div>
+                          )}
 
-                    {/* What to ask your doctor */}
-                    {msg.questionsForDoctor && msg.questionsForDoctor.length > 0 && (
-                      <div className="mt-2 p-2 rounded-xl bg-white/70 border border-slate-200/70 text-[11px] text-slate-700">
-                        <span className="font-bold text-forest block mb-1">
-                          Questions to ask your doctor:
-                        </span>
-                        <ul className="list-disc pl-4 space-y-0.5 text-[10px]">
-                          {msg.questionsForDoctor.map((q, i) => (
-                            <li key={i}>{q}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                          <div className="flex items-center gap-1.5 ml-auto">
+                            {/* A2. Simple Mode Toggle */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSimpleModeActive({
+                                  ...simpleModeActive,
+                                  [msg.id]: !simpleModeActive[msg.id],
+                                })
+                              }
+                              className={`px-2 py-0.5 rounded-full font-bold transition flex items-center gap-0.5 ${
+                                isSimple
+                                  ? 'bg-brand-purple text-white'
+                                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                              }`}
+                              title="Toggle between plain language and clinical explanation"
+                            >
+                              <span>Aa↓</span>
+                              <span>{isSimple ? 'Clinical' : 'Simpler'}</span>
+                            </button>
+
+                            {/* A2. Listen button */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSpeakingMsgId(isSpeaking ? null : msg.id)
+                              }
+                              className={`p-1 rounded-full transition ${
+                                isSpeaking
+                                  ? 'bg-brand-pink text-white animate-pulse'
+                                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                              }`}
+                              title="Listen aloud in your app language"
+                            >
+                              <Volume2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* What to ask your doctor */}
+                      {msg.questionsForDoctor && msg.questionsForDoctor.length > 0 && (
+                        <div className="mt-2 p-2 rounded-xl bg-white/70 border border-slate-200/70 text-[11px] text-slate-700">
+                          <span className="font-bold text-forest block mb-1">
+                            Questions to ask your doctor:
+                          </span>
+                          <ul className="list-disc pl-4 space-y-0.5 text-[10px]">
+                            {msg.questionsForDoctor.map((q, i) => (
+                              <li key={i}>{q}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Input Bar */}
@@ -334,6 +474,164 @@ export default function AskPage() {
               {isRecording && (
                 <div className="mt-1.5 text-center text-[10px] text-rose-600 font-semibold animate-pulse">
                   Listening in Indic Voice... Speak naturally
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB: A1. EXPLAIN TO MY FAMILY */}
+      {activeSubTab === 'family' && (
+        <div className="space-y-4">
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 text-[10px] font-bold text-brand-purple">
+                👨‍👩‍👧 Culturally Sensitive Family Bridge
+              </span>
+              <span className="text-[10px] text-slate-400">Respectful &amp; Evidence-Grounded</span>
+            </div>
+
+            <div>
+              <h2 className="font-heading text-lg font-bold text-slate-900">
+                Explain my health choices to family
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Generate polite WhatsApp messages and voice notes in Indian languages to explain doctor instructions without conflict.
+              </p>
+            </div>
+
+            {/* Recipient Picker */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">1. Who are you sharing with?</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { id: 'saas', label: 'Mother-in-law (Saas)' },
+                  { id: 'husband', label: 'Husband' },
+                  { id: 'mother', label: 'Mother (Mummy)' },
+                  { id: 'sister', label: 'Sister / Bhabhi' },
+                ].map((rec) => (
+                  <button
+                    key={rec.id}
+                    type="button"
+                    onClick={() => setFamilyRecipient(rec.id as any)}
+                    className={`p-2.5 rounded-2xl border text-xs font-semibold transition text-center ${
+                      familyRecipient === rec.id
+                        ? 'bg-brand-purple text-white border-brand-purple shadow-xs'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {rec.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Topic Picker */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">2. What do you need to explain?</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: 'gluten', label: 'Why I am avoiding maida/wheat' },
+                  { id: 'fatigue', label: 'Why I experience afternoon fatigue' },
+                  { id: 'metformin', label: 'Why doctor gave Metformin' },
+                  { id: 'delays', label: 'Why my cycle gets delayed' },
+                ].map((top) => (
+                  <button
+                    key={top.id}
+                    type="button"
+                    onClick={() => setFamilyTopic(top.id)}
+                    className={`p-2 rounded-xl border text-[11px] font-semibold transition text-left ${
+                      familyTopic === top.id
+                        ? 'bg-rose-100 border-brand-pink text-brand-pink'
+                        : 'bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
+                  >
+                    {top.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Language Picker */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">3. Language of message</label>
+              <div className="flex gap-2">
+                {[
+                  { id: 'hi', label: 'Hindi (हिंदी)' },
+                  { id: 'te', label: 'Telugu (తెలుగు)' },
+                  { id: 'ta', label: 'Tamil (தமிழ்)' },
+                  { id: 'en', label: 'English' },
+                ].map((lng) => (
+                  <button
+                    key={lng.id}
+                    type="button"
+                    onClick={() => setFamilyLang(lng.id as any)}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                      familyLang === lng.id
+                        ? 'bg-forest text-white border-forest'
+                        : 'bg-slate-50 border-slate-200 text-slate-600'
+                    }`}
+                  >
+                    {lng.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Respectful Generated Message Card */}
+            <div className="p-4 rounded-3xl bg-indigo-50/70 border border-indigo-100 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-indigo-950 font-heading">
+                <span>WhatsApp Message Preview</span>
+                <span className="text-[10px] text-brand-purple">Respectful &amp; Warm</span>
+              </div>
+
+              <p className="text-xs text-slate-700 leading-relaxed italic bg-white/90 p-3 rounded-2xl border border-indigo-100">
+                {familyRecipient === 'saas' && familyLang === 'hi' && (
+                  `"प्रणाम मम्मी जी। डॉ. अनन्या सेन ने समझाया है कि मेरे शरीर में मैदा और सामान्य गेहूं से ब्लड शुगर तेजी से बढ़ता है, जिससे ओवरीज में हार्मोन असंतुलन होता है। इसलिए बेसन के चीले, ज्वार-बाजरा और हरी सब्जियां खाने से मेरा स्वास्थ्य सुधर रहा है, यह कोई वजन घटाने की डाइटिंग नहीं है। आपके आशीर्वाद और घर के इस स्वस्थ भोजन में सहयोग से मुझे बहुत शक्ति मिलती है।" `
+                )}
+                {familyRecipient === 'husband' && (
+                  `"Hi, Dr. Sen explained that PCOS fatigue happens because insulin resistance prevents cells from absorbing glucose properly after meals. When I rest for 20 minutes in the afternoon or take a brisk walk, my insulin sensitivity improves. Thanks for supporting my routine!" `
+                )}
+                {familyRecipient === 'saas' && familyLang !== 'hi' && (
+                  `"Namaste Mummy ji. Dr. Sen explained that in Priya's body, maida and heavy refined starches cause insulin spikes that affect ovulation. That is why cooking with besan, jowar and seasonal vegetables helps her health, not dieting for weight loss. Your kind blessing and support with these home food choices helps her heal." `
+                )}
+                {familyRecipient === 'mother' && (
+                  `"Mummy, Dr. Sen has reviewed my lab reports. The Metformin tablet is to balance insulin sensitivity, not for diabetes. The doctor says it protects long-term ovarian health." `
+                )}
+                {familyRecipient === 'sister' && (
+                  `"Hey! Just sharing what Dr. Sen explained about cycle delays in PCOS: high insulin increases androgen hormones which pauses the follicle from releasing an egg. Healthy swaps and walking help regulate it." `
+                )}
+              </p>
+
+              {/* Action Buttons */}
+              <div className="pt-1 flex flex-wrap gap-2">
+                <Button
+                  variant="purple"
+                  size="sm"
+                  onClick={() => {
+                    setFamilyCopied(true);
+                    setTimeout(() => setFamilyCopied(false), 2500);
+                  }}
+                  className="text-xs"
+                >
+                  {familyCopied ? '✓ Copied to Clipboard!' : '📋 Copy WhatsApp Message'}
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={() => setFamilyVoicePlaying(!familyVoicePlaying)}
+                  className="px-3 py-1.5 rounded-xl bg-white border border-indigo-200 text-brand-purple text-xs font-semibold hover:bg-indigo-50 flex items-center gap-1 shadow-xs"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>{familyVoicePlaying ? 'Pause Voice Note' : '🎙️ Generate Voice Note'}</span>
+                </button>
+              </div>
+
+              {familyVoicePlaying && (
+                <div className="p-2 rounded-xl bg-indigo-100 text-indigo-900 text-[11px] flex items-center gap-2 animate-in fade-in">
+                  <span className="w-2 h-2 rounded-full bg-brand-purple animate-ping" />
+                  <span>Simulated Voice Note: Warm, respectful spoken Hindi audio playing...</span>
                 </div>
               )}
             </div>
@@ -506,6 +804,56 @@ export default function AskPage() {
               </Button>
             </div>
 
+            {/* A3. FORWARD-TO-RITU WHATSAPP DEBUNKER */}
+            <div className="mt-5 p-4 rounded-3xl bg-pastel-yellow/30 border border-amber-200/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-950 font-heading flex items-center gap-1.5">
+                  <span>📱</span>
+                  <span>Forward-to-Ritu (WhatsApp Rumor Check)</span>
+                </span>
+                <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                  Share Sheet Target
+                </span>
+              </div>
+
+              <div className="text-[11px] text-slate-600">
+                Received a forwarded forward on a family group? Ritu checks the evidence and writes a respectful reply you can send back.
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white border border-amber-200/60 text-xs text-slate-800 space-y-1">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Simulated Forward:</div>
+                <div className="italic font-medium">"{whatsappForwardText}"</div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                  <span className="font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md">
+                    Verdict: DANGEROUS / BUSTED
+                  </span>
+                  <span className="text-slate-500 text-[10px]">FOGSI Safety Alert</span>
+                </div>
+              </div>
+
+              {/* Polite Group Reply Generator */}
+              <div className="p-3 rounded-2xl bg-white border border-indigo-100 space-y-2">
+                <div className="text-xs font-bold text-indigo-950 font-heading flex items-center justify-between">
+                  <span>Polite Group Reply (Respectful to Elders)</span>
+                  <span className="text-[10px] text-indigo-600">Ready to Paste</span>
+                </div>
+                <p className="text-[11px] text-slate-700 leading-relaxed italic bg-indigo-50/50 p-2.5 rounded-xl">
+                  "Mummy ji / Aunty ji, I checked this with the gynecologist guidelines. Papaya seeds contain benzyl isothiocyanate which can cause severe gastric irritation and uterine spasms, but does not safely treat delayed cycles. Warm ajwain water or ginger tea is much gentler and safer for stomach cramps."
+                </p>
+                <Button
+                  variant="purple"
+                  size="sm"
+                  onClick={() => {
+                    setReplyCopied(true);
+                    setTimeout(() => setReplyCopied(false), 2500);
+                  }}
+                  className="text-xs w-full"
+                >
+                  {replyCopied ? '✓ Copied Polite Group Reply!' : '📋 Copy Polite Group Reply'}
+                </Button>
+              </div>
+            </div>
+
             {/* Sample Verified Claims */}
             <div className="mt-5 space-y-3">
               <div className="text-xs font-bold text-slate-700">Recent Indian Claims Verified:</div>
@@ -627,6 +975,49 @@ export default function AskPage() {
               </Link>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* V6. TAP-TO-EXPLAIN GLOSSARY DRAWER */}
+      {activeGlossaryTerm && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs p-3 animate-in fade-in">
+          <div
+            className="fixed inset-0"
+            onClick={() => setActiveGlossaryTerm(null)}
+          />
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 shadow-2xl border border-indigo-100 z-10 space-y-3 animate-in slide-in-from-bottom-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <span className="text-xs font-bold text-brand-purple font-heading flex items-center gap-1.5">
+                <span>📖</span>
+                <span>Plain-Language Glossary</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setActiveGlossaryTerm(null)}
+                className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 text-xs font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div>
+              <div className="text-sm font-bold text-slate-900 font-heading">
+                {activeGlossaryTerm.term}
+              </div>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                {activeGlossaryTerm.explanation}
+              </p>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveGlossaryTerm(null)}
+              className="w-full text-xs"
+            >
+              Got it
+            </Button>
+          </div>
         </div>
       )}
 

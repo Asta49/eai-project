@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Link } from '@/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,31 @@ export default function CarePage() {
 
   // Active view: Patient Care Team vs Doctor-Side View
   const [activeTab, setActiveTab] = useState<'team' | 'summary' | 'screening' | 'doctorView'>('team');
+
+  // H2. Pattern Watch card state
+  const [patternDismissed, setPatternDismissed] = useState<boolean>(false);
+  const [addedPatternToQuestions, setAddedPatternToQuestions] = useState<boolean>(false);
+
+  // C1. Consult Companion state
+  const [activeConsultSpecialist, setActiveConsultSpecialist] = useState<string | null>(null);
+  const [consultRecording, setConsultRecording] = useState<boolean>(false);
+  const [consultCompleted, setConsultCompleted] = useState<boolean>(false);
+  const [draftRules, setDraftRules] = useState<string[]>([
+    'Avoid Maida and Refined Wheat (Doctor instructed to reduce insulin spikes)',
+    'Repeat Fasting Insulin & Lipid profile in 12 weeks',
+  ]);
+
+  // C3. Trusted Person Access (ASHA / Family) state
+  const [trustedPerson, setTrustedPerson] = useState({
+    name: 'Sunita Devi (ASHA Worker) & Rahul (Husband)',
+    role: 'Trusted Family / Community Roster',
+    sharing: {
+      emergency: true,
+      meds: true,
+      cycleIntimate: false,
+      foodJournal: false,
+    },
+  });
 
   // Care team members with granular sharing permissions
   const [specialists, setSpecialists] = useState<Specialist[]>([
@@ -158,6 +184,50 @@ export default function CarePage() {
       {/* VIEW 1: CARE TEAM & PERMISSIONS */}
       {activeTab === 'team' && (
         <div className="space-y-4">
+          {/* H2. PATTERN WATCH MIRRORED CARD ("Ritu noticed") */}
+          {!patternDismissed && (
+            <div className="p-4 rounded-3xl bg-indigo-50/80 border border-indigo-200 border-l-4 border-l-brand-purple shadow-xs transition animate-in fade-in">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-purple text-white text-[10px]">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </span>
+                  <span className="text-xs font-bold text-indigo-950 font-heading">
+                    Ritu noticed • Pattern Watch
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPatternDismissed(true)}
+                  className="text-slate-400 hover:text-slate-600 text-xs font-bold"
+                  title="Dismiss pattern alert"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className="text-xs text-slate-700 mt-2 leading-relaxed">
+                Your last 3 cycles were 38, 41 and 45 days. Long gaps are worth raising with Dr. Sen during your upcoming visit.
+              </p>
+
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAddedPatternToQuestions(true)}
+                  className="inline-flex items-center gap-1 rounded-xl bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 hover:bg-brand-purpleDark shadow-xs transition"
+                >
+                  {addedPatternToQuestions ? '✓ Added to Visit Questions' : '+ Add to visit questions'}
+                </button>
+                <Link
+                  href="/labs"
+                  className="inline-flex items-center gap-1 rounded-xl bg-white text-brand-purple border border-indigo-200 text-[11px] font-semibold px-2.5 py-1.5 hover:bg-indigo-50 transition"
+                >
+                  Book lab review
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* Automatic Routing Banner */}
           <div className="rounded-3xl bg-[#F4F6F2] border border-slate-200/80 p-4 text-xs">
             <div className="flex items-center gap-1.5 font-bold text-forest text-xs mb-1">
@@ -226,8 +296,19 @@ export default function CarePage() {
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2.5 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-slate-400">Next Review: 20 Dec 2026</span>
+                {/* C1. Consult Companion Button + Review Link */}
+                <div className="mt-3 pt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveConsultSpecialist(s.name);
+                      setConsultRecording(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-purple text-white text-[11px] font-bold shadow-xs hover:bg-brand-purpleDark transition"
+                  >
+                    <span>🎙️ Start visit (Consult Companion)</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setActiveTab('summary')}
@@ -240,6 +321,70 @@ export default function CarePage() {
               </Card>
             ))}
           </div>
+
+          {/* C3. TRUSTED PERSON ACCESS (FAMILY / ASHA ROSTER) */}
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 rounded-full bg-pastel-yellow px-2.5 py-0.5 text-[10px] font-bold text-amber-900">
+                👥 Trusted Person Access (ASHA &amp; Family)
+              </span>
+              <span className="text-[10px] text-slate-400">DPDP Act Safeguard</span>
+            </div>
+
+            <div>
+              <h3 className="font-heading text-sm font-bold text-slate-900">
+                {trustedPerson.name}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Narrow opt-in: your trusted person only sees emergency alerts and medicine adherence. Intimate cycle and symptom logs remain private.
+              </p>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 space-y-2 text-xs">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50">
+                <span>Emergency red flag triggers (Call 112 alerts)</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setTrustedPerson({
+                      ...trustedPerson,
+                      sharing: { ...trustedPerson.sharing, emergency: !trustedPerson.sharing.emergency },
+                    })
+                  }
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    trustedPerson.sharing.emergency ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
+                  }`}
+                >
+                  {trustedPerson.sharing.emergency ? 'Shared ✓' : 'Hidden ✕'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50">
+                <span>Daily medicine adherence checks</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setTrustedPerson({
+                      ...trustedPerson,
+                      sharing: { ...trustedPerson.sharing, meds: !trustedPerson.sharing.meds },
+                    })
+                  }
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    trustedPerson.sharing.meds ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
+                  }`}
+                >
+                  {trustedPerson.sharing.meds ? 'Shared ✓' : 'Hidden ✕'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50">
+                <span>Menstrual flow &amp; intimate symptom details</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
+                  Strictly Private 🔒
+                </span>
+              </div>
+            </div>
+          </Card>
 
           {/* AI Booking Agent Card */}
           <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card">
@@ -463,6 +608,82 @@ export default function CarePage() {
               ))}
             </div>
           </Card>
+
+          {/* C2. SCHEMES & COSTS NAVIGATOR */}
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                🏛️ Public Health Schemes &amp; Price Transparency
+              </span>
+              <span className="text-[10px] text-slate-400">Ayushman Bharat &amp; State Portals</span>
+            </div>
+
+            <div>
+              <h3 className="font-heading text-base font-bold text-slate-900">
+                Government Schemes &amp; Diagnostic Rates
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Financial coverage options and transparent Telangana benchmark costs for women's hormonal healthcare.
+              </p>
+            </div>
+
+            {/* Scheme Cards */}
+            <div className="space-y-2">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Ayushman Bharat (AB PM-JAY)</span>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">₹5 Lakh/Yr Cashless</span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  Covers secondary and tertiary hospital care, pre-existing conditions from Day 1, and in-patient diagnostic evaluations across empaneled public &amp; private hospitals.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Telangana Aarogyasri Scheme</span>
+                  <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">State Cashless</span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  Comprehensive coverage for women's reproductive health surgeries, diagnostic laparoscopy, and hormonal evaluations at recognized network hospitals across Telangana.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">PMMVY &amp; JSSK (Maternal Health)</span>
+                  <span className="text-[10px] bg-purple-100 text-brand-purple font-bold px-2 py-0.5 rounded-full">Direct DBT &amp; Zero Cost</span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  PMMVY provides direct cash incentives (₹5,000–₹6,000) for nutritional support during pregnancy. JSSK guarantees completely zero-expense medicines, diagnostics, and delivery.
+                </p>
+              </div>
+            </div>
+
+            {/* Transparent Diagnostic Benchmark Price Ranges */}
+            <div className="pt-3 border-t border-slate-100 space-y-2">
+              <div className="text-xs font-bold text-slate-800 font-heading">
+                Diagnostic Fair Price Guide (Hyderabad Average):
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-xs">
+                <div className="p-2.5 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+                  <div className="font-bold text-slate-800">HOMA-IR Panel</div>
+                  <div className="text-brand-purple font-bold text-sm mt-0.5">₹450 – ₹800</div>
+                  <div className="text-[10px] text-slate-400">Glucose + Fasting Insulin</div>
+                </div>
+                <div className="p-2.5 rounded-2xl bg-rose-50/60 border border-rose-100">
+                  <div className="font-bold text-slate-800">Thyroid Profile</div>
+                  <div className="text-brand-pink font-bold text-sm mt-0.5">₹350 – ₹600</div>
+                  <div className="text-[10px] text-slate-400">T3, T4, TSH</div>
+                </div>
+                <div className="p-2.5 rounded-2xl bg-teal-50/60 border border-teal-100">
+                  <div className="font-bold text-slate-800">Pelvic Ultrasound</div>
+                  <div className="text-teal-700 font-bold text-sm mt-0.5">₹800 – ₹1,500</div>
+                  <div className="text-[10px] text-slate-400">Follicular / TVS</div>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       )}
 
@@ -564,6 +785,102 @@ export default function CarePage() {
               </div>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* C1. CONSULT COMPANION MODAL */}
+      {activeConsultSpecialist && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-3 animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 shadow-2xl border border-rose-100 z-10 space-y-4 animate-in slide-in-from-bottom-5">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping" />
+                <span className="font-heading text-sm font-bold text-slate-900">
+                  Consult Companion • {activeConsultSpecialist}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveConsultSpecialist(null);
+                  setConsultRecording(false);
+                  setConsultCompleted(false);
+                }}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Privacy Consent Notice */}
+            <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-[10px] text-slate-600">
+              <strong>DPDP Compliance Note:</strong> Audio is processed strictly on-device to extract instructions. No raw audio is uploaded or stored externally without your explicit confirmation.
+            </div>
+
+            {!consultCompleted ? (
+              <div className="space-y-4 py-2">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="relative flex items-center justify-center">
+                    <div className="absolute w-20 h-20 rounded-full bg-rose-200 animate-ping opacity-60" />
+                    <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg relative z-10 text-xl font-bold">
+                      🎙️
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-slate-800 mt-3 font-heading">
+                    Live Visit Recording (04:18)
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    Listening for clinical instructions &amp; lab tests...
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-rose-50/60 border border-rose-100 text-[11px] text-slate-700 space-y-1">
+                  <div className="font-bold text-rose-900">Live Transcript Highlights:</div>
+                  <div className="italic">"...continue Metformin with dinner. Also let's avoid refined maida for the next 3 months to bring that HOMA-IR down..."</div>
+                </div>
+
+                <Button
+                  variant="pink"
+                  className="w-full text-xs font-bold py-2.5"
+                  onClick={() => setConsultCompleted(true)}
+                >
+                  End Visit &amp; Review Extracted Clinical Rules
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3 animate-in fade-in">
+                <div className="text-xs font-bold text-slate-900 font-heading">
+                  Extracted Doctor Instructions Queue:
+                </div>
+                <div className="space-y-2">
+                  {draftRules.map((rule, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 flex items-start gap-2"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-brand-purple shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-semibold">{rule}</div>
+                        <div className="text-[10px] text-brand-purple mt-0.5">Status: Pending Your Confirmation</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  variant="purple"
+                  className="w-full text-xs font-bold py-2.5"
+                  onClick={() => {
+                    setDoctorRules([...doctorRules, ...draftRules]);
+                    setActiveConsultSpecialist(null);
+                    setConsultCompleted(false);
+                  }}
+                >
+                  Confirm &amp; Apply to My Ritu Health Plan
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

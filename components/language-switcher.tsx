@@ -17,16 +17,16 @@ export function LanguageSwitcher({ className = '' }: { className?: string }) {
   };
 
   return (
-    <div className={`relative inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/95 px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 transition ${className}`}>
-      <Globe className="h-3.5 w-3.5 text-forest" />
+    <div className={`relative inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-xs font-medium text-white shadow-xs hover:bg-white/15 transition ${className}`}>
+      <Globe className="h-3.5 w-3.5 text-rose-200" />
       <select
         value={currentLocale}
         onChange={handleLanguageChange}
         aria-label="Select Language"
-        className="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer pr-1"
+        className="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer pr-1"
       >
         {locales.map((loc) => (
-          <option key={loc} value={loc} className="bg-white text-slate-900">
+          <option key={loc} value={loc} className="bg-slate-900 text-white">
             {loc === 'en' ? 'EN' : loc === 'hi' ? 'HI' : loc === 'te' ? 'TE' : 'TA'} • {localeNames[loc].split(' ')[0]}
           </option>
         ))}

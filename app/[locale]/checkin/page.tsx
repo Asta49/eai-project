@@ -54,6 +54,23 @@ export default function CheckinPage() {
 
   // Form states
   const [selectedMood, setSelectedMood] = useState<number>(4);
+
+  // L2. Mood Journal & DRSP Screener state
+  const [subEmotions, setSubEmotions] = useState<string[]>(['Grounded']);
+  const [drspExpanded, setDrspExpanded] = useState<boolean>(false);
+  const [drspScores, setDrspScores] = useState({
+    overwhelmed: 2,
+    irritability: 2,
+    tension: 1,
+  });
+
+  // L3. Weekly photo progress state
+  const [photoSectionOpen, setPhotoSectionOpen] = useState<boolean>(false);
+  const [capturedPhoto, setCapturedPhoto] = useState<boolean>(true);
+  const [activePhotoType, setActivePhotoType] = useState<'jawline' | 'hairline'>('jawline');
+
+  const SUB_EMOTION_OPTIONS = ['Anxious', 'Irritable', 'Grateful', 'Exhausted', 'Grounded', 'Tearful', 'Focused'];
+  const drspTotal = drspScores.overwhelmed + drspScores.irritability + drspScores.tension;
   const [energyLevel, setEnergyLevel] = useState<number>(4);
   const [cravings, setCravings] = useState<number>(2);
   const [periodToday, setPeriodToday] = useState<boolean>(false);
@@ -217,6 +234,39 @@ export default function CheckinPage() {
                 );
               })}
             </div>
+
+            {/* L2. Sub-emotions selector */}
+            <div className="mt-3 pt-3 border-t border-slate-100">
+              <span className="text-[11px] font-semibold text-slate-500 block mb-2">
+                Specific feelings (Tap to tag):
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {SUB_EMOTION_OPTIONS.map((emotion) => {
+                  const isChecked = subEmotions.includes(emotion);
+                  return (
+                    <button
+                      key={emotion}
+                      type="button"
+                      onClick={() => {
+                        if (isChecked) {
+                          setSubEmotions(subEmotions.filter((e) => e !== emotion));
+                        } else {
+                          setSubEmotions([...subEmotions, emotion]);
+                        }
+                      }}
+                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition ${
+                        isChecked
+                          ? 'bg-brand-purple text-white border-brand-purple shadow-xs'
+                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      {isChecked ? '✓ ' : '+ '}
+                      {emotion}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </Card>
 
           {/* Energy & Cravings Sliders */}
@@ -280,7 +330,7 @@ export default function CheckinPage() {
             </div>
           </Card>
 
-          {/* Quick Symptoms & Categories Chips (Matching reference s4.avif right side) */}
+          {/* Quick Symptoms & Categories Chips */}
           <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
               Symptom &amp; Lifestyle Tags (Tap to toggle)
@@ -307,6 +357,95 @@ export default function CheckinPage() {
             </div>
           </Card>
 
+          {/* L2. DRSP LUTEAL SCREENING ACCORDION */}
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-bold text-slate-900 font-heading flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-purple" />
+                  <span>Bi-Weekly Luteal Check (DRSP Screener)</span>
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  Daily Record of Severity of Problems (ACOG &amp; FOGSI standard)
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDrspExpanded(!drspExpanded)}
+                className="text-xs font-semibold text-brand-purple hover:underline"
+              >
+                {drspExpanded ? 'Hide' : 'Check'}
+              </button>
+            </div>
+
+            {drspExpanded && (
+              <div className="space-y-3 pt-2 border-t border-slate-100 text-xs animate-in fade-in">
+                <div>
+                  <div className="flex justify-between font-medium text-slate-700 mb-1">
+                    <span>Feeling overwhelmed / unable to cope:</span>
+                    <span className="font-bold text-brand-purple">{drspScores.overwhelmed} / 5</span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {[1, 2, 3, 4, 5].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setDrspScores({ ...drspScores, overwhelmed: val })}
+                        className={`flex-1 py-1.5 rounded-xl text-[11px] font-bold ${
+                          drspScores.overwhelmed === val ? 'bg-brand-purple text-white' : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        {val}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between font-medium text-slate-700 mb-1">
+                    <span>Irritability or sudden anger spikes:</span>
+                    <span className="font-bold text-brand-purple">{drspScores.irritability} / 5</span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {[1, 2, 3, 4, 5].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setDrspScores({ ...drspScores, irritability: val })}
+                        className={`flex-1 py-1.5 rounded-xl text-[11px] font-bold ${
+                          drspScores.irritability === val ? 'bg-brand-purple text-white' : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        {val}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tele-MANAS Card (shown when elevated or available as resource) */}
+                <div className="rounded-3xl bg-pastel-peach/50 border border-rose-200 p-3.5 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-rose-950 font-heading">
+                      Tele-MANAS Support (Govt. of India)
+                    </span>
+                    <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
+                      Toll-Free 24/7
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-rose-900 leading-relaxed">
+                    If luteal mood swings or anxiety feel unmanageable, trained women's counselors are available in 20+ Indian languages.
+                  </p>
+                  <a
+                    href="tel:14416"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-brand-pink hover:bg-brand-pinkDark px-3 py-1.5 rounded-xl shadow-xs transition mt-1"
+                  >
+                    📞 Call 14416 (Tele-MANAS)
+                  </a>
+                </div>
+              </div>
+            )}
+          </Card>
+
           {/* Adherence to Trial */}
           <Card className="rounded-4xl p-4 border-slate-200/80 bg-white shadow-card flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -331,6 +470,86 @@ export default function CheckinPage() {
             >
               {adherence ? 'Yes, Adhered' : 'Skipped'}
             </button>
+          </Card>
+
+          {/* L3. SKIN & HAIR PROGRESS PHOTOS */}
+          <Card className="rounded-4xl p-5 border-slate-200/80 bg-white shadow-card space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">📸</span>
+                <div>
+                  <div className="text-xs font-bold text-slate-900 font-heading">
+                    Weekly Skin &amp; Hair Progress Photo
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    Week 4 Check • Jawline Acne &amp; Midline Parting
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPhotoSectionOpen(!photoSectionOpen)}
+                className="text-xs font-semibold text-brand-purple hover:underline"
+              >
+                {photoSectionOpen ? 'Close' : 'View / Capture'}
+              </button>
+            </div>
+
+            {photoSectionOpen && (
+              <div className="pt-2 border-t border-slate-100 space-y-3 animate-in fade-in text-xs">
+                {/* Photo type tabs */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActivePhotoType('jawline')}
+                    className={`flex-1 py-1.5 rounded-xl font-bold text-xs ${
+                      activePhotoType === 'jawline'
+                        ? 'bg-rose-100 text-brand-pink border border-rose-300'
+                        : 'bg-slate-50 text-slate-600 border border-slate-200'
+                    }`}
+                  >
+                    Jawline Acne
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActivePhotoType('hairline')}
+                    className={`flex-1 py-1.5 rounded-xl font-bold text-xs ${
+                      activePhotoType === 'hairline'
+                        ? 'bg-indigo-100 text-brand-purple border border-indigo-300'
+                        : 'bg-slate-50 text-slate-600 border border-slate-200'
+                    }`}
+                  >
+                    Midline Hair Parting
+                  </button>
+                </div>
+
+                {/* Simulated Face Guide Overlay Viewfinder */}
+                <div className="relative rounded-3xl bg-slate-900 h-44 flex flex-col items-center justify-center text-white overflow-hidden border-2 border-dashed border-rose-300/80">
+                  {/* Overlay guidelines */}
+                  <div className="absolute inset-4 border border-white/30 rounded-full pointer-events-none flex items-center justify-center">
+                    <span className="text-[10px] text-white/50 uppercase font-mono">
+                      {activePhotoType === 'jawline' ? 'Align Chin in Oval' : 'Align Parting with Center Guide'}
+                    </span>
+                  </div>
+
+                  <div className="z-10 text-center space-y-1">
+                    <span className="text-2xl">📸</span>
+                    <div className="text-xs font-bold text-white">Week 4 Comparison Logged</div>
+                    <div className="text-[10px] text-emerald-300 font-semibold">
+                      Lesions tracked: 6 ➔ 2 (66% reduction)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Privacy Guarantee as required by DPDP Act */}
+                <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-[10px] text-slate-600 flex items-start gap-2">
+                  <span className="text-xs">🔒</span>
+                  <span>
+                    <strong>On-Device Encryption (DPDP Act 2023):</strong> Photos are stored strictly on your local device. Ritu never uploads your photos to any external cloud or AI model.
+                  </span>
+                </div>
+              </div>
+            )}
           </Card>
 
           {/* Big CTA Button (Matching s4.avif) */}

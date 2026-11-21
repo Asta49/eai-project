@@ -21,6 +21,14 @@ import {
   Clock,
   Activity,
   Flame,
+  Volume2,
+  Camera,
+  X,
+  Play,
+  Pause,
+  AlertTriangle,
+  FileText,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function TodayPage() {
@@ -42,6 +50,21 @@ export default function TodayPage() {
     metformin: false,
   });
 
+  // H1. Forecast state
+  const [forecastExpanded, setForecastExpanded] = useState<boolean>(false);
+  const [isSpeakingForecast, setIsSpeakingForecast] = useState<boolean>(false);
+
+  // H3. Audio recap state
+  const [audioRecapPlaying, setAudioRecapPlaying] = useState<boolean>(false);
+  const [audioTranscriptOpen, setAudioTranscriptOpen] = useState<boolean>(false);
+
+  // H4. Prescription scan state
+  const [prescriptionScanOpen, setPrescriptionScanOpen] = useState<boolean>(false);
+  const [prescriptionSaved, setPrescriptionSaved] = useState<boolean>(false);
+
+  // Workouts modal
+  const [workoutsModalOpen, setWorkoutsModalOpen] = useState<boolean>(false);
+
   const weekDays = [
     { date: 15, day: 'S', isPeriod: false },
     { date: 16, day: 'M', isPeriod: false },
@@ -59,7 +82,7 @@ export default function TodayPage() {
   };
 
   return (
-    <div className="space-y-5 pb-6">
+    <div className="space-y-4 sm:space-y-5 pb-6">
       {/* 1. HERO HEART WIDGET (Exact match to reference s1.png & s2.png) */}
       <div className="relative flex flex-col items-center justify-center pt-2">
         {/* Floating decorative mini hearts */}
@@ -93,7 +116,7 @@ export default function TodayPage() {
             <Edit3 className="w-3.5 h-3.5" />
           </Link>
 
-          {/* Heart Content */}
+          {/* Heart Content with Softened Evidence-Based Estimates */}
           <div className="pt-2 flex flex-col items-center justify-center">
             {heartMode === 'period' ? (
               <>
@@ -103,10 +126,13 @@ export default function TodayPage() {
                 <h2 className="font-heading text-3xl sm:text-4xl font-extrabold tracking-tight mt-0.5">
                   Day 18
                 </h2>
-                <div className="mt-1 text-[11px] font-medium text-rose-100">
-                  Possible Pregnancy:
+                <div className="mt-1 text-[10px] font-medium text-rose-100">
+                  Estimated Conception Chance:
                 </div>
-                <div className="font-heading text-lg font-bold">12.4%</div>
+                <div className="font-heading text-sm font-bold">Low (8–15%)</div>
+                <div className="text-[9px] text-rose-200/90 leading-none mt-0.5">
+                  Can't predict exactly with irregular cycles
+                </div>
               </>
             ) : (
               <>
@@ -128,6 +154,85 @@ export default function TodayPage() {
         <div className="mt-2 text-[11px] text-slate-400 font-medium">
           Tap heart to switch view (Period / Ovulation)
         </div>
+      </div>
+
+      {/* H1. TODAY'S FORECAST (Soft sky-blue #EEF2FF card with 3-day expandable outlook & read-aloud) */}
+      <div className="bg-[#EEF2FF] border border-blue-200/80 rounded-3xl p-4 shadow-xs transition">
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-1 flex-1">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-blue-900 font-heading">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Today’s Forecast</span>
+              <span className="text-[9px] font-semibold bg-blue-100/90 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">
+                High Confidence
+              </span>
+            </div>
+            <p className="text-xs text-blue-950 leading-relaxed font-medium">
+              Day 18. In your last 4 cycles, energy dipped and sugar cravings rose around now. Keep a roasted chana snack handy after 4 pm.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsSpeakingForecast(!isSpeakingForecast)}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition shrink-0 ${
+              isSpeakingForecast
+                ? 'bg-blue-600 text-white animate-pulse'
+                : 'bg-white text-blue-700 hover:bg-blue-100 border border-blue-200'
+            }`}
+            title="Read forecast aloud"
+          >
+            <Volume2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {isSpeakingForecast && (
+          <div className="mt-2 px-2.5 py-1.5 rounded-xl bg-blue-100 text-blue-900 text-[11px] flex items-center gap-2 animate-in fade-in">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+            <span>Ritu is reading aloud in English (Indian accent)</span>
+          </div>
+        )}
+
+        {/* 3-day Outlook Accordion Toggle */}
+        <div className="mt-2.5 pt-2 border-t border-blue-200/60 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setForecastExpanded(!forecastExpanded)}
+            className="text-[11px] font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1"
+          >
+            <span>{forecastExpanded ? 'Hide 3-day outlook' : 'View 3-day outlook'}</span>
+            <ChevronRight className={`w-3 h-3 transition-transform ${forecastExpanded ? 'rotate-90' : ''}`} />
+          </button>
+          <span className="text-[10px] text-blue-600/70">From your personal logs</span>
+        </div>
+
+        {forecastExpanded && (
+          <div className="mt-3 space-y-2 pt-1 border-t border-blue-200/50 text-xs text-blue-950 animate-in fade-in">
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="p-2 rounded-2xl bg-white/90 border border-blue-100 shadow-xs">
+                <div className="font-bold text-slate-800 text-[11px]">Today (Day 18)</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Energy: Low</div>
+                <div className="text-[10px] text-amber-600 font-medium">Cravings: High</div>
+                <span className="inline-block mt-1 text-[9px] bg-emerald-50 text-emerald-700 font-bold px-1.5 rounded">High Conf.</span>
+              </div>
+              <div className="p-2 rounded-2xl bg-white/90 border border-blue-100 shadow-xs">
+                <div className="font-bold text-slate-800 text-[11px]">Day 19</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Energy: Rising</div>
+                <div className="text-[10px] text-slate-500">Cramps: None</div>
+                <span className="inline-block mt-1 text-[9px] bg-emerald-50 text-emerald-700 font-bold px-1.5 rounded">High Conf.</span>
+              </div>
+              <div className="p-2 rounded-2xl bg-white/90 border border-blue-100 shadow-xs">
+                <div className="font-bold text-slate-800 text-[11px]">Day 20</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">Energy: Steady</div>
+                <div className="text-[10px] text-slate-500">Cravings: Low</div>
+                <span className="inline-block mt-1 text-[9px] bg-amber-50 text-amber-700 font-bold px-1.5 rounded">Medium Conf.</span>
+              </div>
+            </div>
+            <div className="text-[10px] text-blue-800/80 italic mt-1 text-center">
+              Guideline safety: If pain rises above 7/10, seek emergency medical care (112).
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 2. WEEKLY CALENDAR STRIP (Exact match to reference s1.png & s2.png) */}
@@ -266,26 +371,44 @@ export default function TodayPage() {
         </div>
 
         <div className="grid grid-cols-3 gap-2.5">
-          {/* Card 1: Daily Woman */}
-          <Link
-            href="/food"
-            className="flex flex-col justify-between p-3 rounded-2xl bg-[#EEF2FF] border border-blue-100/80 hover:scale-[1.02] transition shadow-xs h-28"
-          >
+          {/* Card 1: H3. Weekly Audio Recap (Sunday Card with Audio & Transcript) */}
+          <div className="flex flex-col justify-between p-3 rounded-2xl bg-gradient-to-br from-[#EEF2FF] to-[#E0E7FF] border border-blue-200/90 shadow-xs h-32 relative">
             <div>
-              <span className="text-lg">🧘‍♀️</span>
-              <div className="font-heading font-bold text-xs text-blue-950 mt-1 leading-snug">
-                Daily Woman
+              <div className="flex items-center justify-between">
+                <span className="text-base">🎙️</span>
+                <span className="text-[9px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded-full">
+                  75 sec
+                </span>
               </div>
+              <div className="font-heading font-bold text-xs text-blue-950 mt-1 leading-snug">
+                Weekly Audio Recap
+              </div>
+              <p className="text-[9px] text-blue-700 line-clamp-1 mt-0.5">
+                Sunday log summary
+              </p>
             </div>
-            <span className="text-[9px] text-blue-600 font-semibold">
-              Hormone balance →
-            </span>
-          </Link>
+            <div className="flex items-center justify-between gap-1 mt-1">
+              <button
+                type="button"
+                onClick={() => setAudioRecapPlaying(!audioRecapPlaying)}
+                className="flex items-center gap-1 rounded-xl bg-blue-600 text-white px-2 py-1 text-[10px] font-bold hover:bg-blue-700 shadow-xs transition"
+              >
+                {audioRecapPlaying ? 'Pause ⏸' : 'Play ▶'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setAudioTranscriptOpen(!audioTranscriptOpen)}
+                className="text-[9px] text-blue-700 underline font-semibold"
+              >
+                {audioTranscriptOpen ? 'Hide' : 'Text'}
+              </button>
+            </div>
+          </div>
 
           {/* Card 2: Mood Booster */}
           <Link
             href="/food"
-            className="flex flex-col justify-between p-3 rounded-2xl bg-[#FFE8EF] border border-rose-100/80 hover:scale-[1.02] transition shadow-xs h-28"
+            className="flex flex-col justify-between p-3 rounded-2xl bg-[#FFE8EF] border border-rose-100/80 hover:scale-[1.02] transition shadow-xs h-32"
           >
             <div>
               <span className="text-lg">🥗</span>
@@ -298,15 +421,15 @@ export default function TodayPage() {
             </span>
           </Link>
 
-          {/* Card 3: Spread Happiness */}
+          {/* Card 3: Spread Happiness (Typo Fixed!) */}
           <Link
             href="/experiments"
-            className="flex flex-col justify-between p-3 rounded-2xl bg-[#E8F8F5] border border-emerald-100/80 hover:scale-[1.02] transition shadow-xs h-28"
+            className="flex flex-col justify-between p-3 rounded-2xl bg-[#E8F8F5] border border-emerald-100/80 hover:scale-[1.02] transition shadow-xs h-32"
           >
             <div>
               <span className="text-lg">✨</span>
               <div className="font-heading font-bold text-xs text-emerald-950 mt-1 leading-snug">
-                Spread Happines
+                Spread Happiness
               </div>
             </div>
             <span className="text-[9px] text-emerald-700 font-semibold">
@@ -314,6 +437,19 @@ export default function TodayPage() {
             </span>
           </Link>
         </div>
+
+        {/* Weekly Audio Recap Transcript Drawer */}
+        {audioTranscriptOpen && (
+          <div className="mt-2.5 p-3 rounded-2xl bg-white border border-blue-100 text-xs text-slate-700 shadow-xs animate-in fade-in space-y-1">
+            <div className="font-bold text-blue-900 text-[11px] flex items-center justify-between">
+              <span>Recap Transcript (Nov 15–21, 2026)</span>
+              <span className="text-slate-400 text-[10px]">Read by Ritu</span>
+            </div>
+            <p className="text-[11px] leading-relaxed text-slate-600">
+              "Here is your week, Priya: You logged 6 of 7 days. Your energy was highest on Tuesday after the Besan Chilla breakfast. Metformin adherence was 100%. Two mild cramps were recorded around ovulation. Sleep averaged 7.2 hours."
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 5. TODAY'S DAILY PROTOCOL (Medicines & Doctor Care) */}
@@ -355,7 +491,7 @@ export default function TodayPage() {
                   Thyronorm 25mcg
                 </div>
                 <div className="text-[10px] text-slate-500">
-                  Empty stomach • Dr. Ramesh Gupta
+                  Empty stomach • 30m before tea • Dr. Ramesh Gupta
                 </div>
               </div>
             </div>
@@ -399,7 +535,244 @@ export default function TodayPage() {
             </span>
           </div>
         </div>
+
+        {/* H4. Prescription Scan + Smart Timing Row */}
+        <button
+          type="button"
+          onClick={() => setPrescriptionScanOpen(true)}
+          className="w-full mt-2 py-2.5 px-3 rounded-2xl border border-dashed border-brand-pink text-brand-pink bg-rose-50/50 hover:bg-rose-100/60 font-bold text-xs flex items-center justify-center gap-2 transition"
+        >
+          <Camera className="w-4 h-4" />
+          <span>+ Scan prescription</span>
+        </button>
+
+        {prescriptionSaved && (
+          <div className="p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Prescription parsed! Smart timing rules applied.</span>
+          </div>
+        )}
       </div>
+
+      {/* 6. 2×3 TOOLS GRID FOR DIRECT 1-TAP REACHABILITY */}
+      <div>
+        <div className="flex items-center justify-between px-1 mb-2.5">
+          <h3 className="font-heading text-sm font-bold text-slate-900">
+            Care Tools & Services
+          </h3>
+          <span className="text-[11px] text-slate-400 font-medium">1-Tap Access</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          {/* Tool 1: Food & Tolerance */}
+          <Link
+            href="/food"
+            className="p-3 rounded-2xl bg-white border border-rose-100 shadow-xs hover:border-brand-pink transition flex items-center gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl bg-rose-50 text-brand-pink flex items-center justify-center text-lg shrink-0">
+              🥗
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">Food & You</div>
+              <div className="text-[10px] text-slate-500">Tolerances & Thali</div>
+            </div>
+          </Link>
+
+          {/* Tool 2: Labs & OCR */}
+          <Link
+            href="/labs"
+            className="p-3 rounded-2xl bg-white border border-rose-100 shadow-xs hover:border-brand-purple transition flex items-center gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl bg-indigo-50 text-brand-purple flex items-center justify-center text-lg shrink-0">
+              🧪
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">Lab Records</div>
+              <div className="text-[10px] text-slate-500">OCR & Trends</div>
+            </div>
+          </Link>
+
+          {/* Tool 3: Trials */}
+          <Link
+            href="/experiments"
+            className="p-3 rounded-2xl bg-white border border-rose-100 shadow-xs hover:border-emerald-400 transition flex items-center gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0">
+              🔬
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">N-of-1 Trials</div>
+              <div className="text-[10px] text-slate-500">Personal tests</div>
+            </div>
+          </Link>
+
+          {/* Tool 4: Smart Cart */}
+          <Link
+            href="/cart"
+            className="p-3 rounded-2xl bg-white border border-rose-100 shadow-xs hover:border-amber-400 transition flex items-center gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-lg shrink-0">
+              🛒
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">Smart Cart</div>
+              <div className="text-[10px] text-slate-500">Zepto & Blinkit</div>
+            </div>
+          </Link>
+
+          {/* Tool 5: Workouts */}
+          <button
+            type="button"
+            onClick={() => setWorkoutsModalOpen(true)}
+            className="p-3 rounded-2xl bg-white border border-rose-100 shadow-xs hover:border-brand-pink transition flex items-center gap-2.5 text-left"
+          >
+            <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-lg shrink-0">
+              🏃‍♀️
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">Workouts</div>
+              <div className="text-[10px] text-slate-500">PCOS & Thyroid</div>
+            </div>
+          </button>
+
+          {/* Tool 6: Fasting Planner */}
+          <Link
+            href="/food"
+            className="p-3 rounded-2xl bg-white border border-rose-100 shadow-xs hover:border-purple-400 transition flex items-center gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl bg-purple-50 text-brand-purple flex items-center justify-center text-lg shrink-0">
+              🌙
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">Fasting Days</div>
+              <div className="text-[10px] text-slate-500">Navratri & Ekadashi</div>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* H4. PRESCRIPTION SCANNER MODAL */}
+      {prescriptionScanOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs p-3 animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 shadow-2xl border border-rose-100 z-10 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Camera className="w-5 h-5 text-brand-pink" />
+                <span className="font-heading text-base font-bold text-slate-900">
+                  Prescription Scanner & Smart Timing
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPrescriptionScanOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Simulated OCR viewfinder */}
+            <div className="relative rounded-2xl bg-slate-900 p-4 text-center text-white space-y-2 border-2 border-dashed border-rose-300">
+              <div className="text-xs font-semibold text-rose-200">
+                📄 Dr. Sen's RX Slip Detected
+              </div>
+              <div className="bg-white/10 rounded-xl p-2.5 text-[11px] text-left text-slate-200 space-y-1">
+                <div>• Tab. Thyronorm 25mcg (1-0-0) AC</div>
+                <div>• Tab. Metformin 500mg SR (0-0-1) PC</div>
+                <div>• Cap. Shelcal-HD (1-0-0) PC</div>
+              </div>
+            </div>
+
+            {/* Smart Timing AI Rules */}
+            <div className="space-y-2">
+              <div className="text-xs font-bold text-slate-800 font-heading">
+                Smart Timing Recommendations:
+              </div>
+              <div className="p-2.5 rounded-2xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 space-y-1">
+                <div className="font-bold flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Interaction Protection</span>
+                </div>
+                <div>
+                  • <strong>Thyronorm:</strong> Empty stomach, wait 30 mins before tea or coffee.
+                </div>
+                <div>
+                  • <strong>Calcium & Iron:</strong> Separate by at least 4 hours to avoid inhibiting absorption.
+                </div>
+              </div>
+            </div>
+
+            <Button
+              variant="pink"
+              className="w-full text-xs font-bold py-2.5"
+              onClick={() => {
+                setPrescriptionSaved(true);
+                setPrescriptionScanOpen(false);
+                setTimeout(() => setPrescriptionSaved(false), 3500);
+              }}
+            >
+              Confirm & Add to Daily Schedule
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* WORKOUTS MODAL */}
+      {workoutsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs p-3 animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-white rounded-4xl p-5 shadow-2xl border border-rose-100 z-10 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🏃‍♀️</span>
+                <span className="font-heading text-base font-bold text-slate-900">
+                  Targeted Movement Plan
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setWorkoutsModalOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="text-xs text-slate-600 leading-relaxed">
+              Based on International PCOS Guidelines: 150 mins/week moderate activity + 2 days resistance training.
+            </div>
+
+            <div className="space-y-2">
+              <div className="p-3 rounded-2xl bg-rose-50/70 border border-rose-100 flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-slate-900">Luteal Phase Gentle Yoga</div>
+                  <div className="text-[10px] text-slate-500">20 mins • Low cortisol • Home room-friendly</div>
+                </div>
+                <Button size="sm" variant="pink" className="text-[10px] h-7 px-2.5">
+                  Start
+                </Button>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-slate-900">PCOS Resistance Training</div>
+                  <div className="text-[10px] text-slate-500">25 mins • Glutes & Core • Enhances insulin sensitivity</div>
+                </div>
+                <Button size="sm" variant="purple" className="text-[10px] h-7 px-2.5">
+                  Start
+                </Button>
+              </div>
+            </div>
+
+            <Button
+              variant="outline"
+              className="w-full text-xs font-semibold py-2"
+              onClick={() => setWorkoutsModalOpen(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

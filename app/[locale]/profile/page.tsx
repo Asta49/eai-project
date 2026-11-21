@@ -36,6 +36,21 @@ export default function ProfilePage() {
   // Active view: Profile Baseline vs Calibration Engine vs Smart Cart vs DPDP Privacy
   const [activeTab, setActiveTab] = useState<'profile' | 'calibration' | 'cart' | 'privacy'>('profile');
 
+  // P1. Life-Stage Mode state
+  const [lifeStage, setLifeStage] = useState<'cycles' | 'ttc' | 'pregnant' | 'postpartum' | 'menopause'>('cycles');
+
+  // P2. Wearable & BBT state
+  const [devicesConnected, setDevicesConnected] = useState({
+    appleHealth: true,
+    bbtThermometer: true,
+    smartRing: false,
+  });
+
+  // V1, V3, V4 Vernacular states
+  const [saathiMode, setSaathiMode] = useState<boolean>(false);
+  const [voiceAccent, setVoiceAccent] = useState<string>('aditi');
+  const [whatsappLinked, setWhatsappLinked] = useState<boolean>(true);
+
   // Smart Cart state
   const [smartCartEnabled, setSmartCartEnabled] = useState<boolean>(true);
   const [cartHelpLevel, setCartHelpLevel] = useState<'suggest' | 'swap' | 'autobuild'>('swap');
@@ -133,6 +148,44 @@ export default function ProfilePage() {
       {/* TAB 1: HEALTH BASELINE PROFILE */}
       {activeTab === 'profile' && (
         <div className="space-y-4">
+          {/* P1. LIFE-STAGE MODES SELECTOR */}
+          <div className="p-4 rounded-3xl bg-indigo-50/80 border border-indigo-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-indigo-950 font-heading flex items-center gap-1.5">
+                <span>🌱</span>
+                <span>Life-Stage Mode</span>
+              </span>
+              <span className="text-[10px] bg-brand-purple text-white font-bold px-2 py-0.5 rounded-full">
+                Active
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-600">
+              Adapts your Home Heart widget, ovulation windows, and workout advice dynamically.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 pt-1">
+              {[
+                { id: 'cycles', label: 'Tracking cycles' },
+                { id: 'ttc', label: 'TTC (Fertility)' },
+                { id: 'pregnant', label: 'Pregnant' },
+                { id: 'postpartum', label: 'Postpartum' },
+                { id: 'menopause', label: 'Perimenopause' },
+              ].map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setLifeStage(m.id as any)}
+                  className={`p-2 rounded-xl text-xs font-bold transition text-center ${
+                    lifeStage === m.id
+                      ? 'bg-brand-purple text-white shadow-xs'
+                      : 'bg-white text-slate-700 border border-indigo-100 hover:bg-indigo-50'
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Card className="rounded-4xl p-5 sm:p-6 border-rose-100/80 bg-white shadow-card">
             <h2 className="font-heading text-lg font-bold text-slate-900">
               Personal Health Baseline
@@ -234,6 +287,131 @@ export default function ProfilePage() {
                   </span>
                 </div>
               </div>
+            </div>
+          </Card>
+
+          {/* P2. WEARABLE & BBT OVULATION CONFIRM CARD */}
+          <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 text-[10px] font-bold text-brand-purple">
+                ⌚ Connected Wearables &amp; BBT Sensors
+              </span>
+              <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
+                Active Sync
+              </span>
+            </div>
+
+            <h3 className="font-heading text-base font-bold text-slate-900">
+              Wearable &amp; Ovulation Confirmation
+            </h3>
+            <p className="text-xs text-slate-500">
+              Biphasic thermal shift and resting heart rate confirm ovulation automatically.
+            </p>
+
+            <div className="pt-2 border-t border-slate-100 space-y-2 text-xs">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-900">Apple Health / Health Connect</div>
+                  <div className="text-[10px] text-slate-500">Syncs daily steps (6,420) and resting HR (68 bpm)</div>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                  Connected ✓
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-indigo-50/70 border border-indigo-200 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-indigo-950">Basal Body Temperature (BBT)</div>
+                  <div className="text-[10px] text-brand-purple">
+                    +0.32°C biphasic shift sustained 3 days (Nov 15–17)
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-white bg-brand-purple px-2.5 py-1 rounded-full">
+                  Ovulation Confirmed ✓
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* V1, V3, V4. VERNACULAR & VOICE LAYER SETTINGS */}
+          <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 rounded-full bg-pastel-peach px-2.5 py-0.5 text-[10px] font-bold text-rose-950">
+                🎙️ Vernacular &amp; Voice Settings
+              </span>
+              <span className="text-[10px] text-slate-400">Indic AI Engine</span>
+            </div>
+
+            <div>
+              <h3 className="font-heading text-base font-bold text-slate-900">
+                Language &amp; Voice-First Companion
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Customize speaking accents, continuous listening, and WhatsApp connectivity.
+              </p>
+            </div>
+
+            {/* V3. Saathi Mode Toggle */}
+            <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200 flex items-center justify-between">
+              <div>
+                <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <span>🌸 Saathi Mode (Voice-First Experience)</span>
+                  <span className="text-[9px] bg-rose-200 text-rose-800 font-bold px-1.5 py-0.5 rounded">Accessible</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5 max-w-xs">
+                  Speaks every answer automatically and listens continuously without tapping buttons — ideal for mothers and hands-free use.
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSaathiMode(!saathiMode)}
+                className={`w-11 h-6 rounded-full transition-colors p-0.5 flex items-center ${
+                  saathiMode ? 'bg-brand-pink justify-end' : 'bg-slate-300 justify-start'
+                }`}
+              >
+                <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
+              </button>
+            </div>
+
+            {/* V1. Voice Accent Selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Reading Voice &amp; Tone:</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'aditi', label: 'Aditi (Warm Hindi/English)' },
+                  { id: 'deepa', label: 'Deepa (Telugu)' },
+                  { id: 'kavitha', label: 'Kavitha (Tamil)' },
+                ].map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => setVoiceAccent(v.id)}
+                    className={`p-2 rounded-xl text-xs font-semibold border text-center transition ${
+                      voiceAccent === v.id
+                        ? 'bg-brand-pink text-white border-brand-pink shadow-xs'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {v.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* V4. Ritu on WhatsApp Link Flow */}
+            <div className="p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-emerald-950 flex items-center gap-1.5">
+                  <span>💬</span>
+                  <span>Ritu on WhatsApp Companion</span>
+                </span>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  {whatsappLinked ? 'Linked (+91 98765 43210)' : 'Not Linked'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600">
+                Send voice notes, photos of thali meals, or forward lab PDF reports straight to Ritu on WhatsApp. Everything securely syncs to your personal profile.
+              </p>
             </div>
           </Card>
         </div>
