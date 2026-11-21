@@ -4,8 +4,7 @@ import React from 'react';
 import { useRouter } from '@/navigation';
 import { usePersona, PersonaType } from '@/components/persona-context';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { User, Stethoscope, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { User, Stethoscope, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,9 +20,7 @@ export default function LoginPage() {
       case 'patient':
         return <User className="h-5 w-5 text-rose-600 dark:text-rose-400" />;
       case 'doctor':
-        return <Stethoscope className="h-5 w-5 text-teal-600 dark:text-teal-400" />;
-      case 'admin':
-        return <ShieldCheck className="h-5 w-5 text-purple-600 dark:text-purple-400" />;
+        return <Stethoscope className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />;
     }
   };
 
@@ -46,7 +43,7 @@ export default function LoginPage() {
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Preloaded Evaluation Personas</CardTitle>
           <CardDescription>
-            Click any persona to enter directly with all state and mock records loaded.
+            Click any persona to enter directly with all clinical records loaded.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -59,7 +56,7 @@ export default function LoginPage() {
                 onClick={() => handleSelect(p.type, p.defaultRoute)}
                 className={`flex w-full items-center justify-between rounded-xl border p-4 text-left transition-all ${
                   isSelected
-                    ? 'border-rose-300 bg-rose-50/70 shadow-sm dark:border-rose-900/60 dark:bg-rose-950/30'
+                    ? 'border-indigo-300 bg-indigo-50/70 shadow-sm'
                     : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900'
                 }`}
               >
@@ -72,30 +69,23 @@ export default function LoginPage() {
                       <span className="text-sm font-bold text-slate-900 dark:text-white">
                         {p.name}
                       </span>
-                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold border ${p.badgeClass}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${p.badgeClass}`}
+                      >
                         {p.badge}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500">{p.description}</p>
+                    <p className="text-xs text-slate-500 font-normal">
+                      {p.description}
+                    </p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-slate-700" />
+                <ArrowRight className="h-4 w-4 text-slate-400" />
               </button>
             );
           })}
         </CardContent>
       </Card>
-
-      <div className="mt-6 text-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push('/dashboard')}
-          className="text-xs"
-        >
-          Skip & Open Dashboard as Default ({currentPersona.name}) →
-        </Button>
-      </div>
     </div>
   );
 }

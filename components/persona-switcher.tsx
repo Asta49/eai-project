@@ -6,7 +6,6 @@ import { useRouter, usePathname } from '@/navigation';
 import {
   User,
   Stethoscope,
-  ShieldCheck,
   ChevronDown,
   Check,
   Sparkles,
@@ -29,25 +28,12 @@ export function PersonaSwitcher() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const getPersonaIcon = (type: PersonaType) => {
-    switch (type) {
-      case 'patient':
-        return <User className="h-3.5 w-3.5 text-forest" />;
-      case 'doctor':
-        return <Stethoscope className="h-3.5 w-3.5 text-forest" />;
-      case 'admin':
-        return <ShieldCheck className="h-3.5 w-3.5 text-forest" />;
-    }
-  };
-
-  const handleSelect = (type: PersonaType, defaultRoute: string) => {
+  const handleSelect = (type: PersonaType) => {
     setPersonaType(type);
     setIsOpen(false);
-    if (type === 'doctor' && !pathname.includes('/care') && !pathname.includes('/doctors')) {
-      router.push('/care');
-    } else if (type === 'admin' && !pathname.includes('/admin')) {
-      router.push('/admin');
-    } else if (type === 'patient' && (pathname.includes('/care') || pathname.includes('/doctors') || pathname.includes('/admin'))) {
+    if (type === 'doctor') {
+      router.push('/doctor');
+    } else {
       router.push('/today');
     }
   };
@@ -57,30 +43,30 @@ export function PersonaSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-white/15 transition"
-        title="Switch user role without login"
+        className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-white/15 transition cursor-pointer"
+        title="Switch between Patient and Doctor"
       >
         <div className={`flex h-5 w-5 items-center justify-center rounded-full font-bold text-[10px] ${currentPersona.avatarBg}`}>
           {currentPersona.avatarText}
         </div>
-        <span className="font-heading tracking-tight truncate max-w-[90px] sm:max-w-none text-white">
+        <span className="font-heading tracking-tight truncate max-w-[85px] sm:max-w-none text-white">
           {currentPersona.name.split(' ')[0]}
         </span>
-        <span className="text-[10px] text-rose-200/80 font-normal">
+        <span className="text-[10px] text-rose-200/90 font-normal">
           ({currentPersona.badge})
         </span>
         <ChevronDown className="h-3 w-3 text-rose-200/80 ml-0.5" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-72 rounded-3xl border border-slate-200/90 bg-white p-2.5 shadow-xl animate-in fade-in zoom-in-95">
+        <div className="absolute right-0 z-50 mt-2 w-72 rounded-3xl border border-slate-200/90 bg-white p-2.5 shadow-xl animate-in fade-in zoom-in-95 text-slate-900">
           <div className="mb-2 px-2 pt-1">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-forest/70">
-              <Sparkles className="h-3 w-3 text-coral" />
-              Switch Persona (No Login Needed)
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-700">
+              <Sparkles className="h-3 w-3 text-brand-pink" />
+              Switch Role (Instant Access)
             </div>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Select any role to test different patient and clinician workflows:
+              Toggle between the Patient mobile companion and Doctor clinical portal:
             </p>
           </div>
 
@@ -91,10 +77,10 @@ export function PersonaSwitcher() {
                 <button
                   key={p.type}
                   type="button"
-                  onClick={() => handleSelect(p.type, p.defaultRoute)}
-                  className={`flex w-full items-start justify-between rounded-2xl p-2.5 text-left transition-all ${
+                  onClick={() => handleSelect(p.type)}
+                  className={`flex w-full items-start justify-between rounded-2xl p-2.5 text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'border border-forest/20 bg-sage-light/60'
+                      ? 'border border-indigo-200 bg-indigo-50/70 shadow-xs'
                       : 'hover:bg-slate-50 border border-transparent'
                   }`}
                 >
@@ -118,7 +104,7 @@ export function PersonaSwitcher() {
                       </p>
                     </div>
                   </div>
-                  {isSelected && <Check className="mt-1 h-4 w-4 shrink-0 text-forest" />}
+                  {isSelected && <Check className="mt-1 h-4 w-4 shrink-0 text-indigo-600" />}
                 </button>
               );
             })}

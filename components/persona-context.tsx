@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type PersonaType = 'patient' | 'doctor' | 'admin';
+export type PersonaType = 'patient' | 'doctor';
 
 export interface Persona {
   id: string;
@@ -33,7 +33,7 @@ export const PERSONAS: Record<PersonaType, Persona> = {
     badge: 'Patient',
     badgeClass: 'bg-pastel-peach text-pastel-peachText border border-amber-200/60',
     avatarText: 'PS',
-    avatarBg: 'bg-pastel-peach text-pastel-peachText',
+    avatarBg: 'bg-rose-600 text-white',
     description: '26F, Hyderabad • PCOS (Rotterdam B) & Hypothyroid • Care Team Connected',
     defaultRoute: '/today',
     stats: {
@@ -52,21 +52,9 @@ export const PERSONAS: Record<PersonaType, Persona> = {
     badge: 'Doctor',
     badgeClass: 'bg-pastel-mint text-pastel-mintText border border-emerald-200/60',
     avatarText: 'AS',
-    avatarBg: 'bg-pastel-mint text-pastel-mintText',
-    description: 'Lead Specialist • Reviewing Priya’s visit summary, approving trial protocols & rules',
-    defaultRoute: '/care',
-  },
-  admin: {
-    id: 'course_admin',
-    type: 'admin',
-    name: 'Prof. / Course Admin',
-    roleTitle: 'IIM-A Economics of AI',
-    badge: 'Faculty / Admin',
-    badgeClass: 'bg-pastel-blue text-pastel-blueText border border-blue-200/60',
-    avatarText: 'EA',
-    avatarBg: 'bg-pastel-blue text-pastel-blueText',
-    description: 'Course Evaluator • Inspecting Empirical Bayes simulation & unit economics',
-    defaultRoute: '/admin',
+    avatarBg: 'bg-indigo-600 text-white',
+    description: 'Lead Gynecologist • 24 AI Features, Pre-Consult Briefs, Scribe, Rules & ABHA',
+    defaultRoute: '/doctor',
   },
 };
 
@@ -86,14 +74,19 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem('pcos_active_persona_type') as PersonaType;
       if (saved && PERSONAS[saved]) {
         setPersonaTypeState(saved);
+      } else {
+        setPersonaTypeState('patient');
       }
-    } catch (_) {}
+    } catch (_) {
+      setPersonaTypeState('patient');
+    }
   }, []);
 
   const setPersonaType = (type: PersonaType) => {
-    setPersonaTypeState(type);
+    const valid = PERSONAS[type] ? type : 'patient';
+    setPersonaTypeState(valid);
     try {
-      localStorage.setItem('pcos_active_persona_type', type);
+      localStorage.setItem('pcos_active_persona_type', valid);
     } catch (_) {}
   };
 

@@ -23,6 +23,7 @@
 15. [Module 12: IIM-A Economics of AI & Network Moat Simulation](#15-module-12-iim-a-economics-of-ai--network-moat-simulation)
 16. [Module 13: Instant Persona Switcher (Zero Auth Barrier)](#16-module-13-instant-persona-switcher-zero-auth-barrier)
 17. [Module 14: Multilingual Indic Support & Voice Engine](#17-module-14-multilingual-indic-support--voice-engine)
+18. [Module 15: Ritu Doctor Portal (24 Clinical AI Features D1–D24)](#18-module-15-ritu-doctor-portal-24-clinical-ai-features-d1d24)
 
 ---
 
@@ -333,14 +334,14 @@ A permanently docked, native mobile bottom navigation bar with fluid active-stat
 
 ## 16. Module 13: Instant Persona Switcher (Zero Auth Barrier)
 
-A top-bar pill switcher allowing seamless evaluation without login walls:
+A top-bar pill switcher allowing seamless evaluation without login walls or credentials:
 
 1. **Priya Sharma (Patient / User):**
-   - 26F, Hyderabad • PCOS (Rotterdam Phenotype B) + Hypothyroidism • Active walking trial • Full access to Today, Ask, Care, and Profile.
-2. **Dr. Ananya Sen, MD (Care Team Doctor):**
-   - Gynecologist & Care Team Lead • Access to clinical pre-consult summaries, pending trial approvals, and fixed rule creation.
-3. **Prof. / Course Admin (IIM-A Evaluator):**
-   - Evaluator persona • Direct access to the Empirical Bayes network moat simulation, unit economics panel, and platform funnel.
+   - 26F, Hyderabad • PCOS (Rotterdam Phenotype B) + Hypothyroidism • Active walking trial • Full access to Today, Ask, Care, Log, and Profile. Selecting Priya immediately switches to the patient mobile workspace at `/[locale]/today`.
+2. **Dr. Ananya Sen, MD (Care Team Lead & Specialist):**
+   - Senior Consultant Gynecologist & Reproductive Endocrinologist (KIMS Hospitals, Hyderabad). Selecting Dr. Sen immediately switches into the dedicated clinical environment: the **Ritu Doctor Portal** at `/[locale]/doctor`.
+
+*(Note: The legacy course evaluator/admin persona has been retired in favor of clean 2-way clinical role switching.)*
 
 ---
 
@@ -482,6 +483,49 @@ Comprehensive implementation of all 18 AI features and cross-app vernacular arch
 
 ---
 
+## 18. Module 15: Ritu Doctor Portal (24 Clinical AI Features D1–D24)
+
+**Route:** `/[locale]/doctor` (and `/[locale]/doctors`)  
+**Target User Persona:** `Dr. Ananya Sen, MD` (Senior Consultant Gynecologist & Reproductive Endocrinologist)  
+**Clinical Design Philosophy:** Built for the high-volume Indian OPD environment (3–5 minutes per patient) to give doctors instantaneous, synthesized clinical insight without manual chart digging or typing burden. *The AI prepares, drafts, flags, and cross-checks; the doctor retains complete clinical authority, edits, and signs.*
+
+### Layout & Adaptive Architecture
+- **Desktop/Tablet First:** 6-section clinical sidebar (`Inbox`, `Patients`, `Schedule`, `Insights`, `Settings & ABDM`, `AI Audit Trail`), expanding to a high-density, multi-column clinical canvas (`max-w-7xl`).
+- **Mobile Responsive Mode:** Adapts into a 5-tab bottom navigation bar (`Inbox`, `Patients`, `Schedule`, `Insights`, `More`) with Periwinkle (`#6C70EB`) active indicators, suppressing consumer bottom tabs.
+- **Sticky Patient Context Header:** Patient name (`Priya Sharma, 26F`), Rotterdam Phenotype (`Phenotype B`), HOMA-IR index (`3.61`), Fasting Insulin (`16 μIU/mL`), active locked rules counter, and real-time ABDM consent indicators (`Labs [Shared]`, `Lifestyle [Shared]`, `Notes [Shared]`). Unshared streams are strictly represented with greyed *"Not shared by patient"* placeholders, never blank or assumed data.
+- **7 Sub-Tabs:** **Brief · Timeline · Labs & Imaging · Rules · Trials · Notes & Rx · Messages**.
+
+### Complete Specification of the 24 Clinical Features (D1–D24)
+
+| Feature ID | Feature Name | Portal Location | Key Capabilities & Clinical Safeguards |
+| :--- | :--- | :--- | :--- |
+| **D1** | **Risk-Ranked Inbox** | Inbox | Ranks inbound patient alerts by clinical acuity (`Urgent`, `Action Needed`, `FYI`). Includes filter chips and 1-tap primary action buttons (`Review`, `Sign Rx`, `Draft Reply`). |
+| **D2** | **Alert Explanations ("Why is this here?")** | Inbox | Expandable chevron on each inbox item displaying the multi-modal evidence chain (e.g. *Delayed cycle + fasting glucose spike + skipped Metformin doses*). |
+| **D3** | **Message Triage + Reply Drafts** | Messages / Inbox | Classifies inbound patient messages into Urgent, Clinical, and Admin. Provides bilingual draft responses (e.g. Telugu/Hindi patient text paired with an English back-translation for the doctor to approve in 1 click). |
+| **D4** | **60-Second Pre-Consult Brief** | Brief (Sub-tab 1) | Auto-generated synthesis accessible 10 min prior to OPD. Features a 45-second audio summary listen button, 28-day cycle overview, medication adherence stats (88%), key symptoms, and diet tolerances. |
+| **D5** | **"What Changed Since Last Visit" Diff** | Brief (Top Block) | High-contrast periwinkle callout summarizing clinical shifts: `↑ worse` (HOMA-IR, cramps), `↓ better` (fasting insulin, energy), `• new` (started inositol, night shift). |
+| **D6** | **Suggested Visit Agenda** | Brief (Right Col) | Prioritized 3-item checklist integrating patient concerns and pending clinical targets. Doctors can check off items in real time during the consultation. |
+| **D7** | **Ambient Scribe (Consult Note)** | Notes & Rx | `[🎙️ Start Consult]` button in sticky header. Simulates real-time clinical speech-to-text recording, generating structured **SOAP notes** (Subjective, Objective, Assessment, Plan) with auto-detected action items. |
+| **D8** | **Live Two-Way Translation** | Consult / Teleconsult | Dynamic caption strip along the bottom supporting language pairs (EN ⇄ TE, EN ⇄ HI, EN ⇄ TA) allowing doctors to consult comfortably with vernacular-speaking patients. |
+| **D9** | **Guideline Copilot** | Global Floating Button | Persistent `[📖 Ask Guidelines]` button opening an evidence drawer powered by the International PCOS Guideline 2023, FOGSI, and ICMR. Highlights recommendations with exact grade citations (e.g. Grade A, Level 1b). |
+| **D10** | **Natural-Language Rule Builder** | Rules (Sub-tab 4) | Text/mic input enabling doctors to dictate rules in plain English (e.g. *"Never suggest fasting over 14 hours due to migraine risk"*). Converts into a typed JSON schema with a 1-tap `[🔒 Lock Rule]` button. |
+| **D11** | **Cross-Specialist Conflict Checker** | Rules | Real-time safety validation engine flagging conflicting instructions between endocrinologists, gynecologists, and nutritionists with amber warning callouts. |
+| **D12** | **Prescription Assistant** | Notes & Rx | Indian pharmaceutical formulary search (branded generics, dosage, timing), automatic drug-lab interaction checks (e.g. Metformin vs eGFR, Thyronorm vs Calcium timing), and Janaushadhi cost comparisons. |
+| **D13** | **Patient-Language Instructions + Back-Translation** | Notes & Rx | Generates vernacular prescription instructions (Hindi, Telugu, Tamil) alongside a side-by-side English back-translation for the doctor to review before signing. |
+| **D14** | **AI Trial Designer** | Trials (Sub-tab 5) | Generates structured N-of-1 trial protocols (e.g. Spearmint tea for hirsutism, post-meal walks for insulin sensitivity) with statistical power calculations ($88\%$ power, $N=14$ days) awaiting doctor approval. |
+| **D15** | **Bayesian Verdict Reviewer** | Trials | Interactive posterior probability density curve displaying probability of exceeding Minimal Clinically Important Difference ($P(\Delta > \text{MCID}) = 91\%$). Doctor can convert successful trials into permanent locked clinical rules. |
+| **D16** | **Remote Monitoring Thresholds** | Rules | Configurable threshold triggers (e.g. *"Alert me if cycle length exceeds 42 days"* or *"Alert if fasting glucose > 115 mg/dL on 3 consecutive days"*). |
+| **D17** | **Lab Trend Analyst + Derived Indices** | Labs & Imaging | Longitudinal trend graphs with sparklines and auto-calculated indices: HOMA-IR ($3.61 \rightarrow 2.84$), Free Androgen Index (FAI), LH:FSH ratio ($2.3:1$), and TG:HDL ratio. |
+| **D18** | **Diagnostic Criteria Checklist** | Brief / Labs | Interactive Rotterdam 2003 criteria evaluator (Oligo/anovulation, Hyperandrogenism, Polycystic morphology on USG) confirming phenotypic diagnosis with differential exclusions (TSH, Prolactin, 17-OHP). |
+| **D19** | **Ultrasound & Imaging Extraction** | Labs & Imaging | Drag-and-drop ultrasound report analyzer extracting antral follicle counts (AFC: 14 right, 16 left), ovarian stromal volume ($11.2\text{ cm}^3$), and endometrial stripe thickness ($7.2\text{ mm}$). |
+| **D20** | **Referral & Handoff Writer** | Notes & Patient Actions | Generates concise, structured referral letters to sub-specialists (e.g. Reproductive Endocrinologist or Pelvic Floor PT) with granular patient-consented data checkboxes. |
+| **D21** | **Care-Team Case Thread + AI Summary** | Messages / Team | Multi-disciplinary discussion feed between Gynecologist, Nutritionist, and Dermatologist, featuring a pinned AI consensus brief synthesizing the latest team decisions. |
+| **D22** | **Practice Insights & Natural Language Queries** | Insights (Sidebar 4) | Population-level clinic analytics (e.g. Rotterdam phenotype breakdown, average HOMA-IR improvements, adherence rates) with a natural-language query bar (*"Show me all patients on Metformin with HbA1c > 6.0"*). |
+| **D23** | **ABDM / ABHA Record Exchange** | Settings & ABDM | Ayushman Bharat Digital Mission (ABDM) sandbox bridge: maps clinical findings to SNOMED-CT and ICD-10 (`E28.2` for PCOS) and pushes encounter summaries to the patient's ABHA PHR app. |
+| **D24** | **AI Audit Trail** | AI Audit Trail (Sidebar 6) | Immutable compliance log tracking every AI-generated suggestion, scribe note, guideline citation, and dosage draft, recording doctor approval status, timestamp, and edit deltas. |
+
+---
+
 ## 📊 Summary Matrix of Application Routes
 
 | Route | Purpose | Key Capabilities |
@@ -490,12 +534,14 @@ Comprehensive implementation of all 18 AI features and cross-app vernacular arch
 | `/[locale]/today` | **Daily Management** | Interactive Period/Ovulation Heart, 7-day strip, Mood row, Articles, Meds checklist. |
 | `/[locale]/checkin` | **Daily Log** | Energy & pelvic cramp sliders, flow picker, symptoms, Indic voice note. |
 | `/[locale]/ask` | **Trusted Clinical AI** | Guidelines-grounded AI chat, Advice Explainer, Myth Checker, Lab Tracker. |
-| `/[locale]/care` | **Doctor Coordination** | Care team sharing toggles, 1-page pre-consult summary, screening calendar, doctor portal. |
+| `/[locale]/care` | **Doctor Coordination** | Care team sharing toggles, 1-page pre-consult summary, screening calendar, doctor directory & emergency triage. |
 | `/[locale]/profile` | **Profile & Calibration** | Health baselines, Calibration engine (Doctor vs AI), DPDP privacy, JSON export. |
 | `/[locale]/cart` | **Smart Cart Agent** | Zepto/Blinkit cart scanner, 3 help levels, live swap notification, order gate. |
 | `/[locale]/food` | **Indian Nutrition** | 150+ INDB dishes, PCOS-friendliness scores, smart swaps, meal logging. |
 | `/[locale]/experiments`| **N-of-1 Trials** | Deterministic OLS stats engine, Bayesian verdict card, AI explanation drawer. |
 | `/[locale]/labs` | **Diagnostic Labs** | OCR vision extraction, 3 demo reports, home phlebotomist booking. |
+| `/[locale]/doctor` | **Doctor Portal (D1–D24)**| Full clinical EHR & decision engine: Risk inbox, 60s Brief, Ambient Scribe, Rx Assistant, Bayesian trials, Rotterdam criteria, ABDM, Audit trail. |
+| `/[locale]/doctors` | **Doctor Portal Alias** | Redirects/renders the clinical Doctor Portal. |
 | `/[locale]/admin` | **IIM-A Economics Moat** | Interactive Bayes shrinkage slider, days-to-verdict curves, LLM unit economics. |
 | `/[locale]/onboarding`| **Patient Setup** | 5-question baseline wizard, family history, and DPDP consent screen. |
 
