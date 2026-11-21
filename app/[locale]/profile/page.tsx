@@ -93,31 +93,26 @@ export default function ProfilePage() {
   return (
     <div className="space-y-4 sm:space-y-6 pb-20">
       {/* Header */}
-      <div className="rounded-4xl bg-forest p-6 text-white shadow-soft relative overflow-hidden">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-forest-light px-2.5 py-0.5 text-[10px] font-bold text-sage-light flex items-center gap-1">
-            <User className="w-3 h-3 text-sage" />
-            Personal Health Profile
-          </span>
-          <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-slate-200">
-            DPDP Compliant
-          </span>
-        </div>
+      <div className="rounded-4xl bg-gradient-to-br from-[#FF7A9A] via-[#F04D7E] to-[#E3386C] p-6 text-white shadow-lg shadow-rose-200/50 relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white">
+          <User className="w-3 h-3 text-white" />
+          Health Profile &amp; Settings
+        </span>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Priya Sharma
         </h1>
-        <p className="mt-1 text-xs text-sage-light max-w-md">
-          26F, Hyderabad • PCOS &amp; Hypothyroidism • Calibration Engine &amp; Privacy Controls.
+        <p className="mt-1 text-xs text-rose-100 max-w-md">
+          26F, Hyderabad • PCOS (Rotterdam B) &amp; Hypothyroidism • Care Team Connected.
         </p>
 
         {/* Navigation Tabs */}
-        <div className="mt-5 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: 'profile', label: '👤 Health Baseline' },
-            { id: 'calibration', label: '⚖️ Calibration Engine' },
-            { id: 'cart', label: '🛒 Smart Cart Agent' },
-            { id: 'privacy', label: '🔒 DPDP Privacy & Export' },
+            { id: 'profile', label: '👤 Profile' },
+            { id: 'calibration', label: '⚖️ Calibration' },
+            { id: 'cart', label: '🛒 Smart Cart' },
+            { id: 'privacy', label: '🔒 Privacy & Export' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -125,8 +120,8 @@ export default function ProfilePage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition ${
                 activeTab === tab.id
-                  ? 'bg-white text-forest shadow-xs font-bold'
-                  : 'bg-forest-light/60 text-sage-light hover:bg-forest-light'
+                  ? 'bg-white text-brand-pink shadow-xs font-bold'
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
               {tab.label}
@@ -138,12 +133,12 @@ export default function ProfilePage() {
       {/* TAB 1: HEALTH BASELINE PROFILE */}
       {activeTab === 'profile' && (
         <div className="space-y-4">
-          <Card className="rounded-4xl p-5 sm:p-6 border-slate-200/80 bg-white shadow-card">
+          <Card className="rounded-4xl p-5 sm:p-6 border-rose-100/80 bg-white shadow-card">
             <h2 className="font-heading text-lg font-bold text-slate-900">
-              Your 5–6 Question Health Baseline
+              Personal Health Baseline
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Fills in continuously from daily check-ins and lab uploads rather than one long form.
+              Continuously calibrated through daily check-ins and verified lab uploads.
             </p>
 
             <div className="mt-4 space-y-3">

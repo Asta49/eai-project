@@ -43,12 +43,12 @@ export function PersonaSwitcher() {
   const handleSelect = (type: PersonaType, defaultRoute: string) => {
     setPersonaType(type);
     setIsOpen(false);
-    if (type === 'doctor' && !pathname.includes('/doctors')) {
-      router.push('/doctors');
+    if (type === 'doctor' && !pathname.includes('/care') && !pathname.includes('/doctors')) {
+      router.push('/care');
     } else if (type === 'admin' && !pathname.includes('/admin')) {
       router.push('/admin');
-    } else if (type === 'patient' && (pathname.includes('/doctors') || pathname.includes('/admin'))) {
-      router.push('/dashboard');
+    } else if (type === 'patient' && (pathname.includes('/care') || pathname.includes('/doctors') || pathname.includes('/admin'))) {
+      router.push('/today');
     }
   };
 

@@ -8,29 +8,33 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-forest text-white hover:bg-forest-light shadow-md shadow-forest/10',
+          'bg-[#F04D7E] text-white hover:bg-[#D83868] shadow-md shadow-rose-300/30',
         forest:
-          'bg-forest text-white hover:bg-forest-light shadow-md shadow-forest/15',
+          'bg-[#F04D7E] text-white hover:bg-[#D83868] shadow-md shadow-rose-300/30',
+        pink:
+          'bg-[#F04D7E] text-white hover:bg-[#D83868] shadow-md shadow-rose-300/30',
+        purple:
+          'bg-[#6C70EB] text-white hover:bg-[#585CD6] shadow-md shadow-indigo-300/30',
         sage:
-          'bg-sage text-forest-dark hover:bg-sage-dark hover:text-white shadow-sm',
+          'bg-[#6C70EB] text-white hover:bg-[#585CD6] shadow-md shadow-indigo-300/30',
         coral:
-          'bg-coral text-white hover:bg-coral-dark shadow-md shadow-coral/20',
+          'bg-[#F04D7E] text-white hover:bg-[#D83868] shadow-md shadow-rose-300/30',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm',
         outline:
           'border border-slate-200 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-300 shadow-xs',
         outlineForest:
-          'border-2 border-forest bg-transparent text-forest hover:bg-forest hover:text-white',
+          'border-2 border-[#F04D7E] bg-transparent text-[#F04D7E] hover:bg-[#F04D7E] hover:text-white',
         secondary:
-          'bg-sage-light text-forest hover:bg-sage-light/80',
+          'bg-[#EEF0FF] text-[#6C70EB] hover:bg-[#EEF0FF]/80 font-bold',
         ghost:
-          'hover:bg-slate-100 text-slate-700 hover:text-slate-900',
+          'hover:bg-rose-50/70 text-slate-700 hover:text-brand-pink',
         link:
-          'text-forest underline-offset-4 hover:underline p-0 h-auto font-medium',
+          'text-[#6C70EB] underline-offset-4 hover:underline p-0 h-auto font-medium',
         pcos:
-          'bg-forest text-white hover:bg-forest-light shadow-md',
+          'bg-[#F04D7E] text-white hover:bg-[#D83868] shadow-md',
         teal:
-          'bg-sage text-forest hover:bg-sage-dark hover:text-white shadow-sm',
+          'bg-[#6C70EB] text-white hover:bg-[#585CD6] shadow-sm',
       },
       size: {
         default: 'h-11 px-5 py-2.5',

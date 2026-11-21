@@ -53,9 +53,9 @@ export function DisclaimerBanner({
 
   return (
     <div
-      className={`flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400 ${className}`}
+      className={`flex items-center gap-2 rounded-2xl border border-rose-100/70 bg-rose-50/40 px-3 py-1.5 text-[10px] text-slate-500 ${className}`}
     >
-      <ShieldCheck className="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+      <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-brand-pink" />
       <span>{customMessage || t('disclaimer')}</span>
     </div>
   );

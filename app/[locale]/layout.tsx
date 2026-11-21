@@ -28,23 +28,20 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="h-full">
-      <body className="flex min-h-full flex-col bg-[#F4F6F2] font-body text-slate-900 antialiased selection:bg-sage selection:text-forest">
+      <body className="flex min-h-full flex-col bg-[#FFF6F8] font-body text-slate-900 antialiased selection:bg-brand-pinkLight selection:text-brand-pink">
         <PersonaProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {/* Top Bar Navigation */}
             <Navbar />
 
-            {/* Main Content Area: Responsive Mobile-First Canvas */}
-            <main className="flex-1 pb-28 pt-2">
-              <div className="mx-auto max-w-xl sm:max-w-2xl lg:max-w-4xl px-3 sm:px-6">
+            {/* Main Content Area: Responsive Mobile-First Canvas (iPhone 14/15 profile max-w-md sm:max-w-lg) */}
+            <main className="flex-1 pb-24 pt-1">
+              <div className="mx-auto max-w-md sm:max-w-lg px-3.5 sm:px-4">
                 {children}
               </div>
             </main>
 
-            {/* Footer with safety & academic disclosures */}
-            <Footer />
-
-            {/* Signature Floating Bottom Navigation from Reference Mobile UI Kit */}
+            {/* Signature Floating / Docked Bottom Navigation */}
             <BottomNav />
           </NextIntlClientProvider>
         </PersonaProvider>

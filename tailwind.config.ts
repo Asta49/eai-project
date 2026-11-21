@@ -48,40 +48,59 @@ const config: Config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
 
-        // Palette extracted from reference UI kit
+        // Palette extracted from lofee reference UI kit (s1.png & s2.png)
+        brand: {
+          pink: "#F04D7E", // Signature Berry Rose (Heart, Period, Primary CTA)
+          pinkLight: "#FFF0F4",
+          pinkHover: "#D83868",
+          purple: "#6C70EB", // Periwinkle Purple (Ovulation, Active Tab, Next CTA)
+          purpleLight: "#EEF0FF",
+          purpleHover: "#585CD6",
+        },
+        lofee: {
+          bg: "#FFF6F8", // Soft warm blush canvas
+          card: "#FFFFFF",
+          text: "#2D2528", // Deep soft charcoal for titles
+          muted: "#8E8388", // Secondary text
+          border: "#F5E8EB",
+          peach: "#FFE8EF",
+          mint: "#E8F8F5",
+          yellow: "#FEF9C3",
+          sky: "#EEF2FF",
+        },
         forest: {
-          DEFAULT: "#223F36", // Primary deep forest green (cards, header, main CTA)
-          dark: "#172A24",
-          light: "#2E554A",
-          muted: "#3D695B",
+          DEFAULT: "#F04D7E", // Map legacy tokens cleanly to Rose Pink
+          dark: "#D83868",
+          light: "#FFF0F4",
+          muted: "#8E8388",
         },
         sage: {
-          DEFAULT: "#9DBC98", // Primary sage accent
-          dark: "#7B9E76",
-          light: "#E8EFE6",
-          soft: "#F4F6F2", // Main app canvas background
+          DEFAULT: "#6C70EB", // Map legacy tokens to Periwinkle Purple
+          dark: "#585CD6",
+          light: "#EEF0FF",
+          soft: "#FFF6F8",
         },
         coral: {
-          DEFAULT: "#EE7A64", // Warm terracotta / coral highlight
-          dark: "#D85E48",
-          light: "#FDE6E1",
+          DEFAULT: "#F04D7E",
+          dark: "#D83868",
+          light: "#FFE8EF",
         },
         sand: {
-          DEFAULT: "#A0937D",
-          light: "#F7F4EF",
-          amber: "#F4A261",
+          DEFAULT: "#8E8388",
+          light: "#FFF6F8",
+          amber: "#FEF9C3",
         },
         pastel: {
-          peach: "#FDE2D2",
-          peachText: "#9C4221",
-          blue: "#DCEBFF",
-          blueText: "#1F5299",
-          purple: "#F0DEFD",
-          purpleText: "#652399",
-          mint: "#E2F0D9",
-          mintText: "#356526",
-          yellow: "#FEF3C7",
-          yellowText: "#92400E",
+          peach: "#FFE8EF",
+          peachText: "#A82D50",
+          blue: "#EEF0FF",
+          blueText: "#4348C7",
+          purple: "#F3E8FF",
+          purpleText: "#6B21A8",
+          mint: "#E8F8F5",
+          mintText: "#1F7A65",
+          yellow: "#FEF9C3",
+          yellowText: "#854D0E",
         },
       },
       borderRadius: {

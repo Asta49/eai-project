@@ -189,32 +189,27 @@ export default function AskPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-20">
-      {/* Ask Header */}
-      <div className="rounded-4xl bg-forest p-6 text-white shadow-soft relative overflow-hidden">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-forest-light px-2.5 py-0.5 text-[10px] font-bold text-sage-light flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-sage" />
-            Evidence-Grounded AI
-          </span>
-          <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-slate-200">
-            Rule: Source on every answer
-          </span>
-        </div>
+      {/* Ask Header in Periwinkle Purple (matching s1.png & s2.png) */}
+      <div className="rounded-4xl bg-gradient-to-br from-[#8E93F8] via-[#6C70EB] to-[#555AD4] p-6 text-white shadow-lg shadow-indigo-200/50 relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white">
+          <Sparkles className="w-3 h-3 text-white" />
+          Personal Health Assistant
+        </span>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Ask Ritu: Trusted Information
+          Ask Ritu
         </h1>
-        <p className="mt-1 text-xs text-sage-light max-w-md">
-          Personalized answers that say &quot;For you, this means...&quot; grounded in International PCOS Guidelines &amp; ICMR-NIN.
+        <p className="mt-1 text-xs text-indigo-100 max-w-md">
+          Evidence-backed guidance for your cycle, symptoms, labs, and nutrition.
         </p>
 
         {/* Sub-navigation tabs */}
-        <div className="mt-5 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: 'chat', label: '💬 Personal AI Chat' },
-            { id: 'explainer', label: '🩺 Doctor Advice Explainer' },
+            { id: 'chat', label: '💬 Chat' },
+            { id: 'explainer', label: '🩺 Advice Explainer' },
             { id: 'myths', label: '🔍 Myth Checker' },
-            { id: 'labs', label: '🧪 Lab Results Explained' },
+            { id: 'labs', label: '🧪 Lab Tracker' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -222,8 +217,8 @@ export default function AskPage() {
               onClick={() => setActiveSubTab(tab.id as any)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition ${
                 activeSubTab === tab.id
-                  ? 'bg-white text-forest shadow-xs font-bold'
-                  : 'bg-forest-light/60 text-sage-light hover:bg-forest-light'
+                  ? 'bg-white text-brand-purple shadow-xs font-bold'
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
               {tab.label}

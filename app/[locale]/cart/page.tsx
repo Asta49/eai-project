@@ -101,23 +101,18 @@ export default function SmartCartPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-20">
-      {/* Header */}
-      <div className="rounded-4xl bg-forest p-6 text-white shadow-soft relative overflow-hidden">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-forest-light px-2.5 py-0.5 text-[10px] font-bold text-sage-light flex items-center gap-1">
-            <ShoppingCart className="w-3 h-3 text-sage" />
-            Smart Cart Agent
-          </span>
-          <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-slate-200">
-            Permission-Based Shopping
-          </span>
-        </div>
+      {/* Header in Berry Rose */}
+      <div className="rounded-4xl bg-gradient-to-br from-[#FF7A9A] via-[#F04D7E] to-[#E3386C] p-6 text-white shadow-lg shadow-rose-200/50 relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white">
+          <ShoppingCart className="w-3 h-3 text-white" />
+          Smart Cart
+        </span>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Smart Grocery Swaps
         </h1>
-        <p className="mt-1 text-xs text-sage-light max-w-md">
-          Suggests healthier Indian groceries inside Zepto, Blinkit &amp; Instamart based on Dr. Sen&apos;s rules. Never orders without your approval.
+        <p className="mt-1 text-xs text-rose-100 max-w-md">
+          Healthy Indian grocery swaps in Zepto &amp; Blinkit based on Dr. Sen&apos;s guidelines.
         </p>
 
         {/* Status controls */}
@@ -127,11 +122,11 @@ export default function SmartCartPage() {
             onClick={() => setIsPaused(!isPaused)}
             className="flex items-center gap-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white px-3 py-1 text-xs font-semibold transition"
           >
-            {isPaused ? <Play className="w-3.5 h-3.5 text-sage" /> : <Pause className="w-3.5 h-3.5 text-sage" />}
-            <span>{isPaused ? 'Resume Smart Cart' : 'Pause Agent'}</span>
+            {isPaused ? <Play className="w-3.5 h-3.5 text-white" /> : <Pause className="w-3.5 h-3.5 text-white" />}
+            <span>{isPaused ? 'Resume' : 'Pause Agent'}</span>
           </button>
 
-          <span className="text-[11px] text-sage-light">
+          <span className="text-[11px] text-rose-100 font-medium">
             Linked to: <strong>Zepto (Hyderabad)</strong>
           </span>
         </div>

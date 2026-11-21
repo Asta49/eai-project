@@ -117,32 +117,27 @@ export default function CarePage() {
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-20">
-      {/* Header */}
-      <div className="rounded-4xl bg-forest p-6 text-white shadow-soft relative overflow-hidden">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-forest-light px-2.5 py-0.5 text-[10px] font-bold text-sage-light flex items-center gap-1">
-            <Stethoscope className="w-3 h-3 text-sage" />
-            Care Team Coordination
-          </span>
-          <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-slate-200">
-            Granular DPDP Sharing
-          </span>
-        </div>
+      {/* Care Header */}
+      <div className="rounded-4xl bg-gradient-to-br from-[#8E93F8] via-[#6C70EB] to-[#555AD4] p-6 text-white shadow-lg shadow-indigo-200/50 relative overflow-hidden">
+        <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white">
+          <Stethoscope className="w-3 h-3 text-white" />
+          Clinical Care Team
+        </span>
 
         <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Care: Coordinating Your Doctors
+          Doctor &amp; Care Team
         </h1>
-        <p className="mt-1 text-xs text-sage-light max-w-md">
-          Connect your gynecologist, endocrinologist, dietician, and trainer with tailored sharing permissions.
+        <p className="mt-1 text-xs text-indigo-100 max-w-md">
+          Consult your gynecologist, endocrinologist, and dietitian with tailored sharing permissions.
         </p>
 
         {/* View Switcher Tabs */}
-        <div className="mt-5 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: 'team', label: '🩺 Care Team & Sharing' },
-            { id: 'summary', label: '📄 1-Page Visit Summary' },
-            { id: 'screening', label: '🗓️ Screening Calendar' },
-            { id: 'doctorView', label: '👩‍⚕️ Doctor-Side View' },
+            { id: 'team', label: '🩺 Care Team' },
+            { id: 'summary', label: '📄 Visit Summary' },
+            { id: 'screening', label: '🗓️ Screenings' },
+            { id: 'doctorView', label: '👩‍⚕️ Doctor Portal' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -150,8 +145,8 @@ export default function CarePage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition ${
                 activeTab === tab.id
-                  ? 'bg-white text-forest shadow-xs font-bold'
-                  : 'bg-forest-light/60 text-sage-light hover:bg-forest-light'
+                  ? 'bg-white text-brand-purple shadow-xs font-bold'
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
               {tab.label}

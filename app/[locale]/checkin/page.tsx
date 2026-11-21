@@ -145,40 +145,39 @@ export default function CheckinPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header Prompt (Matching reference s4.avif: "How are you feeling this day?") */}
-      <div className="rounded-4xl bg-forest p-6 text-white text-center shadow-soft relative overflow-hidden">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-forest-light/40 blur-xl" />
-        <span className="inline-flex items-center gap-1 rounded-full bg-forest-light px-3 py-1 text-xs font-semibold text-sage-light">
-          <Calendar className="w-3.5 h-3.5 text-sage" />
-          Day 18 Check-in • Active Walking Trial
+      {/* Header Prompt */}
+      <div className="rounded-4xl bg-gradient-to-br from-[#FF7A9A] via-[#F04D7E] to-[#E3386C] p-6 text-white text-center shadow-lg shadow-rose-200/50 relative overflow-hidden">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/20 blur-xl" />
+        <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-rose-50">
+          <Calendar className="w-3.5 h-3.5 text-white" />
+          Day 18 Daily Log • Luteal Phase
         </span>
-        <h1 className="mt-3 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          How are you feeling this day?
+        <h1 className="mt-2 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          How are you feeling today?
         </h1>
-        <p className="mt-1 text-xs text-sage-light max-w-sm mx-auto">
-          30-second daily check-in to power your Bayesian N-of-1 statistics engine.
+        <p className="mt-1 text-xs text-rose-100 max-w-sm mx-auto">
+          Log your mood, symptoms, and flow to update your cycle predictions.
         </p>
 
         {/* Mode Toggle: Quick Tap vs Voice Natural Language */}
-        <div className="mt-4 inline-flex rounded-full bg-forest-dark/80 p-1 text-xs font-semibold">
+        <div className="mt-4 inline-flex rounded-full bg-black/15 p-1 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setMode('quick')}
             className={`rounded-full px-4 py-1.5 transition-all ${
-              mode === 'quick' ? 'bg-white text-forest shadow-xs font-bold' : 'text-sage-light'
+              mode === 'quick' ? 'bg-white text-brand-pink shadow-xs font-bold' : 'text-white'
             }`}
           >
-            Quick Tap Form
+            Quick Tap
           </button>
           <button
             type="button"
             onClick={() => setMode('voice')}
-            className={`flex items-center gap-1 rounded-full px-4 py-1.5 transition-all ${
-              mode === 'voice' ? 'bg-white text-forest shadow-xs font-bold' : 'text-sage-light'
+            className={`rounded-full px-4 py-1.5 transition-all ${
+              mode === 'voice' ? 'bg-white text-brand-pink shadow-xs font-bold' : 'text-white'
             }`}
           >
-            <Mic className="w-3.5 h-3.5 text-coral" />
-            Voice / Chat NLP
+            Voice Note
           </button>
         </div>
       </div>

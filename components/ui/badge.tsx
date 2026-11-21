@@ -8,13 +8,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          'border-transparent bg-forest text-white',
+          'border-transparent bg-brand-pink text-white shadow-xs',
         forest:
-          'border-transparent bg-forest text-white',
+          'border-transparent bg-brand-pink text-white shadow-xs',
+        pink:
+          'border-transparent bg-brand-pink text-white shadow-xs',
+        purple:
+          'border-transparent bg-brand-purpleLight text-brand-purple',
         sage:
-          'border-transparent bg-sage-light text-forest-dark',
+          'border-transparent bg-brand-purpleLight text-brand-purple',
         coral:
-          'border-transparent bg-coral-light text-coral-dark',
+          'border-transparent bg-brand-pinkLight text-brand-pink',
         secondary:
           'border-transparent bg-slate-100 text-slate-700',
         destructive:
@@ -33,8 +37,6 @@ const badgeVariants = cva(
           'border-transparent bg-sage-light text-forest-dark',
         peach:
           'border-transparent bg-pastel-peach text-pastel-peachText',
-        purple:
-          'border-transparent bg-pastel-purple text-pastel-purpleText',
       },
     },
     defaultVariants: {
