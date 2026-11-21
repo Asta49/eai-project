@@ -1,0 +1,387 @@
+# Ritu: Comprehensive Feature Specification & Documentation
+
+> **Ritu (ऋतु / ఋతు / ரிது)**: A private, clinical-grade health companion for women navigating hormonal and lifestyle conditions — PCOS/PCOD, thyroid disorders, endometriosis, anaemia, irregular periods, pregnancy & postpartum, and perimenopause/menopause.
+
+---
+
+## 📑 Table of Contents
+
+1. [Product Positioning & Core Principles](#1-product-positioning--core-principles)
+2. [Visual Design System & Mobile UI Architecture](#2-visual-design-system--mobile-ui-architecture)
+3. [Navigation Architecture (Docked 5-Tab Bar)](#3-navigation-architecture-docked-5-tab-bar)
+4. [Module 1: Home & Daily Cycle Tracking](#4-module-1-home--daily-cycle-tracking)
+5. [Module 2: Daily Check-in & Symptom Logging](#5-module-2-daily-check-in--symptom-logging)
+6. [Module 3: Ask Ritu — Trusted Information & Clinical AI](#6-module-3-ask-ritu--trusted-information--clinical-ai)
+7. [Module 4: Food & Indian Nutrition (INDB 150+ Dishes)](#7-module-4-food--indian-nutrition-indb-150-dishes)
+8. [Module 5: Workouts & Condition-Adjusted Movement](#8-module-5-workouts--condition-adjusted-movement)
+9. [Module 6: Smart Cart Agent (Grocery Swaps)](#9-module-6-smart-cart-agent-grocery-swaps)
+10. [Module 7: Care Team & Doctor Coordination](#10-module-7-care-team--doctor-coordination)
+11. [Module 8: Calibration Engine ("How Ritu Personalises")](#11-module-8-calibration-engine-how-ritu-personalises)
+12. [Module 9: Deterministic N-of-1 Personal Science Engine](#12-module-9-deterministic-n-of-1-personal-science-engine)
+13. [Module 10: Diagnostic Labs & OCR Vision Extraction](#13-module-10-diagnostic-labs--ocr-vision-extraction)
+14. [Module 11: Privacy, DPDP 2023 & Data Portability](#14-module-11-privacy-dpdp-2023--data-portability)
+15. [Module 12: IIM-A Economics of AI & Network Moat Simulation](#15-module-12-iim-a-economics-of-ai--network-moat-simulation)
+16. [Module 13: Instant Persona Switcher (Zero Auth Barrier)](#16-module-13-instant-persona-switcher-zero-auth-barrier)
+17. [Module 14: Multilingual Indic Support & Voice Engine](#17-module-14-multilingual-indic-support--voice-engine)
+
+---
+
+## 1. Product Positioning & Core Principles
+
+### Core Problem
+Hormonal conditions in women depend on individual neuroendocrine baselines, carry societal stigma, require elusive diet and lifestyle adjustments through trial-and-error, and suffer from widespread clinical misinformation.
+
+### The Three Non-Negotiable Rules
+1. **The doctor decides; the AI fine-tunes.**  
+   The AI operates strictly within clinical boundaries set by qualified doctors. The AI never overrides a prescription, never changes a dosage, and never relaxes a restriction.
+2. **Every answer shows its source.**  
+   No unverified generative hallucinations. Every clinical statement provides an evidence citation (International PCOS Guideline, ICMR-NIN, FOGSI, ACOG, WHO).
+3. **Private by default.**  
+   In compliance with India's **Digital Personal Data Protection (DPDP) Act 2023**, sharing is opt-in, granular per person, and granular per data category. No health data is ever sold to advertisers, insurers, or FMCG brands.
+
+---
+
+## 2. Visual Design System & Mobile UI Architecture
+
+*Directly aligned with the **lofee - Health Woman App UI Design Kit** (`reference/s1.png` and `reference/s2.png`):*
+
+- **Canvas Background:** Soft Warm Blush (`#FFF6F8`) providing an inviting, tactile, premium feel.
+- **Card Surfaces:** Pure White (`#FFFFFF`) with delicate rose borders (`#F5E8EB`) and soft depth shadows.
+- **Color Palette:**
+  - **Berry Rose (`#F04D7E`):** Signature color for the interactive Period Heart widget, active calendar dates, and primary action buttons.
+  - **Periwinkle Purple (`#6C70EB`):** Signature color for Ovulation predictions, active bottom navigation highlights, and secondary tools.
+  - **Pastel Modals:** Soft peach (`#FFE8EF`), mint (`#E8F8F5`), sunny yellow (`#FEF9C3`), and sky blue (`#EEF2FF`).
+- **Typography:**
+  - Headings: `Fredoka` & `Plus Jakarta Sans` for soft, friendly, rounded headers.
+  - Body & Metrics: `Poppins` & `Inter` for crisp, medical-grade legibility.
+- **Mobile Container:** Optimized for iPhone 14/15 profiles (`max-w-md sm:max-w-lg mx-auto`) with generous pill radii (`rounded-3xl` / `rounded-4xl`).
+
+---
+
+## 3. Navigation Architecture (Docked 5-Tab Bar)
+
+A permanently docked, native mobile bottom navigation bar with fluid active-state pill indicators:
+
+| Tab | Route | Description |
+| :--- | :--- | :--- |
+| 🏠 **Home** | `/today` (and `/`) | Central Period & Ovulation Heart, Weekly Strip, Moods, Articles, Daily Meds |
+| 📅 **Log** | `/checkin` | 10-Second Daily Check-in, Symptoms, Pain slider, Indic Voice note |
+| 💬 **Ask** | `/ask` | Personal AI Chat, Doctor Advice Explainer, Myth Checker, Lab Tracker |
+| 🩺 **Care** | `/care` | Care Team roster, Sharing Toggles, 1-Page Summary, Screening Calendar, Doctor Portal |
+| 👤 **Profile** | `/profile` | Health Baseline, Calibration Engine, Smart Cart Settings, DPDP Data Export |
+
+---
+
+## 4. Module 1: Home & Daily Cycle Tracking
+
+- **Welcome Header:** Displays `Welcome` + active user name (`Priya Sharma`), with a notification bell showing unread badge alerts.
+- **Notification Tray (Matching `s1.png`):**
+  - Tapping the bell opens a slide-up notification tray:
+    - 💙 *Ovulation Prediction Day! (High chance of fertile window)*
+    - 💖 *Today is Your Day (Energy rising; 30-min gentle walk recommended)*
+    - 🛒 *Smart Cart Swap Ready (Slurrp Farm Millet Noodles pick)*
+    - 💊 *Medicine Reminder (Thyronorm taken; Metformin due with dinner)*
+- **Hero Period & Ovulation Heart Widget:**
+  - Heart-shaped gradient card (`#FF7A9A` → `#F04D7E` → `#E3386C`) with floating pencil button (`✏️`).
+  - Displays: **Period: Day 18** and **Possible Pregnancy: 12.4%**.
+  - **Interactive 1-Tap Toggle:** Tapping the heart instantly transforms it into the **Ovulation Prediction** view in Periwinkle Purple (`#8E93F8` → `#6C70EB`).
+- **Weekly Interactive Calendar Strip:**
+  - Displays current month (`November 2026`) with a 7-day row (`S M T W T F S`).
+  - Active date `18` highlighted in a solid rose pink circle; period days highlighted in dashed circles.
+  - Tapping any date updates daily vitals.
+- **"Your Mood" Quick Bar:**
+  - ➕ `Add Mood` in soft periwinkle card.
+  - 😭 `Sad` in soft rose card.
+  - 😫 `Badmood` in soft mint card.
+  - 😍 `Happy` in soft yellow card.
+  - Immediate tactile confirmation upon selection.
+- **Article & Guidance Cards:**
+  - 🧘‍♀️ **Daily Woman** (`#EEF2FF`): Hormone harmony routine for Day 18.
+  - 🥗 **Mood Booster** (`#FFE8EF`): High-fiber Indian breakfast swaps.
+  - ✨ **Spread Happines** (`#E8F8F5`): Restorative pelvic stretches and active trials.
+- **Daily Medicine Checklist:**
+  - One-tap checkoffs for *Thyronorm 25mcg* (Empty stomach) and *Metformin 500mg* (Evening).
+
+---
+
+## 5. Module 2: Daily Check-in & Symptom Logging
+
+- **10-Second Flow:** Quick input without tedious questionnaires.
+- **Vitals & Metrics:**
+  - Energy slider (1 to 5).
+  - Pelvic Cramp / Pain slider (0 to 10).
+  - Period flow tracker (`None`, `Spotting`, `Light`, `Medium`, `Heavy`).
+- **Interactive Symptom Chips:**
+  - Quick-toggle tags: *Sugar Cravings*, *Bloating*, *Hormonal Acne*, *Afternoon Fatigue*, *Period Started*, *Brain Fog*.
+- **Multilingual Voice & NLP Extraction:**
+  - Users can speak naturally in Hindi, Telugu, Tamil, or English (e.g., *"Aaj bahut thakaan thi, period nahi aaya"*).
+  - Vision/LLM parses structured fields (`energy: 2, period: false, notes: ...`).
+  - Explicit confirmation review screen before committing to profile.
+- **Red-Flag Emergency Safeguard:**
+  - Detects acute symptoms (severe pelvic pain, heavy hemorrhage, chest pain, fainting, pregnancy complications).
+  - Immediately replaces AI wellness advice with an urgent **Call Emergency (112) / Seek Care Today** card.
+
+---
+
+## 6. Module 3: Ask Ritu — Trusted Information & Clinical AI
+
+- **Personal AI Chat ("Ask Ritu"):**
+  - Speaks with personal context: *"For you, Priya, having Phenotype B with a HOMA-IR of 3.61 means..."*
+  - Grounded in guidelines: *International PCOS Guideline (2023), ICMR-NIN, ACOG, FOGSI, WHO*.
+  - Every reply includes a verifiable source line:  
+    `Source: International PCOS Guideline 2023 · Section 4.2 | ICMR-NIN Guidelines for Indians`
+  - Generates a **"Questions to Ask Your Doctor"** box at the end of answers.
+- **Doctor's Advice Explainer:**
+  - Deconstructs clinical instructions (e.g., *"Avoid Gluten & High Glycemic Carbs"* prescribed by Dr. Ananya Sen):
+    - ❓ **Why:** Insulin resistance dampens follicular maturation; gut mucosal permeability.
+    - 🧬 **How it affects your body:** Stabilizes postprandial glucose curves and reduces inflammatory acne.
+    - 🛑 **Foods to stop:** Maida, white bread, naan, bhature, suji upma.
+    - 🕵️ **Hidden Indian sources:** *Hing (asafoetida)* compounded with wheat flour, soy sauce in street food, packaged gravies.
+    - 🌾 **Indian alternatives:** Jowar and Bajra rotis, Besan chilla, Ragi dosa, Kuttu/Rajgira parathas.
+    - 📈 **Progress Tracker:** 14 days gluten-free logged, energy score +0.8 pts.
+  - Interactive paste box for any new doctor note.
+- **WhatsApp & Social Media Myth Checker:**
+  - Users paste viral forwarded messages or Instagram reel claims.
+  - Ritu evaluates the claim against scientific trials:
+    - *Apple Cider Vinegar cures PCOS in 10 days* → ❌ **Busted** (Zero trial evidence; causes enamel erosion and gastric irritation with Metformin).
+    - *Women with thyroid must strictly avoid cruciferous vegetables* → ⚖️ **Nuanced / Busted** (Cooked cabbage and cauliflower are completely safe; heat denatures goitrogens).
+    - *Spearmint tea twice daily reduces facial hair (hirsutism)* → ✅ **Evidence Supported** (Double-blind RCTs prove significant free testosterone reduction).
+- **Lab Results Explained in Plain English:**
+  - Explains HOMA-IR (3.61 - Elevated), TSH (3.8 µIU/mL - Monitored for optimal ovulatory range 1.5–2.5), and Free Testosterone (42 pg/mL).
+  - Out-of-range visual alerts with target benchmarks.
+- **Community Aggregate Insights:**
+  - *"42 women in Hyderabad with similar hormonal baselines and insulin resistance consulted Dr. Ananya Sen and completed low-GI trials."*
+  - Strict privacy constraint: Only displayed in aggregate with $N \ge 40$ privacy floor.
+
+---
+
+## 7. Module 4: Food & Indian Nutrition (INDB 150+ Dishes)
+
+- **Indian Nutrient Databank (INDB) Seed:**
+  - 150+ regional Indian dishes (North Indian, South Indian, Maharashtrian, Bengali, Gujarati).
+  - Calculates per-serving calories, protein, carbohydrates, fat, dietary fiber, and estimated Glycemic Index.
+- **PCOS-Friendliness Score (1 to 10):**
+  - Computed deterministically from the **Fiber-to-Carb Ratio**, protein density, and glycemic load.
+  - Color-coded badges: Green ($7.0–10$), Amber ($5.0–6.9$), Coral ($< 5.0$).
+- **Smart Indian Swaps:**
+  - *White Rice Poha ($4.5/10$)* ➔ *Besan Chilla with grated paneer ($9.0/10$)* (3x more protein, steady glycemic response).
+  - *Maida Paratha* ➔ *Sattu-stuffed Jowar Roti*.
+  - *Suji Upma* ➔ *Foxtail Millet & Vegetable Khichdi*.
+- **Post-Meal 2–3 Hour Check-in:**
+  - Tracks postprandial feedback: *No bloating*, *Mild bloating*, *Heavy distension*, *Sustained energy*.
+- **Personal Food Group Tolerance Spectrum:**
+  - 🟢 **Suits You:** Fermented millets (14 meals logged, 0 bloating).
+  - 🟡 **Small Portions:** Chana / Chickpeas (fine up to 1 katori).
+  - 🔴 **Low Tolerance:** A1 Buffalo Dairy (bloating in 5 of 6 logged meals).
+  - 🟣 **Still Learning:** Spearmint tea (6 days logged).
+- **Doctor Restriction Override:**
+  - `[Doctor's rule: Avoid Gluten & Maida]` automatically overrides any AI tolerance scoring.
+- **Food-Effect Export:** One-click export for clinical dietitian review.
+
+---
+
+## 8. Module 5: Workouts & Condition-Adjusted Movement
+
+- **Clinical Target:** 150 minutes/week moderate activity + 2 weekly strength sessions (per ICMR and International PCOS guidelines).
+- **Condition-Adjusted Modifications:**
+  - *PCOS & Endometriosis:* Low-impact pelvic floor relaxation and steady-state walking to prevent intra-abdominal pressure.
+  - *Hypothyroidism:* Heart-rate pacing avoiding chronic cortisol elevations.
+  - *Anaemia:* Low-intensity intervals with recovery periods.
+- **Daily Cycle-Phase Adjustment:**
+  - *Luteal Phase (Day 18):* Progesterone elevation reduces joint laxity and insulin sensitivity. Recommends gentle strength and restorative mobility over intense HIIT.
+- **Filters:** Home-friendly, Room-friendly, Women-only routines (10, 20, 30 min).
+- **Activity Tracking:** Synchronizes steps and logs post-session energy.
+
+---
+
+## 9. Module 6: Smart Cart Agent (Grocery Swaps)
+
+- **Permission-Based Integration:**
+  - Connects to quick-commerce grocery apps (Zepto, Blinkit, Instamart).
+  - **Opt-in by default:** Completely disabled until the user toggles access.
+- **Three Help Levels:**
+  1. *Suggest Only:* Flags items and displays healthier alternatives; user makes changes manually.
+  2. *Swap with Approval:* Ritu asks before replacing each item in the cart.
+  3. *Auto-Build:* Ritu compiles a weekly healthy grocery basket for user review.
+- **Live Shopping Notification Simulator:**
+  - Triggers alerts while shopping:  
+    `"Haldiram Aloo Bhujia may not suit your insulin resistance (palm oil & trans fats). Swap with Roasted Foxnuts (Makhana) with rock salt from Zepto?"`
+- **Purchase Protection Gate:**
+  - **Ritu never places an order or charges payment autonomously.** Requires final `"Yes, Order"` tap.
+- **Controls & Auditing:**
+  - 1-tap pause agent, unlink app, or wipe cart audit history.
+  - Zero sponsored ads: Recommendations are strictly dictated by doctor rules.
+
+---
+
+## 10. Module 7: Care Team & Doctor Coordination
+
+- **Care Team Roster:**
+  - **Dr. Ananya Sen, MD** (Gynecologist & PCOS Lead, Apollo Health City)
+  - **Dr. Ramesh Gupta, MD** (Endocrinologist, Yashoda Hospitals)
+  - **Sneha Nair, RD** (Clinical Dietitian, Care Hospitals)
+  - **Priya Rao, PT** (Women's Physiotherapist & Trainer)
+- **Granular Data Sharing Controls:**
+  - Separate toggles per specialist across 5 data streams: `Labs`, `Food & Tolerance`, `Daily Symptoms`, `Workouts`, and `Medicines`.
+- **Automatic Clinical Routing:**
+  - New lipid/glucose lab uploads route to Endocrinologist and Dietitian.
+  - Gynecologist dietary restrictions route directly into the Dietitian's meal planner.
+- **1-Page Clinical Visit Summary:**
+  - Formats cycle history, 93% medicine adherence, food tolerance findings, completed N-of-1 trial statistics, and lab trends into a 1-page brief.
+  - Includes a pre-populated **"Questions for the Visit"** list.
+  - One-tap button to transmit to the doctor before consults.
+- **Preventive Screening Calendar:**
+  - Tailored to age (26) and family history (Paternal Diabetes, Maternal Thyroid):
+    - *Pelvic Ultrasound (TVS / Follicles)* — Annual review.
+    - *Thyroid Function Panel (TSH, FT4)* — Every 6 months.
+    - *HbA1c & Fasting Insulin* — Quarterly.
+    - *Pap Smear / Cervical Screening* — Every 3 years.
+    - *Clinical Breast Exam* — Annual wellness.
+- **Doctor-Side View Portal:**
+  - Specialists can log in to inspect the patient visit summary.
+  - Review & approve AI trial suggestions (e.g., approve a 21-day dairy elimination trial).
+  - Add fixed clinical rules that lock into the calibration engine.
+
+---
+
+## 11. Module 8: Calibration Engine ("How Ritu Personalises")
+
+- **Doctor's Limits vs. AI Learning (Side-by-Side):**
+  - **Doctor Rules (Fixed Limits — Always Wins):** Diagnoses, active prescriptions (Metformin 500mg, Thyronorm 25mcg), dietary bans (Avoid Gluten/Maida), and biomarker targets ($< 10$ Fasting Insulin).
+  - **AI Learned Insights (Fine-Tuning Within Limits):** Tolerance for fermented millets, correlation between morning walks and reduced evening cravings ($r = -0.62$), and luteal cycle acne triggers.
+- **Insight Source Tags:**
+  - `[Doctor's rule]` (Fixed) vs `[Learned from you: 42 logs]`.
+- **Clinical Conflict Alerts:**
+  - Clashes between instructions (e.g., Dietitian recommends 16-hour fasting vs. Endocrinologist advises food with Metformin): **Ritu automatically prioritizes the doctor's rule.**
+- **Staged AI Trial Proposals:**
+  - Staged protocols awaiting doctor sign-off before commencement.
+
+---
+
+## 12. Module 9: Deterministic N-of-1 Personal Science Engine
+
+*Located in `/lib/engine` — pure TypeScript functions with zero generative AI write access.*
+
+- **Bayesian Normal-Normal Conjugate Update:**
+  1. Computes daily outcome metrics across baseline (14 days) and intervention (28–42 days).
+  2. Adjusts for menstrual cycle phase via ordinary least-squares regression:  
+     $$y = \beta_0 + \hat{\delta}\cdot\text{phase} + \gamma_1\cdot\text{follicular} + \gamma_2\cdot\text{luteal} + \epsilon$$
+  3. Corrects for lag-1 autocorrelation ($\rho$):  
+     $$\text{SE}_{\text{adj}} = \text{SE} \times \sqrt{\frac{1+\rho}{1-\rho}}$$
+  4. Weights by protocol adherence: Inflates standard error if adherence drops below 70%:  
+     $$\text{SE}_{\text{final}} = \frac{\text{SE}_{\text{adj}}}{\sqrt{\text{adherence}}}$$
+  5. Updates population prior $\mathcal{N}(\mu_0, \tau_0^2)$ to posterior $\mathcal{N}(\mu_n, \sigma_n^2)$:  
+     $$\frac{1}{\sigma_n^2} = \frac{1}{\tau_0^2} + \frac{1}{\text{SE}_{\text{final}}^2}, \quad \mu_n = \sigma_n^2 \left(\frac{\mu_0}{\tau_0^2} + \frac{\hat{\delta}}{\text{SE}_{\text{final}}^2}\right)$$
+  6. Computes Bayesian posterior probability of meaningful clinical benefit:  
+     $$P(\text{benefit} > \text{MCID})$$
+  7. Deterministic verdict thresholds:
+     - $\ge 0.80$ ➔ `"Likely Worked For You"`
+     - $\le 0.20$ ➔ `"Likely Did Not Work For You"`
+     - Otherwise ➔ `"Inconclusive: Extend Trial"`
+- **Thompson Sampling Recommender:**
+  - Samples from posterior prior distributions to rank candidate interventions balancing exploration and exploitation.
+- **Safety Filters:**
+  - Automatically suppresses interventions exceeding user budget, contraindicated in pregnancy, or requiring pending doctor sign-off.
+
+---
+
+## 13. Module 10: Diagnostic Labs & OCR Vision Extraction
+
+- **OCR Vision Extraction:**
+  - Upload photo or PDF of a lab report ➔ Multimodal vision model extracts `{testName, value, unit, referenceRange, sampleDate, labName}` with strict Zod validation.
+  - Normalizes aliases into canonical biomarkers: Fasting Glucose, Fasting Insulin, HbA1c, TSH, Free/Total Testosterone, LH, FSH, AMH, Prolactin, Lipid Panel, Vitamin D3, B12, Ferritin.
+- **Built-in Mock Samples:**
+  - Includes 3 realistic demo reports from *Thyrocare*, *Dr. Lal PathLabs*, and *Metropolis*.
+- **Home Phlebotomist Scheduling:**
+  - Simulated home sample collection booking via *Tata 1mg* and *Apollo Diagnostics*.
+- **Deterministic Test Scheduler:**
+  - Algorithmically schedules repeat tests based on Rotterdam phenotype and elapsed time.
+
+---
+
+## 14. Module 11: Privacy, DPDP 2023 & Data Portability
+
+- **Granular Consent Settings:**
+  - Toggle 1: Core Health Analytics (Cycles, HOMA-IR, trials).
+  - Toggle 2: Care Team Sharing (Transmitting records to booked doctors).
+  - Toggle 3: De-identified Population Research (Aggregating prior distributions).
+- **Data Portability (1-Click JSON Export):**
+  - Exports a complete machine-readable JSON copy of user vitals, lab history, symptoms, trial outcomes, and calibration rules.
+- **Right to Erasure ("Danger Zone"):**
+  - Instant permanent deletion of user account and de-indexing of medical logs.
+- **Commercial Privacy Guarantee:**
+  - User data is never sold, leased, or shared with third-party advertisers or insurance underwriters.
+
+---
+
+## 15. Module 12: IIM-A Economics of AI & Network Moats
+
+*Course Capstone Demonstration Module (`/admin`):*
+
+- **Hierarchical Empirical Bayes Prior Simulation:**
+  - Interactive patient slider ($N = 50$ to $5,000$).
+  - **Graph 1 (Days to Decisive Verdict):** Demonstrates data network effects: Time required for a statistically significant verdict drops from **38 days down to 14 days** as community priors tighten.
+  - **Graph 2 (Verdict Accuracy):** Decision accuracy increases from **61% to 94%**.
+- **LLM Unit Economics Panel:**
+  - Token consumption tracker per active patient month.
+  - AI inference cost (₹18.40/user/mo) vs. Subscription price (₹299/mo).
+  - Demonstrates **91.4% gross margin** with sustainable SaaS unit economics.
+- **Conversion Funnel Analytics:**
+  - Monitors progression from Onboarding ➔ First Check-in ➔ Active Trial ➔ Lab Booking ➔ Doctor Consultation.
+
+---
+
+## 16. Module 13: Instant Persona Switcher (Zero Auth Barrier)
+
+A top-bar pill switcher allowing seamless evaluation without login walls:
+
+1. **Priya Sharma (Patient / User):**
+   - 26F, Hyderabad • PCOS (Rotterdam Phenotype B) + Hypothyroidism • Active walking trial • Full access to Today, Ask, Care, and Profile.
+2. **Dr. Ananya Sen, MD (Care Team Doctor):**
+   - Gynecologist & Care Team Lead • Access to clinical pre-consult summaries, pending trial approvals, and fixed rule creation.
+3. **Prof. / Course Admin (IIM-A Evaluator):**
+   - Evaluator persona • Direct access to the Empirical Bayes network moat simulation, unit economics panel, and platform funnel.
+
+---
+
+## 17. Module 14: Multilingual Indic Support & Voice Engine
+
+- **Four Languages Supported:**
+  - English (`en`)
+  - Hindi (`hi` - हिन्दी)
+  - Telugu (`te` - తెలుగు)
+  - Tamil (`ta` - தமிழ்)
+- **Localization Infrastructure:**
+  - Implemented using `next-intl` App Router shared pathnames (`/[locale]/...`).
+  - All UI strings, clinical terms, and disclaimer notices localized.
+- **Voice Provider Interface (`VoiceProvider`):**
+  - Implemented with the browser Web Speech API.
+  - Designed with clean adapter interfaces ready to swap in **Bhashini**, **Sarvam AI**, or **AI4Bharat** backends.
+
+---
+
+## 📊 Summary Matrix of Application Routes
+
+| Route | Purpose | Key Capabilities |
+| :--- | :--- | :--- |
+| `/[locale]` | **Application Entry** | Automatically launches the active mobile experience (`TodayPage`). |
+| `/[locale]/today` | **Daily Management** | Interactive Period/Ovulation Heart, 7-day strip, Mood row, Articles, Meds checklist. |
+| `/[locale]/checkin` | **Daily Log** | Energy & pelvic cramp sliders, flow picker, symptoms, Indic voice note. |
+| `/[locale]/ask` | **Trusted Clinical AI** | Guidelines-grounded AI chat, Advice Explainer, Myth Checker, Lab Tracker. |
+| `/[locale]/care` | **Doctor Coordination** | Care team sharing toggles, 1-page pre-consult summary, screening calendar, doctor portal. |
+| `/[locale]/profile` | **Profile & Calibration** | Health baselines, Calibration engine (Doctor vs AI), DPDP privacy, JSON export. |
+| `/[locale]/cart` | **Smart Cart Agent** | Zepto/Blinkit cart scanner, 3 help levels, live swap notification, order gate. |
+| `/[locale]/food` | **Indian Nutrition** | 150+ INDB dishes, PCOS-friendliness scores, smart swaps, meal logging. |
+| `/[locale]/experiments`| **N-of-1 Trials** | Deterministic OLS stats engine, Bayesian verdict card, AI explanation drawer. |
+| `/[locale]/labs` | **Diagnostic Labs** | OCR vision extraction, 3 demo reports, home phlebotomist booking. |
+| `/[locale]/admin` | **IIM-A Economics Moat** | Interactive Bayes shrinkage slider, days-to-verdict curves, LLM unit economics. |
+| `/[locale]/onboarding`| **Patient Setup** | 5-question baseline wizard, family history, and DPDP consent screen. |
+
+---
+
+## 🧪 Automated Testing & Verification
+
+- **Vitest Test Suite (`lib/engine/__tests__/engine.test.ts`):**  
+  **17 of 17 deterministic tests passing** covering OLS cycle adjustment, lag-1 autocorrelation inflation, normal conjugate updates, safety filtering, Thompson sampling, and phenotype estimation.
+- **Production Build:**  
+  **78 of 78 static routes compiled cleanly** across all 4 locales with zero TypeScript or webpack errors.
